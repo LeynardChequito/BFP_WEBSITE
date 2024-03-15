@@ -4,90 +4,88 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\EmergencyCallModel;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Message;
-use Kreait\Firebase\Messaging\Notification;
+use App\Models\AccountModel;
+use App\Models\AdminModel;
+use CodeIgniter\HTTP\Files\UploadedFile;
 
 class EmergencyCallController extends BaseController
 {
+    private $emergencyCall;
+    private $accountModel;
+    private $adminModel;
+
+    public function __construct()
+    {
+        $this->emergencyCall = new EmergencyCallModel();
+        $this->accountModel = new AccountModel();
+        $this->adminModel = new AdminModel();
+        helper('firebasenotifications');
+    }
+
     public function emergencycall()
     {
         $emergencyCallModel = new EmergencyCallModel();
+        $latestEmergencyCalls = $emergencyCallModel->orderBy('created_at', 'DESC')->findAll(5); // Fetch latest 5 emergency calls
 
         $data = [
-            'emergency_call' => $emergencyCallModel->findAll(),
+            'latestEmergencyCalls' => $latestEmergencyCalls,
         ];
 
-        return view('EMERGENCYCALL/emergencybutton', $data);
+        return view('ADMIN/adminnotif', $data);
     }
 
-    public function submit()
+    public function emergency()
     {
-        $request = $this->request;
-
-        if (! $this->validate([
-            'csrf_token' => 'required|validate_csrf'
-        ])) {
-            return redirect()->back()->withInput()->with('error', 'CSRF token validation failed');
-        }
-
-        // Get the form input values
-        $incidentType = $request->getPost('incident_type');
-        $incidentSeverity = $request->getPost('incident_severity');
-        $incidentLocation = $request->getPost('incident_location');
-        $nearestLandmark = $request->getPost('nearest_landmark');
-        $incidentDescription = $request->getPost('incident_description');
-        $numPeopleRequiringRescue = $request->getPost('num_people_requiring_rescue');
-        $accessConsiderations = $request->getPost('access_considerations');
-
-        // Handle file upload
-        $file = $request->getFile('report_file');
-        $reportPath = '';
-
-        if ($file->isValid() && ! $file->hasMoved()) {
-            $file->move(ROOTPATH . 'public/accident_report');
-            $reportPath = $file->getName(); // Get the name of the uploaded file
-        }
-
-        // Save the data to the database
-        $emergencyCallModel = new EmergencyCallModel();
-        $emergencyCallModel->save([
-            'incident_type' => $incidentType,
-            'incident_severity' => $incidentSeverity,
-            'incident_location' => $incidentLocation,
-            'nearest_landmark' => $nearestLandmark,
-            'incident_description' => $incidentDescription,
-            'num_people_requiring_rescue' => $numPeopleRequiringRescue,
-            'access_considerations' => $accessConsiderations,
-            'report_path' => $reportPath,
-        ]);
-
-        // Send push notification
-        $this->sendPushNotification($incidentType, $incidentSeverity);
-
-        return redirect()->to('success-page');
+        return view('ADMIN/adminnotif');
     }
 
-    private function sendPushNotification($incidentType, $incidentSeverity)
+    public function sitecall()
     {
-        // Initialize Firebase Factory
-        $factory = (new Factory)
-            ->withServiceAccount('path/to/serviceAccountKey.json')
-            ->withDatabaseUri('https://your-project-id.firebaseio.com');
-
-        // Initialize Firebase Messaging
-        $messaging = $factory->createMessaging();
-
-        // Create notification
-        $notification = Notification::create('New Incident Report', $incidentType . ' - ' . $incidentSeverity);
-
-        // Create message
-        $message = CloudMessage::new()
-            ->withNotification($notification)
-            ->withData(['incident_type' => $incidentType, 'incident_severity' => $incidentSeverity]);
-
-        // Send message
-        $messaging->send($message);
+        return view('WEBSITE/site');
     }
+
+    public function submitEmergencyCall()
+    {
+        try {
+            // Retrieve user_id from session
+            $user_id = session()->get('user_id');
+    
+            // Retrieve form data
+            $fireType = $this->request->getPost('fire_type');
+            $fireSize = $this->request->getPost('fire_size');
+            $roadType = $this->request->getPost('road_type');
+            $additionalInfo = $this->request->getPost('additional_info');
+            $photoUpload = $this->request->getFile('photo_upload');
+    
+            // Prepare emergency call data including user_id
+            $emergencyCallData = [
+                'user_id' => $user_id,
+                'fire_type' => $fireType,
+                'fire_size' => $fireSize,
+                'road_type' => $roadType,
+                'additional_info' => $additionalInfo,
+                'photo_upload' => $photoUpload->getName()
+            ];
+    
+            // Save emergency call data to database
+            $this->emergencyCall->insert($emergencyCallData);
+    
+            // Fetch admin's token and other necessary info from the database based on the logged-in admin's id
+            $admin_id = session()->get('admin_id'); // Assuming 'admin_id' is stored in session upon admin login
+            $admin = $this->adminModel->find($admin_id);
+            $adminToken = $admin['token'];
+    
+            $title = $fireType; // Using fire_type field as the title
+            $body = "Fire Size: $fireSize, Road Type: $roadType, Additional Info: $additionalInfo"; // Constructing the body using other fields
+    
+            // Send push notification to the admin
+            $notifRes = sendNotification($title, $body, [$adminToken]);
+    
+            // Redirect or return response as needed
+            return redirect()->to('/home')->with('success', 'Emergency call submitted successfully.');
+        } catch (\Throwable $th) {
+            // Handle any errors
+            return redirect()->back()->withInput()->with('error', $th->getMessage());
+        }
+    }    
 }

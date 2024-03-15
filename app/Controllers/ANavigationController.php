@@ -15,11 +15,6 @@ class ANavigationController extends BaseController
         $this->session = \Config\Services::session();
     }
 
-    public function adminHome()
-    {
-        return view('ADMIN/adminhome');
-    }
-
     public function adminManage()
     {
         return view('ADMIN/manage');

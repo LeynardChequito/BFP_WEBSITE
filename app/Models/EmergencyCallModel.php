@@ -7,20 +7,18 @@ use CodeIgniter\Model;
 class EmergencyCallModel extends Model
 {
     protected $table            = 'emergency_call';
-    protected $primaryKey       = 'emergencycall_id';
+    protected $primaryKey       = 'emergency_id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'incident_type', 
-        'incident_severity', 
-        'incident_location', 
-        'nearest_landmark', 
-        'incident_description', 
-        'num_people_requiring_rescue', 
-        'access_considerations', 
-        'report_path'
+        'fire_type', 
+        'fire_size', 
+        'road_type', 
+        'additional_info', 
+        'photo_upload',
+        'user_id'
     ];
 
     // Dates

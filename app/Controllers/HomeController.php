@@ -39,10 +39,7 @@ class HomeController extends BaseController
     {
         return view('WEBSITE/activities');
     }
-    public function site()
-    {
-        return view('WEBSITE/site');
-    }
+
 
 
     public function logout()

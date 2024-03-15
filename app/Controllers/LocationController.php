@@ -11,6 +11,11 @@ class LocationController extends BaseController
         return view('COMPONENTS/contactus');
     }
 
+    public function map()
+    {
+        return view('EMERGENCYCALL\LocationView');
+    }
+
     public function updateLocation()
     {
         $latitude = $this->request->getPost('latitude');

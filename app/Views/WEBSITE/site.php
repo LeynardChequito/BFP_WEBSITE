@@ -1,105 +1,98 @@
-<?php
-    $imageSources = [
-        'images/BABALA-400-×-1500px.png',
-        'images/fire-safety-advocacy-banner-2023-01.jpg',
-        'images/images2.jpg',
-        'images/bfp-modernization.jpg',
-        'images/bfp-banner.jpg',
-    ];
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-  <style>
-  body {
-    background-color: #f8f9fa;
-    
-            color: #343a40;
-  }
-
-  .navbar {
-    background-color: #ff6347; 
-  }
-
-  .navbar-brand {
-    font-size: 1.5rem;
-    color: #fff; 
-  }
-
-  .navbar-nav .nav-item {
-    margin-right: 10px;
-  }
-
-  .navbar-nav .nav-link {
-    color: #fff;
-  }
-
-  .navbar-nav .nav-link:hover {
-    color: #17a2b8;
-  }
-
-  .nav-flex-icons .nav-item {
-    margin-right: 0;
-  }
-
-  .nav-flex-icons .nav-link {
-    color: #fff;
-    font-size: 1.5rem;
-  }
-
-  .nav-flex-icons .nav-link:hover {
-    color: #17a2b8;
-  }
-  .footer{
-    background-color: #85919d;
-    position:relative;
-  }
-
-  
-  #carouselExample {
-            max-width: 1500px;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Call Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        /* Custom styles */
+        /* Add your custom styles here */
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
             width: 100%;
-            height: 400px;
-            border: 2px solid #EF3340;
-            border-radius: 8px;
-            overflow: hidden;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* Form styles */
+        form {
             margin-bottom: 20px;
-            margin-right: auto;
-            margin-left: auto;
         }
 
-        .carousel-inner {
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
             width: 100%;
-            height: 100%;
-            margin-top: 1px;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
 
-        .carousel-inner img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: opacity 1s ease-in-out;
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
-        .btn-news {
-            margin-top: 20px;
-            text-align: center;
+        button:hover {
+            background-color: #45a049;
         }
 
-        .buttons-container {
-            margin-top: 10px;
+        .readonly {
+            border: none;
+            background-color: #f5f5f5;
+            padding: 8px;
         }
-    
-</style>
+    </style>
+</head>
 <body>
   <!-- First Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-dark default-color">
-    <a class="navbar-brand" href="#"><strong>BFP OFFICIAL WEBSITE</strong></a>
+    <img src="<?= base_url(); ?>images/Banner03_18Aug2018.png" alt="Logo" class="logo">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -108,7 +101,7 @@
     <!-- Use Bootstrap grid system for alignment -->
     <div class="ml-auto row align-items-center">
         <div class="col-auto">
-            <button class="btn btn-success my-2 my-sm-0" onclick="openModal()>Emergency Call</button>
+            <button id="btncall" class="btn btn-success my-2 my-sm-0" onclick="openModal()">Emergency Call </button>
         </div>
         <div class="col-auto text-white">
             <span class="font-weight-bold">Ph Standard Time:</span>
@@ -117,8 +110,8 @@
         <a class="btn btn-danger" href="<?= site_url('/logout') ?>">Logout</a>
     </div>
 </nav>
-      
 
+  <!-- Second Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#additionalNav"
       aria-controls="additionalNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -142,32 +135,84 @@
       </ul>
     </div>
   </nav>
-<body>
 
-  
- 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Modal Form -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h4 class="text-center">Emergency Call Form</h4>
 
+        <form id="emergencyCallForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data">
+            <?= csrf_field() ?>
+            <div class="form-group">
+                <input type="hidden" id="user_id" name="user_id" value="<?= session('user_id') ?>">
+                <label for="fullName"></label>
+                <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
+                
+                <label for="fire_type">Type of Fire Incident:</label>
+                <select id="fire_type" name="fire_type" class="form-control" required>
+                    <option value="Residential Fire">Residential Fire</option>
+                    <option value="Commercial Fire">Commercial Fire</option>
+                    <option value="Wildfire">Wildfire</option>
+                    <option value="Vehicle Fire">Vehicle Fire</option>
+                    <option value="Other">Other (Please Explain)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fire_size">Size of Fire:</label>
+                <select id="fire_size" name="fire_size" class="form-control" required>
+                    <option value="Small">Small (noticed only in a small area)</option>
+                    <option value="Medium">Medium (affecting several buildings or structures)</option>
+                    <option value="Large">Large (putting many buildings or structures at risk)</option>
+                    <option value="Under Control">Under Control (fire is controlled)</option>
+                    <option value="Uncertain">Uncertain (no definite information)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="road_type">Type of Roadways:</label>
+                <select id="road_type" name="road_type" class="form-control" required>
+                    <option value="Highway">Highway </option>
+                    <option value="Street">Street</option>
+                    <option value="Avenue">Avenue </option>
+                    <option value="Boulevard">Boulevard</option>
+                    <option value="Rural Road">Rural Road </option>
+                    <option value="Expressway">Expressway </option>
+                    <option value="Alley">Alley </option>
+                    <option value="Service Road">Service Road </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="additional_info">Additional Information:</label>
+                <textarea id="additional_info" name="additional_info" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="photo_upload">Add a Photo (Optional):</label>
+                <input type="file" id="photo_upload" name="photo_upload" class="form-control-file">
+            </div>
+
+            <!-- Hidden fields for latitude and longitude -->
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </form>
+    </div>
+</div>
 
 <script>
     // Function to open the modal
     function openModal() {
         document.getElementById("myModal").style.display = "block";
+        getLocation(); // Get location when modal opens
     }
 
     // Function to close the modal
     function closeModal() {
         document.getElementById("myModal").style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        var modal = document.getElementById("myModal");
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
     }
 
     // Function to update Philippine time
@@ -181,80 +226,25 @@
     updatePhilippineTime();
     setInterval(updatePhilippineTime, 1000);
 
-    function makeEmergencyCall() {
-        console.log('Emergency call initiated!');
-    }
-
-    function toggleMenu() {
-        const toggleMenuButton = document.querySelector('.toggle-menu-button');
-        toggleMenuButton.classList.toggle('open');
-
-        const toggleMenu = document.getElementById('toggleMenu');
-        toggleMenu.style.display = toggleMenu.style.display === 'none' ? 'flex' : 'none';
-
-        if (toggleMenu.style.display === 'flex') {
-            const menuItems = ['Home', 'About Us', 'Contact Us'];
-            const menuContent = menuItems.map(item => `<a href="#" class="nav-link" onclick="navigateTo('${item}')">${item}</a>`).join('');
-            toggleMenu.innerHTML = menuContent;
+    // Function to get user's current location
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
         } else {
-            toggleMenu.innerHTML = '';
+            alert("Geolocation is not supported by this browser.");
         }
     }
 
-    function updatePhilippineTime() {
-        const timeElement = document.getElementById('philippineTime');
-
-        setInterval(() => {
-            const currentTime = new Date();
-            const options = { timeZone: 'Asia/Manila', hour12: true };
-            const philippineTime = currentTime.toLocaleString('en-US', options);
-
-            timeElement.textContent = `Philippine Standard Time: ${philippineTime}`;
-        }, 1000);
-    }
-    updatePhilippineTime();
-
-    function closeSearchModal() {
-        const searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
-        searchModal.hide();
-    }
-
-    function searchInModal() {
-        const searchInputModal = document.getElementById('searchInputModal');
-        const searchTermModal = searchInputModal.value.trim();
-
-        if (searchTermModal !== '') {
-            console.log('Search term in modal:', searchTermModal);
-            // Perform the search logic here
-            // You may want to update the UI or trigger the search function
-            closeSearchModal();
-        } else {
-            alert('Please enter a search term.');
-        }
-    }
-
-    function search() {
-        const searchInput = document.getElementById('searchInput');
-        const searchTerm = searchInput.value.trim();
-
-        if (searchTerm !== '') {
-            fetch(`app\Views\COMPONENTS\search.php?search=${encodeURIComponent(searchTerm)}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Search results:', data);
-                    // Process the search results (update UI, display results, etc.)
-                })
-                .catch(error => {
-                    console.error('Error during search:', error);
-                });
-        } else {
-            alert('Please enter a search term.');
-        }
-        const searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
-        searchModal.show();
+    // Function to display user's current position
+    function showPosition(position) {
+        document.getElementById("latitude").value = position.coords.latitude;
+        document.getElementById("longitude").value = position.coords.longitude;
     }
 </script>
+
+<!-- Your other scripts -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-

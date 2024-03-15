@@ -86,58 +86,71 @@
 <body>
 
 <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <form id="emergencyCallForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data">
-    <?= csrf_field() ?>
-    <label for="incident_type">Incident Type:</label>
-    <input type="text" id="incident_type" name="incident_type" required>
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <form id="emergencyCallForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data">
+            <?= csrf_field() ?>
+            <label for="fire_type">Type of Fire:</label>
+            <select id="fire_type" name="fire_type" required>
+                <option value="Residential Fire">Residential Fire</option>
+                <option value="Commercial Fire">Commercial Fire</option>
+                <option value="Wildfire">Wildfire</option>
+                <option value="Vehicle Fire">Vehicle Fire</option>
+                <option value="Other">Other (Please Explain)</option>
+            </select>
 
-    <label for="incident_severity">Incident Severity:</label>
-    <input type="text" id="incident_severity" name="incident_severity" required>
+            <label for="fire_size">Size of Fire:</label>
+            <select id="fire_size" name="fire_size" required>
+                <option value="Small">Small (noticed only in a small area)</option>
+                <option value="Medium">Medium (affecting several buildings or structures)</option>
+                <option value="Large">Large (putting many buildings or structures at risk)</option>
+                <option value="Under Control">Under Control (fire is controlled)</option>
+                <option value="Uncertain">Uncertain (no definite information)</option>
+            </select>
 
-    <label for="incident_location">Incident Location:</label>
-    <input type="text" id="incident_location" name="incident_location" required>
+            <label for="victim_permission">Victim's Permission Granted:</label>
+            <input type="checkbox" id="evacuate_permission" name="evacuate_permission">
+            <label for="evacuate_permission">Agreed to evacuate from the affected area</label>
+            <br>
+            <input type="checkbox" id="extinguisher_usage" name="extinguisher_usage">
+            <label for="extinguisher_usage">Used a fire extinguisher to control the fire</label>
+            <br>
+            <input type="checkbox" id="neighbor_assistance" name="neighbor_assistance">
+            <label for="neighbor_assistance">Received assistance from neighbors</label>
 
-    <label for="nearest_landmark">Nearest Landmark:</label>
-    <input type="text" id="nearest_landmark" name="nearest_landmark">
+            <label for="location_identification">Identify Location:</label>
+            <button type="button" id="location_identification" onclick="identifyLocation()">Press to Identify Location</button>
 
-    <label for="incident_description">Incident Description:</label>
-    <textarea id="incident_description" name="incident_description" required></textarea>
+            <label for="photo_upload">Add a Photo (Optional):</label>
+            <input type="file" id="photo_upload" name="photo_upload">
 
-    <label for="num_people_requiring_rescue">Number of People Requiring Rescue:</label>
-    <input type="number" id="num_people_requiring_rescue" name="num_people_requiring_rescue" min="0">
-
-    <label for="access_considerations">Access Considerations:</label>
-    <input type="text" id="access_considerations" name="access_considerations">
-
-    <label for="report_file">Attach Report (if any):</label>
-    <input type="file" id="report_file" name="report_file">
-
-    <button type="submit">Submit</button>
-</form>
-
-        </div>
+            <button type="submit">Submit</button>
+        </form>
     </div>
+</div>
 
-    <script>
-        // Function to open the modal
-        function openModal() {
-            document.getElementById("myModal").style.display = "block";
-        }
+<script>
+    function openModal() {
+        document.getElementById("myModal").style.display = "block";
+    }
 
-        // Function to close the modal
-        function closeModal() {
-            document.getElementById("myModal").style.display = "none";
-        }
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+    }
 
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            var modal = document.getElementById("myModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+    // Function to identify location
+    function identifyLocation() {
+        // Add your code to identify the location here
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        var modal = document.getElementById("myModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
-    </script>
+    }
+</script>
 </body>
 </html>

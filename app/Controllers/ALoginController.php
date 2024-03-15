@@ -74,4 +74,39 @@ class ALoginController extends BaseController
             return view('ALOGIN/adminlogin', $data);
         }
     }
+    public function adddologin()
+    {
+        $adminModel = new AdminModel();
+        $email = $this->request->getVar('email');
+        $password = $this->request->getVar('password');
+        $token = $this->request->getVar('token'); // Retrieve the token from the request
+    
+        
+        $data = $adminModel->where('email_address', $email)->first();
+    
+        if ($data && password_verify($password, $data['password'])) {
+            log_message('debug', 'User data: ' . print_r($data, true));
+            // Update the token in the database
+            $adminModel->update($data['admin_id'], array('token' => $token));
+    
+            // Set session data
+            $ses_data = [
+                'admin_id' => $data['admin_id'],     
+                'email_address' => $data['email_address'],
+                'isLoggedln' => TRUE
+            ];
+            $this->session->set($ses_data);
+    
+            $res['status'] = '1';
+            $res['message'] = 'Login successful';
+        } else {
+            $res['status'] = '0';
+            $res['message'] = 'Login failed';
+        }
+    
+        log_message('debug', 'Login response: ' . json_encode($res));
+    
+        return json_encode($res);
+    }
+    
 }

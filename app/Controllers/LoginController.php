@@ -74,5 +74,41 @@ class LoginController extends BaseController
             $data['validation'] = $this->validator;
             return view('LOGIN/login', $data);
         }
-    }      
+    }  
+
+
+    public function dologin()
+    {
+        $accountModel = new AccountModel();
+        $email = $this->request->getVar('email');
+        $password = $this->request->getVar('password');
+        $token = $this->request->getVar('token');
+        
+        $data = $accountModel->where('email', $email)->first();
+
+        if ($data && password_verify($password, $data['password'])) {
+            log_message('debug', 'User data: ' . print_r($data, true));
+            $accountModel->update($data['user_id'], array('token' => $token));
+
+            // Set session data
+            $ses_data = [
+                'user_id' => $data['user_id'],
+                'fullName' => $data['fullName'],
+                'email' => $data['email'],
+                'isLoggedln' => TRUE
+            ];
+            $this->session->set($ses_data);
+
+            $res['status'] = '1';
+            $res['message'] = 'Login successful';
+        } else {
+            $res['status'] = '0';
+            $res['message'] = 'Login failed';
+        }
+
+        log_message('debug', 'Login response: ' . json_encode($res));
+
+        return json_encode($res);
+    }
+
 }

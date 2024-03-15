@@ -1,3 +1,13 @@
+<?php
+function getCurrentTime()
+{
+    return date('F j, Y g:i A', strtotime('now'));
+}
+
+$philippineTime = getCurrentTime();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,6 +15,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BFP WEBSITE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             margin: 0;
@@ -14,7 +25,7 @@
         }
 
         .header {
-            background-color: #EF3340; 
+            background-color: #EF3340;
             padding: 10px;
             display: flex;
             justify-content: space-between;
@@ -41,30 +52,7 @@
         }
 
         .nav-link:hover {
-            color: #FFD100; 
-        }
-
-        .search-bar {
-        margin: 20px;
-        height: 30px;
-        padding: 8px;
-        border: 1px solid #ddd; /* Add border to the search bar */
-        border-radius: 4px;
-        font-size: 14px;
-    }
-
-    .search-button {
-        background-color: #EF3340;
-        color: #fff;
-        border: 1px solid #fff; /* Add border to the search button */
-        border-radius: 4px;
-        padding: 8px 15px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-        .search-button:hover {
-            background-color: #D82230;
+            color: #FFD100;
         }
 
         .philippine-time {
@@ -73,172 +61,236 @@
             font-size: 14px;
         }
 
-        .toggle-menu {
-            display: none;
-            flex-direction: column;
-            position: absolute;
-            top: 50px;
-            right: 0;
-            background-color: #EF3340; 
-            padding: 10px;
-            z-index: 1;
-        }
-
-        .toggle-menu-button {
-            background-color: #EF3340; 
-            color: #fff;
-            cursor: pointer;
-            margin-right: 10px;
-            border: none;
-            font-size: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .hamburger-icon {
-            width: 30px;
-            height: 3px;
-            background-color: #fff;
-            margin: 6px 0;
-            transition: 0.4s;
-        }
-
-        .toggle-menu-button.open .hamburger-icon:nth-child(1) {
-            transform: rotate(-45deg) translate(-5px, 6px);
-        }
-
-        .toggle-menu-button.open .hamburger-icon:nth-child(2) {
-            opacity: 0;
-        }
-
-        .toggle-menu-button.open .hamburger-icon:nth-child(3) {
-            transform: rotate(45deg) translate(-5px, -6px);
-        }
-
-        @media (max-width: 1000px) {
-            .desktop-header {
-                display: none;
-            }
-
-            .toggle-menu-button {
-                display: flex;
-            }
-
-            .toggle-menu {
-                display: flex;
-            }
-        }
-
-        @media (min-width: 1000px) {
-            .mobile-header {
-                display: none;
-            }
-        }
-
-        /* Styles for the normal dropdown */
-        .dropdown {
+        .notification-dropdown {
             position: relative;
             display: inline-block;
+            color: #fff;
+        }
+
+        .notification-dropdown:hover .dropdown-content {
+            display: block;
         }
 
         .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #EF3340;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-
-        
-    }
-    .dropdown btn {
-        color: #EF3340; /* Set to the desired color */
-        
-        border: 1px solid #EF3340; /* Set the border color */
-    }
-    .dropdown-content a {
-        color: #fff;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-    }
-
-    .dropdown-content a:hover {
-        background-color: #555;
-        color: #fff;
-    }
-
-        .dropdown button {
-            color: #fff; 
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 200px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            padding: 10px;
+            border-radius: 8px;
         }
 
-        .dropdown:hover .dropdown-content {
+        .dropdown-content a {
+            color: #333;
             display: block;
+            padding: 10px 0;
+            transition: color 0.3s, background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f5f5f5;
+            color: #EF3340;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notification-details {
+            margin-left: 10px;
+        }
+
+        .notification-time {
+            color: #EF3340;
+        }
+
+        .notification-title {
+            color: #333;
+        }
+
+        .dropdown-item {
+            background-color: #E5F2FF;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .notification {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 
-
 <body>
 
-<?php
-function getCurrentTime() {
-    return date('F j, Y g:i A', strtotime('now'));
-}
+    <!-- Header section -->
+    <div class="header desktop-header">
+        <!-- Logo -->
+        <img src="<?= base_url(); ?>images/Banner03_18Aug2018.png" alt="Logo" class="logo">
 
-$philippineTime = getCurrentTime();
-?>
+        <!-- Notification dropdown -->
+        <div class="notification-dropdown position-relative">
+            <!-- Notification icon and counter -->
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill">
+                <i class="fas fa-bell notification-icon"></i>
+                <span id="notification-counter" class="badge badge-danger badge-counter">0</span>
+            </span>
+            <!-- Dropdown content to display notifications -->
+            <div class="dropdown-content">
+                <h6 class="dropdown-header">Community Emergency Message</h6>
+                <div class="dropdown-separator"></div>
+                <div id="notification-container"></div>
+                <a class="dropdown-item text-center small text-gray-500" href="#">Show all notifications</a>
+            </div>
+        </div>
 
+        <!-- Philippine time -->
+        <span id="philippineTime" class="philippine-time">Philippine Standard Time: <?= $philippineTime ?></span>
+    </div>
 
+    <!-- Modal for notifications -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Notifications</h2>
+            <div id="notificationContent"></div>
+        </div>
+    </div>
 
-<div class="header desktop-header">
-    <img src="<?= base_url(); ?>images/Banner03_18Aug2018.png" alt="Logo" class="logo">
-    
+    <!-- External scripts -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
+    <!-- JavaScript code for handling notifications -->
+    <script type="module">
+        const firebaseConfig = {
+            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+            authDomain: "pushnotifbfp.firebaseapp.com",
+            projectId: "pushnotifbfp",
+            storageBucket: "pushnotifbfp.appspot.com",
+            messagingSenderId: "214092622073",
+            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+            measurementId: "G-XMBH6JJ3M6"
+        };
 
-    <span id="philippineTime" class="philippine-time">Philippine Standard Time: <?= $philippineTime ?></span>
-</div>
+        firebase.initializeApp(firebaseConfig);
+        const fcm = firebase.messaging();
+        let mToken;
 
+        fcm.getToken({
+            vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+        }).then((currentToken) => {
+            console.log('Token retrieved:', currentToken);
+            mToken = currentToken;
+        });
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        fcm.onMessage((data) => {
+            console.log('onMessage: ', data);
 
+            let count = localStorage.getItem("notification-count");
+            if (count) {
+                localStorage.setItem('notification-count', parseInt(count) + 1);
+            } else {
+                localStorage.setItem('notification-count', 1);
+            }
 
-<script>
+            $('#notification-counter').text(localStorage.getItem("notification-count"));
+            $('#notification-container').append(
+                `<div class="dropdown-separator"></div>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3 notification-item">
+                        <div class="icon-circle bg-primary">
+                            <i class="fas fa-file-alt text-white"></i> 
+                        </div>
+                    </div>
+                    <div class="notification-details">
+                        <div class="small text-gray-500 notification-time">${new Date().toLocaleString('en-PH', { hour: 'numeric', minute: 'numeric', hour12: true })}</div>
+                        <span class="font-weight-bold notification-title">${data.notification.title}</span>
+                    </div>
+                </a>`
+            );
 
-    function toggleMenu() {
-        const toggleMenuButton = document.querySelector('.toggle-menu-button');
-        toggleMenuButton.classList.toggle('open');
+            $('#notificationContent').append(
+                `<div class="notification">
+                    <div class="notification-time">${new Date().toLocaleString('en-PH', { hour: 'numeric', minute: 'numeric', hour12: true })}</div>
+                    <div class="notification-title">${data.notification.title}</div>
+                    <div class="notification-body">${data.notification.body}</div>
+                </div>`
+            );
+        });
 
-        const toggleMenu = document.getElementById('toggleMenu');
-        toggleMenu.style.display = toggleMenu.style.display === 'none' ? 'flex' : 'none';
+        const modal = document.getElementById("notificationModal");
+        const span = document.getElementsByClassName("close")[0];
 
-        if (toggleMenu.style.display === 'flex') {
-            const menuItems = ['Home', 'About Us', 'Contact Us'];
-            const menuContent = menuItems.map(item => `<a href="#" class="nav-link" onclick="navigateTo('${item}')">${item}</a>`).join('');
-            toggleMenu.innerHTML = menuContent;
-        } else {
-            toggleMenu.innerHTML = '';
-        }
-    }
+        $(".notification-dropdown").on("click", function() {
+            modal.style.display = "block";
+        });
 
-    function updatePhilippineTime() {
-        const timeElement = document.getElementById('philippineTime');
+        span.onclick = function() {
+            modal.style.display = "none";
+        };
 
-        setInterval(() => {
-            const currentTime = new Date();
-            const options = { timeZone: 'Asia/Manila', hour12: true };
-            const philippineTime = currentTime.toLocaleString('en-US', options);
-
-            timeElement.textContent = `Philippine Standard Time: ${philippineTime}`;
-        }, 1000);
-    }
-    
-    updatePhilippineTime();
-
-</script>
-
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+    </script>
 </body>
 
 </html>

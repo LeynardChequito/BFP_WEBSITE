@@ -12,7 +12,7 @@ class AccountModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['fullName',	'dob',	'address',	'phoneNumber',	'email',	'password', 'sex',	'photoIdPath',	'profilePhotoPath', 'permission'];
+    protected $allowedFields    = ['fullName',	'dob',	'address',	'phoneNumber',	'email',	'password', 'sex',	'photoIdPath',	'profilePhotoPath', 'permission', 'token'];
 
     // Dates
     protected $useTimestamps = false;

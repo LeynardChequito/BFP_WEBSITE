@@ -77,28 +77,7 @@
     updatePhilippineTime();
     setInterval(updatePhilippineTime, 1000);
 </script>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#additionalNav"
-      aria-controls="additionalNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-        <a href="site" class="nav-item nav-link">Home</a>
-        </li>
-        <li class="nav-item">
-        <a href="activities" class="nav-item nav-link">Activities</a>
-        </li>
-        <li class="nav-item">
-        <a href="achievements" class="nav-item nav-link">Achievements</a>
-        </li>
-        <li class="nav-item active">
-        <a class="nav-link" href="#">Contact Us <span class="sr-only">(current)</span></a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+<?= view('WEBSITE/site'); ?>
 
   <body>
   <h2>Line Numbers: </h2>
