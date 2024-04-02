@@ -228,6 +228,7 @@ $philippineTime = getCurrentTime();
             measurementId: "G-XMBH6JJ3M6"
         };
 
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const fcm = firebase.messaging();
         let mToken;
@@ -237,11 +238,12 @@ $philippineTime = getCurrentTime();
         }).then((currentToken) => {
             console.log('Token retrieved:', currentToken);
             mToken = currentToken;
+        }).catch((error) => {
+            console.error('Error retrieving token:', error);
         });
 
         fcm.onMessage((data) => {
             console.log('onMessage: ', data);
-
             let count = localStorage.getItem("notification-count");
             if (count) {
                 localStorage.setItem('notification-count', parseInt(count) + 1);

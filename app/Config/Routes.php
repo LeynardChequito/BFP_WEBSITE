@@ -35,9 +35,6 @@ $routes->get('/fdas', 'HomeController::fdas');
 $routes->get('/inspection', 'HomeController::inspection');
 
 
-
-
-
 // ---------------------ADMIN DASHBOARD------------------------------------
 // ADMIN LOGIN
 $routes->get('admin-login', 'ALoginController::adminlogin');
@@ -82,9 +79,9 @@ $routes->post('security/send-to-admin-dashboard', 'SecurityController::sendToAdm
 
 $routes->get('user-location', 'LocationController::showUserLocation');
 $routes->post('location/update', 'LocationController::updateLocation');
-$routes->get('mapping', 'LocationController::map');
+$routes->get('rescuemap', 'LocationController::map');
 
-//EMERGENCY CALL
+
 //EMERGENCY CALL
 $routes->get('emergency-call', 'EmergencyCallController::emergencycall');
 $routes->post('emergency-call/submit', 'EmergencyCallController::submitEmergencyCall');

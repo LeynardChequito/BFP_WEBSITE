@@ -4,7 +4,7 @@
         <h2 class="text-center mb-4">BFP Admin</h2>
         <ul class="list-unstyled components">
             <li>
-                <a href="<?= site_url('/admin-manage') ?>">
+                <a href="<?= site_url('/admin-home') ?>">
                     <i class="fas fa-home mr-2"></i>Home
                 </a>
             </li>

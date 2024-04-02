@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <style>
-        /* Custom styles */
-        /* Add your custom styles here */
-        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -142,7 +139,7 @@
         <span class="close" onclick="closeModal()">&times;</span>
         <h4 class="text-center">Emergency Call Form</h4>
 
-        <form id="emergencyCallForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data">
+        <form id="emergencyCallForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data" onsubmit="submitEmergencyCall()">
             <?= csrf_field() ?>
             <div class="form-group">
                 <input type="hidden" id="user_id" name="user_id" value="<?= session('user_id') ?>">
@@ -203,11 +200,51 @@
     </div>
 </div>
 
+<script type="module">
+        // Import the necessary functions from the Firebase Messaging module
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+        authDomain: "pushnotifbfp.firebaseapp.com",
+        projectId: "pushnotifbfp",
+        storageBucket: "pushnotifbfp.appspot.com",
+        messagingSenderId: "214092622073",
+        appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+        measurementId: "G-XMBH6JJ3M6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+
+
+
+    // Function to handle form submission and send notification
+    function submitEmergencyCall() {
+        var fireType = document.getElementById('fire_type').value;
+        // Construct the notification message
+        var notificationPayload = {
+              notification: {
+                  title: 'Emergency Call',
+                  body: 'A new emergency call has been submitted.',
+                  data: {
+                      fireType: fireType
+                      // Add other form field data here
+                  }
+              },
+              topic: 'admin_notifications'
+          };
+
+          navigator.serviceWorker.controller.postMessage(notificationPayload);
+      }
+</script>
 <script>
     // Function to open the modal
     function openModal() {
         document.getElementById("myModal").style.display = "block";
-        getLocation(); // Get location when modal opens
+        getLocation();
     }
 
     // Function to close the modal

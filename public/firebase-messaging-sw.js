@@ -1,25 +1,42 @@
 importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js')
 importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js')
 
-var firebaseConfig = {
-  apiKey: "AIzaSyCAE7RoSAc1C19WIPku6cb6kGLPrZF9bQc",
-  authDomain: "bfp-website-b54a3.firebaseapp.com",
-  projectId: "bfp-website-b54a3",
-  storageBucket: "bfp-website-b54a3.appspot.com",
-  messagingSenderId: "592874205081",
-  appId: "1:592874205081:web:9cae8e44a8e1ac22f1ed08",
-  measurementId: "G-7F4VDV2KPC"
+const firebaseConfig = {
+  apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+  authDomain: "pushnotifbfp.firebaseapp.com",
+  projectId: "pushnotifbfp",
+  storageBucket: "pushnotifbfp.appspot.com",
+  messagingSenderId: "214092622073",
+  appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+  measurementId: "G-XMBH6JJ3M6"
 };
 
 firebase.initializeApp(firebaseConfig);
-const fcm = firebase.messaging()
+const messaging = firebase.messaging();
 
+// Background message handler
+messaging.setBackgroundMessageHandler(function(payload) {
+  console.log('Received background message ', payload);
 
-fcm.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc' 
-}).then((currentToken) => {
-        console.log('Token retrieved:', currentToken);
-    });
+  // Customize notification content based on the received payload
+  const notificationTitle = 'EMERGENCY ALERT!!!';
+  const notificationOptions = {
+      body: payload.data.body || 'No additional information provided',
+      icon: payload.data.icon || '/firebase-logo.png',
+      image: payload.data.image || 'image.jpg',
+      data: {
+          click_action: payload.data.click_action || '/'
+      }
+  };
 
-  fcm.onBackgroundMessage((data) => {
-    console.log('onBackgroundMessage: ', data)
-  })
+  // Display the notification
+  return self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+// Message handler to receive notification details from the site.php form
+self.addEventListener('message', function(event) {
+  const notificationPayload = event.data;
+  console.log('Received notification details:', notificationPayload);
+
+  // You can process the notification details here as needed
+});

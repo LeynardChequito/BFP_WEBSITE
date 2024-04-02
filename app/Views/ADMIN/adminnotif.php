@@ -73,9 +73,6 @@ fcm.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5
         mToken = currentToken;
     });
 
-   
-    
-
     fcm.onMessage((data) => {
     console.log('onMessage: ', data)
 
