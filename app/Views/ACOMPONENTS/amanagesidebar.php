@@ -18,6 +18,11 @@
                     <i class="fas fa-images mr-2"></i>Carousel
                 </a>
             </li>
+            <li>
+                <a href="<?= site_url('graph') ?>">
+                    <i class="fas fa-images mr-2"></i>Graph
+                </a>
+            </li>
         </ul>
         <hr>
         <a class="btn btn-danger btn-block mt-4" href="<?= site_url('/admin-logout') ?>">Logout</a>

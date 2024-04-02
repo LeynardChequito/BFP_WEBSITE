@@ -70,6 +70,10 @@ $routes->post('carousel/edit', 'CarouselController::edit');
 $routes->post('carousel/update', 'CarouselController::update');
 $routes->get('delete/(:segment)', 'CarouselController::delete/$1'); 
 
+//GRAPH
+$routes->get('/graph', 'GraphController::graph');
+
+
 // SOS
 $routes->get('security', 'SecurityController::sos');
 $routes->post('security/capture-fire-incident', 'SecurityController::captureFireIncident');
