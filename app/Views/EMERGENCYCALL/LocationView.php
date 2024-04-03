@@ -6,26 +6,51 @@
     <title>BFP Geolocation</title>
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
     <style>
-        /* Define the map container's size */
-        #map {
-            width: 100%;
-            height: 600px;
+        /* Reset default margin and padding */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
         }
 
-        /* Style for legend */
+        /* Adjust map container's size */
+        #map {
+            width: 100vw;
+            /* Full width of the viewport */
+            height: calc(100vh - 80px);
+            /* Full height of the viewport minus header height */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style for the BFP Header */
+        .bfp-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            padding: 20px 0;
+            background-color: #f8f9fa;
+            margin: 0;
+        }
+
+        /* Style for the legend */
         .legend {
             position: absolute;
-            bottom: 20px;
+            top: 20px;
             left: 20px;
             background-color: rgba(255, 255, 255, 0.8);
             padding: 10px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-family: Arial, sans-serif;
         }
 
         /* Style for legend items */
         .legend-item {
             margin-bottom: 5px;
+            display: flex;
+            align-items: center;
         }
 
         /* Style for legend item icon */
@@ -45,9 +70,28 @@
             margin-left: -12px;
         }
 
-        /* Fallback font */
-        body {
-            font-family: Arial, sans-serif;
+        /* Map attribution */
+        .map-attribution {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Button styles */
+        .navigate-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .navigate-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -56,6 +100,8 @@
     <!-- BFP Header -->
     <div class="bfp-header">
         Bureau of Fire Protection (BFP)
+        <!-- Philippine Time Display -->
+        <div id="philippineTime" class="philippine-time"></div>
     </div>
 
     <!-- Map container -->
@@ -69,9 +115,7 @@
         <div class="legend-item hydrant">
             <span style="background-color: lightgreen;"></span>Fire Hydrant
         </div>
-        <div class="legend-item user">
-            <span style="background-color: orange;"></span>User in Need
-        </div>
+        <!-- You can add more legend items here -->
     </div>
 
     <!-- Map attribution -->
@@ -86,10 +130,10 @@
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-clustering.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             // Initialize communication with the platform
             const platform = new H.service.Platform({
-                apikey: 'Vitn_s6WLkw5GbaUtITnXneLg20TrdDPZP_-qCDb1ok'
+                apikey: 'Vitn_s6WLkw5GbaUtITnXneLg20TrdDPZP_-qCDb1ok' // Replace with your actual API key
             });
 
             // Default options for the base layers that are used to render a map
@@ -129,23 +173,26 @@
             }
 
             // Add marker for the rescuer
-            var rescuerMarker = new H.map.Marker(
-                { lat: 13.3798859, lng: 121.1832902 },
-                { icon: createIcon('yellow') }
-            );
+            var rescuerMarker = new H.map.Marker({
+                lat: 13.3798859,
+                lng: 121.1832902
+            }, {
+                icon: createIcon('yellow')
+            });
             rescuerMarker.setData("<div><p>Rescuer</p></div>");
             map.addObject(rescuerMarker); // Adding rescuerMarker to the map
             // Click event for rescuer marker
-            rescuerMarker.addEventListener('tap', function (evt) {
+            rescuerMarker.addEventListener('tap', function(evt) {
                 var bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
                     content: evt.target.getData()
                 });
                 ui.addBubble(bubble);
             });
 
+
             // Add markers for fire hydrants
-            var hydrantLocations = [
-                {
+            // Add markers for fire hydrants
+            var hydrantLocations = [{
                     name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
                     lat: 13.355547541837,
                     lng: 121.170303614926,
@@ -322,23 +369,27 @@
                 }
             ];
 
-
-            hydrantLocations.forEach(function (hydrant) {
-                var hydrantMarker = new H.map.Marker(
-                    { lat: hydrant.lat, lng: hydrant.lng },
-                    { icon: createIcon(hydrant.color) }
-                );
-                hydrantMarker.setData("<div><p>" + hydrant.name + "</p><button onclick='navigateToMarker(" + hydrant.lat + "," + hydrant.lng + ")'>Navigate</button></div>");
+            hydrantLocations.forEach(function(hydrant) {
+                var hydrantMarker = new H.map.Marker({
+                    lat: hydrant.lat,
+                    lng: hydrant.lng
+                }, {
+                    icon: createIcon(hydrant.color)
+                });
+                hydrantMarker.setData("<div><p>" + hydrant.name + "</p><button class='navigate-button'>Navigate</button></div>");
                 map.addObject(hydrantMarker); // Adding hydrantMarker to the map
                 // Click event for hydrant marker
-                hydrantMarker.addEventListener('tap', function (evt) {
+                hydrantMarker.addEventListener('tap', function(evt) {
                     var hydrantData = evt.target.getData();
                     var hydrantInfo = new H.ui.InfoBubble(evt.target.getGeometry(), {
                         content: hydrantData
                     });
                     ui.addBubble(hydrantInfo);
-                    // Calculate route from rescuer to the selected marker
-                    calculateRoute(map, { lat: 13.3798859, lng: 121.1832902 }, { lat: hydrant.lat, lng: hydrant.lng });
+
+                    // Add click event listener to the navigate button dynamically
+                    hydrantInfo.getElement().querySelector('.navigate-button').addEventListener('click', function() {
+                        navigateToMarker(hydrant.lat, hydrant.lng);
+                    });
                 });
             });
 
@@ -350,7 +401,10 @@
                     lng: 121.1832902
                 };
                 // Calculate route from rescuer to the selected marker
-                calculateRoute(map, rescuerLocation, { lat: markerLat, lng: markerLng });
+                calculateRoute(map, rescuerLocation, {
+                    lat: markerLat,
+                    lng: markerLng
+                });
             }
 
             // Function to calculate and display route
@@ -371,7 +425,7 @@
                 };
 
                 // Define a callback function to process the routing response:
-                var onResult = function (result) {
+                var onResult = function(result) {
                     // ensure that at least one route was found
                     if (result.routes.length) {
                         result.routes[0].sections.forEach((section) => {
@@ -396,7 +450,7 @@
                 };
 
                 // Define an error handler for the routing request:
-                var onError = function (error) {
+                var onError = function(error) {
                     console.error('Error calculating route:', error);
                 };
 
@@ -407,14 +461,42 @@
             // Function to clear existing routes
             function clearRoutes() {
                 // Remove each route object from the map and empty the routeObjects array
-                routeObjects.forEach(function (object) {
+                routeObjects.forEach(function(object) {
                     map.removeObject(object);
                 });
                 routeObjects = [];
             }
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Function to get current time in Philippine Standard Time
+            function getCurrentTimeInPhilippines() {
+                const currentTime = new Date();
+                const utcOffset = 0; // GMT+8:00 for Philippines
+                const philippinesTime = new Date(currentTime.getTime() + (utcOffset * 3600000)); // Adding offset in milliseconds
 
+                // Format date components
+                const day = philippinesTime.getDate();
+                const month = philippinesTime.toLocaleString('default', {
+                    month: 'long'
+                });
+                const year = philippinesTime.getFullYear();
+                const time = philippinesTime.toLocaleTimeString();
+
+                return `${month} ${day}, ${year} ${time}`;
+            }
+
+            // Function to update time display every second
+            function updateTime() {
+                document.getElementById("philippineTime").textContent = "Philippine Standard Time: " + getCurrentTimeInPhilippines();
+                setTimeout(updateTime, 1000); // Update time every second
+            }
+
+            // Start updating time
+            updateTime();
+        });
+    </script>
 </body>
 
 </html>

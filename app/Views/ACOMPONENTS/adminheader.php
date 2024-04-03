@@ -1,13 +1,3 @@
-<?php
-function getCurrentTime()
-{
-    return date('F j, Y g:i A', strtotime('now'));
-}
-
-$philippineTime = getCurrentTime();
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -197,7 +187,7 @@ $philippineTime = getCurrentTime();
         </div>
 
         <!-- Philippine time -->
-        <span id="philippineTime" class="philippine-time">Philippine Standard Time: <?= $philippineTime ?></span>
+        <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
     <!-- Modal for notifications -->
@@ -216,23 +206,35 @@ $philippineTime = getCurrentTime();
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
-    <!-- JavaScript code for handling notifications -->
+    <!-- JavaScript code for handling notifications and updating time -->
     <script type="module">
         const firebaseConfig = {
-            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
-            authDomain: "pushnotifbfp.firebaseapp.com",
-            projectId: "pushnotifbfp",
-            storageBucket: "pushnotifbfp.appspot.com",
-            messagingSenderId: "214092622073",
-            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
-            measurementId: "G-XMBH6JJ3M6"
+        apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+        authDomain: "pushnotifbfp.firebaseapp.com",
+        projectId: "pushnotifbfp",
+        storageBucket: "pushnotifbfp.appspot.com",
+        messagingSenderId: "214092622073",
+        appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+        measurementId: "G-XMBH6JJ3M6"
         };
 
-        // Initialize Firebase
+        // Function to get current time
+        function getCurrentTime() {
+            return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
+        }
+
+        // Function to update time every second
+        function updateTime() {
+            document.getElementById("current-time").textContent = getCurrentTime();
+            setTimeout(updateTime, 1000); // Update time every second
+        }
+
+        // Initialize Firebase and update time
         firebase.initializeApp(firebaseConfig);
         const fcm = firebase.messaging();
         let mToken;
 
+        // Get Firebase token
         fcm.getToken({
             vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
         }).then((currentToken) => {
@@ -242,6 +244,7 @@ $philippineTime = getCurrentTime();
             console.error('Error retrieving token:', error);
         });
 
+        // Handle incoming messages
         fcm.onMessage((data) => {
             console.log('onMessage: ', data);
             let count = localStorage.getItem("notification-count");
@@ -261,7 +264,7 @@ $philippineTime = getCurrentTime();
                         </div>
                     </div>
                     <div class="notification-details">
-                        <div class="small text-gray-500 notification-time">${new Date().toLocaleString('en-PH', { hour: 'numeric', minute: 'numeric', hour12: true })}</div>
+                        <div class="small text-gray-500 notification-time">${getCurrentTime()}</div>
                         <span class="font-weight-bold notification-title">${data.notification.title}</span>
                     </div>
                 </a>`
@@ -269,29 +272,33 @@ $philippineTime = getCurrentTime();
 
             $('#notificationContent').append(
                 `<div class="notification">
-                    <div class="notification-time">${new Date().toLocaleString('en-PH', { hour: 'numeric', minute: 'numeric', hour12: true })}</div>
+                    <div class="notification-time">${getCurrentTime()}</div>
                     <div class="notification-title">${data.notification.title}</div>
                     <div class="notification-body">${data.notification.body}</div>
                 </div>`
             );
         });
 
-        const modal = document.getElementById("notificationModal");
-        const span = document.getElementsByClassName("close")[0];
-
+        // Open modal on notification click
         $(".notification-dropdown").on("click", function() {
             modal.style.display = "block";
         });
 
+        // Close modal when close button clicked
+        const span = document.getElementsByClassName("close")[0];
         span.onclick = function() {
             modal.style.display = "none";
         };
 
+        // Close modal when clicked outside the modal
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         };
+
+        // Start updating time
+        updateTime();
     </script>
 </body>
 
