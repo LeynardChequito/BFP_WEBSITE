@@ -20,6 +20,11 @@ class ANavigationController extends BaseController
         return view('ADMIN/manage');
     }
 
+    public function adminHome()
+    {
+        return view('ADMIN/adminhome');
+    }
+
     public function adminLogout()
     {
         $this->session->setFlashdata('logout_success', 'Admin Logout successful!');

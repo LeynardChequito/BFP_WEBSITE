@@ -48,7 +48,7 @@ $routes->post('admin-registration/processForm', 'ARegistrationController::adminp
 // ADMIN DASHBOARD HEADER NAVIGATION BAR 
 $routes->get('/admin-home', 'ANavigationController::adminManage');
 $routes->get('/admin-logout', 'ANavigationController::adminLogout');
-
+$routes->get('admin-dashboard', 'ANavigationController::adminHome');
 // ---------------------OTHER FUNCTIONS------------------------------------
 // NEWS
 $routes->get('news', 'NewsController::news');

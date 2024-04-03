@@ -46,15 +46,17 @@
         }
 
         .philippine-time {
-            margin-left: auto;
             color: #fff;
             font-size: 14px;
+            margin-left: auto;
+            margin-right: 20px; /* Adjusted margin for alignment */
         }
 
         .notification-dropdown {
             position: relative;
             display: inline-block;
             color: #fff;
+            margin-right: 20px;
         }
 
         .notification-dropdown:hover .dropdown-content {
@@ -160,6 +162,24 @@
         .notification {
             margin-bottom: 10px;
         }
+
+        .view-map-btn {
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            margin-right: 10px; /* Adjusted margin for alignment */
+            margin-left: 580px; /* Added margin for distance from bell icon */
+        }
+
+        .view-map-btn:hover {
+            background-color: lightblue;
+            color: black;
+        }
     </style>
 </head>
 
@@ -185,6 +205,9 @@
                 <a class="dropdown-item text-center small text-gray-500" href="#">Show all notifications</a>
             </div>
         </div>
+
+        <!-- View Map button -->
+        <a class="view-map-btn" href="<?= site_url('rescuemap') ?>">View Map</a>
 
         <!-- Philippine time -->
         <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>

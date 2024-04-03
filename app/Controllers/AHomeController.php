@@ -17,4 +17,8 @@ class AhomeController extends BaseController
         return view('ADMIN/adminbanner'); 
     }
 
+    public function adminHome()
+    {
+        return view('ADMIN/adminhome');
+    }
 }

@@ -1,14 +1,6 @@
-<?php
-$imageSources = [
-    'images/BABALA-400-×-1500px.png',
-    'images/fire-safety-advocacy-banner-2023-01.jpg',
-    'images/images2.jpg',
-    'images/bfp-modernization.jpg',
-    'images/bfp-banner.jpg',
-];
-?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,8 +8,11 @@ $imageSources = [
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <style>
         body {
+            background-image: url('<?= base_url("public/design/admindbbg.jpg") ?>');
             background-color: #f8f9fa;
             color: #343a40;
+            background-size: cover;
+            background-repeat: no-repeat;
         }
 
         #carouselExample {
@@ -67,6 +62,7 @@ $imageSources = [
         }
     </style>
 </head>
+
 <body>
 
     <?= view('ACOMPONENTS/adminheader'); ?>
@@ -98,16 +94,16 @@ $imageSources = [
 
 
     <script type="module">
-        import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import {getMessaging,getToken,onMessage} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
         const firebaseConfig = {
-        apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
-        authDomain: "pushnotifbfp.firebaseapp.com",
-        projectId: "pushnotifbfp",
-        storageBucket: "pushnotifbfp.appspot.com",
-        messagingSenderId: "214092622073",
-        appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
-        measurementId: "G-XMBH6JJ3M6"
+            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+            authDomain: "pushnotifbfp.firebaseapp.com",
+            projectId: "pushnotifbfp",
+            storageBucket: "pushnotifbfp.appspot.com",
+            messagingSenderId: "214092622073",
+            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+            measurementId: "G-XMBH6JJ3M6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -183,4 +179,5 @@ $imageSources = [
         });
     </script>
 </body>
+
 </html>

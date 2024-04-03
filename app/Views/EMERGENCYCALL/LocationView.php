@@ -7,20 +7,64 @@
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
     <style>
         /* Reset default margin and padding */
-        body,
-        html {
+        body {
             margin: 0;
             padding: 0;
         }
 
-        /* Adjust map container's size */
-        #map {
-            width: 100vw;
-            /* Full width of the viewport */
-            height: calc(100vh - 80px);
-            /* Full height of the viewport minus header height */
+        /* Add a dark overlay around the map card */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Adjust opacity as needed */
+            z-index: -1; /* Ensure the overlay is behind other elements */
+        }
+
+        .btn-back {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #0056b3;
+        }
+
+        #map-container {
+            width: 100%;
+            height: 500px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Adjust map container's size */
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-card {
+            width: 75%;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
         }
 
         /* Style for the BFP Header */
@@ -97,30 +141,35 @@
 </head>
 
 <body>
-    <!-- BFP Header -->
+<button onclick="history.go(-1);" class="btn-back">Back</button>
     <div class="bfp-header">
         Bureau of Fire Protection (BFP)
-        <!-- Philippine Time Display -->
         <div id="philippineTime" class="philippine-time"></div>
     </div>
 
-    <!-- Map container -->
-    <div id="map"></div>
-
-    <!-- Legend -->
-    <div class="legend">
-        <div class="legend-item rescuer">
-            <span style="background-color: yellow;"></span>Rescuer
+    <div class="map-card">
+        <!-- Map container -->
+        <div id="map-container">
+            <div id="map"></div>
         </div>
-        <div class="legend-item hydrant">
-            <span style="background-color: lightgreen;"></span>Fire Hydrant
-        </div>
-        <!-- You can add more legend items here -->
-    </div>
 
-    <!-- Map attribution -->
-    <div class="map-attribution">
-        Map data &copy; 2024 HERE
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item rescuer">
+                <span style="background-color: yellow;"></span>Rescuer
+            </div>
+            <div class="legend-item hydrant">
+                <span style="background-color: lightgreen;"></span>Fire Hydrant
+            </div>
+            <div class="legend-item hydrant">
+                <span style="background-color: red;"></span>User in Need
+            </div>
+        </div>
+
+        <!-- Map attribution -->
+        <div class="map-attribution">
+            Map data &copy; 2024 HERE
+        </div>
     </div>
 
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
@@ -189,6 +238,43 @@
                 ui.addBubble(bubble);
             });
 
+            // Function to get user's geolocation
+            function getUserGeolocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                } else {
+                    console.log("Geolocation is not supported by this browser.");
+                }
+            }
+
+            // Function to handle user's geolocation
+            function showPosition(position) {
+                // Add marker for user in need
+                var userMarker = new H.map.Marker({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                }, {
+                    icon: createIcon('red') // Red color for user in need
+                });
+                userMarker.setData("<div><p>Please, Help Me!</p><button class='navigate-button'>Navigate</button></div>");
+                map.addObject(userMarker); // Adding userMarker to the map
+                // Click event for user marker
+                userMarker.addEventListener('tap', function(evt) {
+                    var userData = evt.target.getData();
+                    var userInfo = new H.ui.InfoBubble(evt.target.getGeometry(), {
+                        content: userData
+                    });
+                    ui.addBubble(userInfo);
+
+                    // Add click event listener to the navigate button dynamically
+                    userInfo.getElement().querySelector('.navigate-button').addEventListener('click', function() {
+                        navigateToMarker(position.coords.latitude, position.coords.longitude);
+                    });
+                });
+            }
+
+            // Call function to get user's geolocation
+            getUserGeolocation();
 
             // Add markers for fire hydrants
             // Add markers for fire hydrants
