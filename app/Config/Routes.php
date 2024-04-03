@@ -25,6 +25,15 @@ $routes->get('/logout', 'HomeController::logout');
 $routes->get('/achievements', 'HomeController::achievements');
 $routes->get('/contacts', 'HomeController::contacts');
 $routes->get('/activities', 'HomeController::activities');
+$routes->get('/site', 'HomeController::home');
+
+//ALBUM
+$routes->get('/album', 'HomeController::album');
+$routes->get('/intern', 'HomeController::intern');
+$routes->get('/pfv', 'HomeController::pfv');
+$routes->get('/fdas', 'HomeController::fdas');
+$routes->get('/inspection', 'HomeController::inspection');
+
 
 
 

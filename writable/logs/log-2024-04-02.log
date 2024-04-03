@@ -1,0 +1,3 @@
+CRITICAL - 2024-04-02 04:41:53 --> ErrorException: Maximum execution time of 60 seconds exceeded
+in SYSTEMPATH\Session\Handlers\FileHandler.php on line 128.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
