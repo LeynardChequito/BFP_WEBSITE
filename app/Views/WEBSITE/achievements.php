@@ -45,38 +45,6 @@
   }
 </style>
 <body>
-  <!-- First Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark default-color">
-    <a class="navbar-brand" href="#"><strong>BFP OFFICIAL WEBSITE</strong></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- Use Bootstrap grid system for alignment -->
-    <div class="ml-auto row align-items-center">
-        <div class="col-auto">
-            <button class="btn btn-success my-2 my-sm-0">Emergency Call</button>
-        </div>
-        <div class="col-auto text-white">
-            <span class="font-weight-bold">Ph Standard Time:</span>
-            <div id="philippineTime" class="ml-2"></div>
-        </div>
-    </div>
-</nav>
-
-<script>
-    // Function to update Philippine time
-    function updatePhilippineTime() {
-        const options = { timeZone: 'Asia/Manila', hour12: true, hour: 'numeric', minute: 'numeric', second: 'numeric' };
-        const philippineTime = new Date().toLocaleString('en-US', options);
-        document.getElementById('philippineTime').innerText = philippineTime;
-    }
-
-    // Update time initially and set interval to update every second
-    updatePhilippineTime();
-    setInterval(updatePhilippineTime, 1000);
-</script>
 <?= view('WEBSITE/site'); ?>
 
   <body>
