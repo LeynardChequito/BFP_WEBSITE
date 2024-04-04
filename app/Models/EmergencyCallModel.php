@@ -13,7 +13,8 @@ class EmergencyCallModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'fire_type', 
+        'fire_type',
+        'barangay', 
         'fire_size', 
         'road_type', 
         'additional_info', 

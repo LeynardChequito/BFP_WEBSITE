@@ -84,7 +84,7 @@
         </div>
     </div> -->
 
-    <?= view('COMPONENTS/footer'); ?>
+    <?= view('hf/footer'); ?>
 
     <div class="notification-container" id="notificationContainer"></div>
 

@@ -1,0 +1,64 @@
+ERROR - 2024-04-04 02:51:21 --> mysqli_sql_exception: Column 'photo_upload' cannot be null in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:306
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(306): mysqli->query('INSERT INTO `em...', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `em...')
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `em...')
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(2302): CodeIgniter\Database\BaseConnection->query('INSERT INTO `em...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(326): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(802): CodeIgniter\Model->doInsert(Array)
+#6 C:\laragon\www\BFP_WEBSITE\system\Model.php(744): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\laragon\www\BFP_WEBSITE\app\Controllers\EmergencyCallController.php(50): CodeIgniter\Model->insert(Array)
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\EmergencyCallController->submitEmergencyCall()
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmergencyCallController))
+#10 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#12 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#13 {main}
+ERROR - 2024-04-04 02:52:12 --> mysqli_sql_exception: Column 'photo_upload' cannot be null in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:306
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(306): mysqli->query('INSERT INTO `em...', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `em...')
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `em...')
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(2302): CodeIgniter\Database\BaseConnection->query('INSERT INTO `em...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(326): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(802): CodeIgniter\Model->doInsert(Array)
+#6 C:\laragon\www\BFP_WEBSITE\system\Model.php(744): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\laragon\www\BFP_WEBSITE\app\Controllers\EmergencyCallController.php(50): CodeIgniter\Model->insert(Array)
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\EmergencyCallController->submitEmergencyCall()
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmergencyCallController))
+#10 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#12 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#13 {main}
+ERROR - 2024-04-04 02:53:53 --> mysqli_sql_exception: Column 'photo_upload' cannot be null in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:306
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(306): mysqli->query('INSERT INTO `em...', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `em...')
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `em...')
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(2302): CodeIgniter\Database\BaseConnection->query('INSERT INTO `em...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(326): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(802): CodeIgniter\Model->doInsert(Array)
+#6 C:\laragon\www\BFP_WEBSITE\system\Model.php(744): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\laragon\www\BFP_WEBSITE\app\Controllers\EmergencyCallController.php(50): CodeIgniter\Model->insert(Array)
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\EmergencyCallController->submitEmergencyCall()
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmergencyCallController))
+#10 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#12 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#13 {main}
+ERROR - 2024-04-04 02:59:04 --> mysqli_sql_exception: Column 'photo_upload' cannot be null in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:306
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(306): mysqli->query('INSERT INTO `em...', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `em...')
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `em...')
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(2302): CodeIgniter\Database\BaseConnection->query('INSERT INTO `em...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(326): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(802): CodeIgniter\Model->doInsert(Array)
+#6 C:\laragon\www\BFP_WEBSITE\system\Model.php(744): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\laragon\www\BFP_WEBSITE\app\Controllers\EmergencyCallController.php(50): CodeIgniter\Model->insert(Array)
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\EmergencyCallController->submitEmergencyCall()
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmergencyCallController))
+#10 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#12 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#13 {main}

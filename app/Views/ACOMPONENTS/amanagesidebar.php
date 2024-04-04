@@ -20,7 +20,7 @@
             </li>
             <li>
                 <a href="<?= site_url('graph') ?>">
-                    <i class="fas fa-images mr-2"></i>Graph
+                    <i class="fas fa-images mr-2"></i>Dashboard
                 </a>
             </li>
         </ul>

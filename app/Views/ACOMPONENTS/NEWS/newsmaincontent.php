@@ -199,7 +199,7 @@
             </div>
         </div>
 
-        <?= view('COMPONENTS/footer'); ?>
+        <?= view('hf/footer'); ?>
 
     </div>
 
