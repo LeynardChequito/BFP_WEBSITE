@@ -61,7 +61,7 @@
     <img src="website/intern/20.jpg" alt="Photo 4">
     <!-- Add more images as needed -->
     </div>
-    
+    <a href="javascript:history.go(-1);" class="btn btn-danger mt-3">Back</a>
 </div>
 
 </body>

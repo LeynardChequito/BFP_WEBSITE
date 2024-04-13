@@ -56,6 +56,8 @@
     <img src="website/inspection/7.jpg" alt="Photo 2">
     <img src="website/inspection/8.jpg" alt="Photo 3">
     <!-- Add more images as needed -->
+
+    <a href="javascript:history.go(-1);" class="btn btn-danger mt-3">Back</a>
     </div>
     
 </div>

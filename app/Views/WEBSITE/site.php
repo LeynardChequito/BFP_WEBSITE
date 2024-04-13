@@ -111,28 +111,29 @@
 
     <!-- Second Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#additionalNav"
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#additionalNav"
         aria-controls="additionalNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-        </button>
+    </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-            <a href="<?= site_url('/home') ?>" class="nav-link">Home</a>
+            <li class="nav-item <?php echo (current_url() == site_url('/home')) ? 'active' : ''; ?>">
+                <a href="<?= site_url('/home') ?>" class="nav-link">Home</a>
             </li>
-            <li class="nav-item">
-            <a href="activities" class="nav-item nav-link">Activities</a>
+            <li class="nav-item <?php echo (current_url() == site_url('/activities')) ? 'active' : ''; ?>">
+                <a href="<?= site_url('/activities') ?>" class="nav-link">Activities</a>
             </li>
-            <li class="nav-item">
-            <a href="achievements" class="nav-item nav-link">Achievements</a>
+            <li class="nav-item <?php echo (current_url() == site_url('/achievements')) ? 'active' : ''; ?>">
+                <a href="<?= site_url('/achievements') ?>" class="nav-link">Achievements</a>
             </li>
-            <li class="nav-item">
-            <a href="contacts" class="nav-item nav-link">Contact Us</a>
+            <li class="nav-item <?php echo (current_url() == site_url('/contacts')) ? 'active' : ''; ?>">
+                <a href="<?= site_url('/contacts') ?>" class="nav-link">Contact Us</a>
             </li>
         </ul>
-        </div>
-    </nav>
+    </div>
+</nav>
+
 
     <!-- Modal Form -->
     <div id="myModal" class="modal">

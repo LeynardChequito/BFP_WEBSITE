@@ -34,6 +34,10 @@
     .album img:hover {
         transform: scale(1.1);
     }
+
+    .btn btn-danger mt-3{
+        align-items: center;
+    }
 </style>
 
 <body>
@@ -48,13 +52,16 @@
 <div class="album-info">
             <h3><strong>FDAS/AFSS/Manual & Automatic Fire Alarm System Testing</strong></h3>
             <a href="<?= site_url('/Show More') ?>" class="nav-link"></a>
+           
         <img src="website/fdas.jpg" alt="Photo 1">
     <img src="website/fdas/1.jpg" alt="Photo 2">
     <img src="website/fdas/2.jpg" alt="Photo 3">
     <img src="website/fdas/3.jpg" alt="Photo 4">
     <img src="website/fdas/4.jpg" alt="Photo 2">
     <img src="website/fdas/5.jpg" alt="Photo 3">
+   
     
+    <a href="javascript:history.go(-1);" class="btn btn-danger mt-3">Back</a>
     <!-- Add more images as needed -->
     </div>
     
