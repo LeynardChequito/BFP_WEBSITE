@@ -18,21 +18,21 @@ $routes->get('registration', 'RegistrationController::register');
 $routes->post('registration/processForm', 'RegistrationController::processForm');
 
 // NAVIGATION BAR
-$routes->get('/home', 'HomeController::home');
-$routes->get('/contact-us', 'HomeController::contactUs');
-$routes->get('/banner', 'HomeController::banner');
-$routes->get('/logout', 'HomeController::logout');
-$routes->get('/achievements', 'HomeController::achievements');
-$routes->get('/contacts', 'HomeController::contacts');
-$routes->get('/activities', 'HomeController::activities');
+$routes->get('home', 'HomeController::home');
+$routes->get('contact-us', 'HomeController::contactUs');
+$routes->get('banner', 'HomeController::banner');
+$routes->get('logout', 'HomeController::logout');
+$routes->get('achievements', 'HomeController::achievements');
+$routes->get('contacts', 'HomeController::contacts');
+$routes->get('activities', 'HomeController::activities');
 // $routes->get('/site', 'HomeController::home');
 
 //ALBUM
-$routes->get('/album', 'HomeController::album');
-$routes->get('/intern', 'HomeController::intern');
-$routes->get('/pfv', 'HomeController::pfv');
-$routes->get('/fdas', 'HomeController::fdas');
-$routes->get('/inspection', 'HomeController::inspection');
+$routes->get('album', 'HomeController::album');
+$routes->get('intern', 'HomeController::intern');
+$routes->get('pfv', 'HomeController::pfv');
+$routes->get('fdas', 'HomeController::fdas');
+$routes->get('inspection', 'HomeController::inspection');
 
 
 // ---------------------ADMIN DASHBOARD------------------------------------
@@ -46,8 +46,8 @@ $routes->get('admin-registration', 'ARegistrationController::adminregister');
 $routes->post('admin-registration/processForm', 'ARegistrationController::adminprocessForm');
 
 // ADMIN DASHBOARD HEADER NAVIGATION BAR 
-$routes->get('/admin-home', 'ANavigationController::adminManage');
-$routes->get('/admin-logout', 'ANavigationController::adminLogout');
+$routes->get('admin-home', 'ANavigationController::adminManage');
+$routes->get('admin-logout', 'ANavigationController::adminLogout');
 $routes->get('admin-dashboard', 'ANavigationController::adminHome');
 
 $routes->get('admin-notif', 'AHomeController::adminNotif');
@@ -70,7 +70,7 @@ $routes->post('carousel/update', 'CarouselController::update');
 $routes->get('delete/(:segment)', 'CarouselController::delete/$1'); 
 
 //GRAPH
-$routes->get('/graph', 'GraphController::graph');
+$routes->get('graph', 'GraphController::graph');
 
 
 // SOS
