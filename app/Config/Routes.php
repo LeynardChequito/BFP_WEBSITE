@@ -25,7 +25,7 @@ $routes->get('/logout', 'HomeController::logout');
 $routes->get('/achievements', 'HomeController::achievements');
 $routes->get('/contacts', 'HomeController::contacts');
 $routes->get('/activities', 'HomeController::activities');
-$routes->get('/site', 'HomeController::home');
+// $routes->get('/site', 'HomeController::home');
 
 //ALBUM
 $routes->get('/album', 'HomeController::album');
@@ -49,6 +49,8 @@ $routes->post('admin-registration/processForm', 'ARegistrationController::adminp
 $routes->get('/admin-home', 'ANavigationController::adminManage');
 $routes->get('/admin-logout', 'ANavigationController::adminLogout');
 $routes->get('admin-dashboard', 'ANavigationController::adminHome');
+
+$routes->get('admin-notif', 'AHomeController::adminNotif');
 // ---------------------OTHER FUNCTIONS------------------------------------
 // NEWS
 $routes->get('news', 'NewsController::news');
