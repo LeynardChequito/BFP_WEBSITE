@@ -113,7 +113,7 @@ class ARegistrationController extends BaseController
 
             $this->session->setFlashdata('success', 'Admin registration successful!');
 
-            return redirect()->to('/admin-login');
+            return redirect()->to('admin-login');
         } else {
             $data['validation'] = $this->validator;
             return view('AREGISTER/aregister', $data);

@@ -14,7 +14,7 @@ class HomeController extends BaseController
     }
     public function home()
     {
-        return view('WEBSITE\home');
+        return view('WEBSITE/home');
     }
 
     public function contactUs()

@@ -198,7 +198,7 @@ fcm.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5
             let email = document.getElementById('email_address').value;
             let password = document.getElementById('password').value;
 
-            fetch('/adddologin', {
+            fetch('adddologin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -214,7 +214,7 @@ fcm.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5
                 console.log(data);
                 if (data.status === '1') {
                     
-                    window.location.href = '/admin-home';
+                    window.location.href = 'admin-home';
                 }
             })
             .catch(error => {

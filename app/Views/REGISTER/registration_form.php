@@ -198,7 +198,7 @@
                             <button type="submit" class="btn btn-primary">Submit</button>
 
                             <div class="form-group">
-                                <p class="text-body-1">Already have an account? <a class="link-login" href="<?= site_url('/login') ?>">Login</a></p>
+                                <p class="text-body-1">Already have an account? <a class="link-login" href="<?= site_url('login') ?>">Login</a></p>
                             </div>
                         </form>
 

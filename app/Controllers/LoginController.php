@@ -61,14 +61,14 @@ class LoginController extends BaseController
     
                     $this->session->set($ses_data);
                     $this->session->setFlashdata('success', 'Login successful!');
-                    return redirect()->to('/home');
+                    return redirect()->to('home');
                 } else {
                     $this->session->setFlashdata('error', 'Password is incorrect.');
-                    return redirect()->to('/login');
+                    return redirect()->to('login');
                 }
             } else {
                 $this->session->setFlashdata('error', 'Email does not exist.');
-                return redirect()->to('/login');
+                return redirect()->to('login');
             }
         } else {
             $data['validation'] = $this->validator;

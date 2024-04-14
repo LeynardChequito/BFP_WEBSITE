@@ -21,4 +21,8 @@ class AhomeController extends BaseController
     {
         return view('ADMIN/adminhome');
     }
+
+    public function adminNotif(){
+        return view ('ADMIN/adminnotif');
+    }
 }

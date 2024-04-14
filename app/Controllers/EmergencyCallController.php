@@ -80,7 +80,7 @@ class EmergencyCallController extends BaseController
         $messaging->send($message);
 
         // Redirect or return response as needed
-        return redirect()->to('/home')->with('success', 'Emergency call submitted successfully.');
+        return redirect()->to('home')->with('success', 'Emergency call submitted successfully.');
     } catch (\Throwable $th) {
         // Handle any errors
         return redirect()->back()->withInput()->with('error', $th->getMessage());

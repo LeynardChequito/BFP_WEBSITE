@@ -126,7 +126,7 @@
                     </div>
                     <div class="card-footer">
                         <h12>VALIANT FIREFIGHTERS OF CALAPAN CITY<br> In case of fire and emergency Call CCFS Hotline: 288-7777 / 09156031561 / 09814782880</h12>
-                        <a href="<?= site_url('/contact-us') ?>" class="nav-link">See more...</a>
+                        <a href="<?= site_url('contact-us') ?>" class="nav-link">See more...</a>
                     </div>
                 </div>
             </div>

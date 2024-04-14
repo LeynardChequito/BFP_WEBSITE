@@ -117,7 +117,7 @@ class RegistrationController extends BaseController
             $this->session->setFlashdata('success', 'Registration successful!');
 
             // Redirect to login page after successful registration
-            return redirect()->to('/login');
+            return redirect()->to('login');
         } else {
             $data['validation'] = $this->validator;
             return view('REGISTER/registration_form', $data);
