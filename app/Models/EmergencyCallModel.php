@@ -19,7 +19,9 @@ class EmergencyCallModel extends Model
         'road_type', 
         'additional_info', 
         'photo_upload',
-        'user_id'
+        'user_id',
+        'latitude',
+        'longitude'
     ];
 
     // Dates

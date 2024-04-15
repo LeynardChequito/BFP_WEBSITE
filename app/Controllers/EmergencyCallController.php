@@ -27,9 +27,11 @@ class EmergencyCallController extends BaseController
         $roadType = $this->request->getPost('road_type');
         $photoUpload = $this->request->getFile('photo_upload');
         $additionalInfo = $this->request->getPost('additional_info');
+        $latitude = $this->request->getPost('latitude'); 
+        $longitude = $this->request->getPost('longitude');
 
         // Retrieve user's full name based on user_id
-        $userId = session()->get('user_id'); // Assuming you store the user_id in session
+        $userId = session()->get('user_id'); 
         $accountModel = new AccountModel();
         $user = $accountModel->find($userId);
         $fullName = $user['fullName'];
@@ -43,7 +45,9 @@ class EmergencyCallController extends BaseController
             'fire_size' => $fireSize,
             'road_type' => $roadType,
             'additional_info' => $additionalInfo,
-            'photo_upload' => $photoUpload->getName() // Store the filename instead of the uploaded file object
+            'latitude' => $latitude, 
+            'longitude' => $longitude, 
+            'photo_upload' => $photoUpload->getName() 
         ];
 
         // Save emergency call data to database
@@ -70,7 +74,7 @@ class EmergencyCallController extends BaseController
                     'fireSize' => $fireSize,
                     'roadType' => $roadType,
                     'additionalInfo' => $additionalInfo,
-                    'photo_upload' => $photoUpload->getName() // Store the filename in the notification data
+                    'photo_upload' => $photoUpload->getName()
                 ],
             ],
             'topic' => 'admin_notifications'

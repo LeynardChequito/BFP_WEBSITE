@@ -387,7 +387,6 @@
     var geolocationDisplay = document.getElementById("geolocationDisplay");
     geolocationDisplay.innerHTML = "<b>Latitude:</b> " + position.coords.latitude + "<br><b>Longitude:</b> " + position.coords.longitude;
 }
-
         </script>
         <script>
             // Function to handle change in fire type dropdown
