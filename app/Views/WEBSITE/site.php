@@ -88,7 +88,7 @@
         </style>
     </head>
 
-    <body>
+    <body onload="getLocation();">
         <!-- First Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark default-color" style="background-color: red;">
             <img src="<?= base_url(); ?>images/Banner03_18Aug2018.png" alt="Logo" class="logo">
@@ -138,12 +138,12 @@
                 <span class="close" onclick="closeModal()">&times;</span>
                 <h4 class="text-center">Emergency Call Form</h4>
 
-                <form id="emergencyCallForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data" onsubmit="submitEmergencyCall()">
+                <form id="emergencyCallForm" class="myForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data" onsubmit="submitEmergencyCall()">
                     <?= csrf_field() ?>
                     <div class="form-group">
                         <!-- Hidden fields for latitude and longitude -->
-                        <input type="hidden" id="latitude" name="latitude">
-                        <input type="hidden" id="longitude" name="longitude">
+                        <input type="hidden" id="latitude" name="latitude" value="">
+                        <input type="hidden" id="longitude" name="longitude" value="">
 
                         <!-- Geolocation display -->
                         <div id="geolocationDisplay"></div>
@@ -369,25 +369,33 @@
             // Update time initially and set interval to update every second
             updatePhilippineTime();
             setInterval(updatePhilippineTime, 1000);
-
+        </script>
+        <script type="text/javascript">
             // Function to get user's current location
             function getLocation() {
                 if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(showPosition);
-                } else {
-                    alert("Geolocation is not supported by this browser.");
+                    navigator.geolocation.getCurrentPosition(showPosition, showError);
                 }
             }
 
             function showPosition(position) {
-    document.getElementById("latitude").value = position.coords.latitude;
-    document.getElementById("longitude").value = position.coords.longitude;
+                document.querySelector('.myForm input[name = "latitude"]').value = position.coords.latitude;
+                document.querySelector('.myForm input[name = "longitude"]').value = position.coords.longitude;
 
-    // Display latitude and longitude
-    var geolocationDisplay = document.getElementById("geolocationDisplay");
-    geolocationDisplay.innerHTML = "<b>Latitude:</b> " + position.coords.latitude + "<br><b>Longitude:</b> " + position.coords.longitude;
-}
-        </script>
+                // Display latitude and longitude
+                var geolocationDisplay = document.getElementById("geolocationDisplay");
+                geolocationDisplay.innerHTML = "<b>Latitude:</b> " + position.coords.latitude + "<br><b>Longitude:</b> " + position.coords.longitude;
+            }
+            function showError(error){
+                switch(error.code){
+                    case error.PERMISSION_DENIED:
+                        alert("You must allow the request for Geolocation to fill out the form.");
+                        location.reload();
+                        break;
+                }
+            }
+            
+            </script>
         <script>
             // Function to handle change in fire type dropdown
             function handleFireTypeChange() {
