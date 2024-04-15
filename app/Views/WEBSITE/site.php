@@ -142,8 +142,9 @@
                     <?= csrf_field() ?>
                     <div class="form-group">
                         <!-- Hidden fields for latitude and longitude -->
-                        <input type="hidden" id="latitude" name="latitude" value="">
-                        <input type="hidden" id="longitude" name="longitude" value="">
+                        <input type="hidden" id="latitude" name="latitude">
+                        <input type="hidden" id="longitude" name="longitude">
+
 
                         <!-- Geolocation display -->
                         <div id="geolocationDisplay"></div>
@@ -371,30 +372,31 @@
             setInterval(updatePhilippineTime, 1000);
         </script>
         <script type="text/javascript">
-            // Function to get user's current location
-            function getLocation() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(showPosition, showError);
+           // Function to get user's current location
+                function getLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(showPosition, showError);
+                    }
                 }
-            }
 
-            function showPosition(position) {
-                document.querySelector('.myForm input[name = "latitude"]').value = position.coords.latitude;
-                document.querySelector('.myForm input[name = "longitude"]').value = position.coords.longitude;
+                function showPosition(position) {
+                    // Update the hidden input fields with latitude and longitude values
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
 
-                // Display latitude and longitude
-                var geolocationDisplay = document.getElementById("geolocationDisplay");
-                geolocationDisplay.innerHTML = "<b>Latitude:</b> " + position.coords.latitude + "<br><b>Longitude:</b> " + position.coords.longitude;
-            }
-            function showError(error){
-                switch(error.code){
-                    case error.PERMISSION_DENIED:
-                        alert("You must allow the request for Geolocation to fill out the form.");
-                        location.reload();
-                        break;
+                    // Display latitude and longitude
+                    var geolocationDisplay = document.getElementById("geolocationDisplay");
+                    geolocationDisplay.innerHTML = "<b>Latitude:</b> " + position.coords.latitude + "<br><b>Longitude:</b> " + position.coords.longitude;
                 }
-            }
-            
+
+                function showError(error) {
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            alert("You must allow the request for Geolocation to fill out the form.");
+                            location.reload();
+                            break;
+                    }
+                }            
             </script>
         <script>
             // Function to handle change in fire type dropdown
