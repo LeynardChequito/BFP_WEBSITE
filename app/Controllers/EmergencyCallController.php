@@ -25,17 +25,17 @@ class EmergencyCallController extends BaseController
             $barangay = $this->request->getPost('barangay');
             $fireSize = $this->request->getPost('fire_size');
             $roadType = $this->request->getPost('road_type');
-            $photoUpload = $this->request->getFile('photo_upload');
             $additionalInfo = $this->request->getPost('additional_info');
             $latitude = $this->request->getPost('latitude');
             $longitude = $this->request->getPost('longitude');
-
+            $photoUpload = $this->request->getFile('photo_upload');
+    
             // Retrieve user's full name based on user_id
             $userId = session()->get('user_id');
             $accountModel = new AccountModel();
             $user = $accountModel->find($userId);
             $fullName = $user['fullName'];
-
+    
             // Prepare emergency call data including user's full name
             $emergencyCallData = [
                 'user_id' => $userId,
@@ -49,10 +49,9 @@ class EmergencyCallController extends BaseController
                 'longitude' => $longitude,
                 'photo_upload' => $photoUpload->getName()
             ];
-
+    
             // Save emergency call data to database
             $this->emergencyCall->insert($emergencyCallData);
-
             // Handle file upload
             if ($photoUpload && $photoUpload->isValid()) {
                 // Move the uploaded file to the public/accident_report directory
