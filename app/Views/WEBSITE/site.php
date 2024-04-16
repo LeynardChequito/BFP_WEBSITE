@@ -138,7 +138,7 @@
                 <span class="close" onclick="closeModal()">&times;</span>
                 <h4 class="text-center">Emergency Call Form</h4>
 
-                <form id="emergencyCallForm" class="myForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data" onsubmit="submitEmergencyCall()">
+                <form id="emergencyCallForm" class="myForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data" onsubmit="return submitEmergencyCall()">
                     <?= csrf_field() ?>
                     <div class="form-group">
                         <!-- Hidden fields for latitude and longitude -->
@@ -267,7 +267,6 @@
                         <input type="file" id="photo_upload" name="photo_upload" class="form-control-file">
                     </div>
 
-                    <!-- Hidden fields for latitude and longitude -->
                     <input type="hidden" id="latitude" name="latitude">
                     <input type="hidden" id="longitude" name="longitude">
 
@@ -372,32 +371,32 @@
             setInterval(updatePhilippineTime, 1000);
         </script>
         <script type="text/javascript">
-           // Function to get user's current location
-                function getLocation() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(showPosition, showError);
-                    }
+            // Function to get user's current location
+            function getLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition, showError);
                 }
+            }
 
-                function showPosition(position) {
-                    // Update the hidden input fields with latitude and longitude values
-                    document.getElementById('latitude').value = position.coords.latitude;
-                    document.getElementById('longitude').value = position.coords.longitude;
+            function showPosition(position) {
+                // Update the hidden input fields with latitude and longitude values
+                document.getElementById('latitude').value = position.coords.latitude;
+                document.getElementById('longitude').value = position.coords.longitude;
 
-                    // Display latitude and longitude
-                    var geolocationDisplay = document.getElementById("geolocationDisplay");
-                    geolocationDisplay.innerHTML = "<b>Latitude:</b> " + position.coords.latitude + "<br><b>Longitude:</b> " + position.coords.longitude;
+                // Display latitude and longitude (optional)
+                var geolocationDisplay = document.getElementById("geolocationDisplay");
+                geolocationDisplay.innerHTML = "<b>Latitude:</b> " + position.coords.latitude + "<br><b>Longitude:</b> " + position.coords.longitude;
+            }
+
+            function showError(error) {
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert("You must allow the request for Geolocation to fill out the form.");
+                        location.reload();
+                        break;
                 }
-
-                function showError(error) {
-                    switch (error.code) {
-                        case error.PERMISSION_DENIED:
-                            alert("You must allow the request for Geolocation to fill out the form.");
-                            location.reload();
-                            break;
-                    }
-                }            
-            </script>
+            }
+        </script>
         <script>
             // Function to handle change in fire type dropdown
             function handleFireTypeChange() {

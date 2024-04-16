@@ -20,22 +20,22 @@ class EmergencyCallController extends BaseController
     public function submitEmergencyCall()
     {
         try {
-            // Retrieve form data
+            // Retrieve form data including latitude and longitude
+            $latitude = $this->request->getPost('latitude');
+            $longitude = $this->request->getPost('longitude');
             $fireType = $this->request->getPost('fire_type');
             $barangay = $this->request->getPost('barangay');
             $fireSize = $this->request->getPost('fire_size');
             $roadType = $this->request->getPost('road_type');
-            $additionalInfo = $this->request->getPost('additional_info');
-            $latitude = $this->request->getPost('latitude');
-            $longitude = $this->request->getPost('longitude');
             $photoUpload = $this->request->getFile('photo_upload');
-    
+            $additionalInfo = $this->request->getPost('additional_info');
+
             // Retrieve user's full name based on user_id
             $userId = session()->get('user_id');
             $accountModel = new AccountModel();
             $user = $accountModel->find($userId);
             $fullName = $user['fullName'];
-    
+
             // Prepare emergency call data including user's full name
             $emergencyCallData = [
                 'user_id' => $userId,
@@ -49,7 +49,7 @@ class EmergencyCallController extends BaseController
                 'longitude' => $longitude,
                 'photo_upload' => $photoUpload->getName()
             ];
-    
+
             // Save emergency call data to database
             $this->emergencyCall->insert($emergencyCallData);
             // Handle file upload
@@ -82,7 +82,6 @@ class EmergencyCallController extends BaseController
             // Send the message
             $messaging->send($message);
 
-            // Redirect or return response as needed
             return redirect()->to('home')->with('success', 'Emergency call submitted successfully.');
         } catch (\Throwable $th) {
             // Handle any errors
