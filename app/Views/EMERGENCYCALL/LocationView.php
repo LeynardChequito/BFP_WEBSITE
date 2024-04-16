@@ -58,7 +58,7 @@
 
         @media only screen and (min-width: 768px) {
             #map-container {
-                height: 500px;
+                height: 1500px;
                 /* Adjust height as needed for larger screens */
             }
         }
