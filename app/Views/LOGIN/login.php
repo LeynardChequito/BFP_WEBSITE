@@ -6,110 +6,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BFP Community Login Form</title>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            background-image: url('/images/bglog.jpg');
-            background-size: cover; 
-            background-position: center; 
-        }
+        /* Default styles */
 
-        .login-card {
-            max-width: 400px;
-            width: 100%;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            margin: 50px auto;
-            z-index: 1; 
-        }
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
 
-        .bfp-title {
-            color: #d9534f;
-            font-size: 1.8em;
-            margin-top: 10px;
-        }
+.login-card {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    margin: 50px auto;
+    z-index: 1; 
+}
 
-        .v-text-field {
-            width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            border: 1px solid #d9534f;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+.bfp-title {
+    color: #d9534f;
+    font-size: 1.8em;
+    margin-top: 10px;
+}
 
-        .bfp-btn {
-            background-color: #d9534f;
-            color: #fff;
-            margin-top: 20px;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+.v-text-field {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border: 1px solid #d9534f;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
 
-        .bfp-btn:hover {
-            background-color: #c9302c;
-        }
+.bfp-btn {
+    background-color: #d9534f;
+    color: #fff;
+    margin-top: 20px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-        .bfp-link {
-            color: #d9534f;
-            cursor: pointer;
-            margin-top: 15px;
-            display: inline-block;
-            text-decoration: underline;
-            font-size: 1em;
-        }
+.bfp-btn:hover {
+    background-color: #c9302c;
+}
 
-        .create-account-btn {
-            text-decoration: none;
-            display: block;
-            width: 100%;
-            background-color: #d9534f;
-            color: #fff;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            text-align: center;
-            margin-top: 25px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+.bfp-link {
+    color: #d9534f;
+    cursor: pointer;
+    margin-top: 15px;
+    display: inline-block;
+    text-decoration: underline;
+    font-size: 1em;
+}
 
-        .create-account-btn:hover {
-            background-color: #c9302c;
-        }
+.create-account-btn {
+    text-decoration: none;
+    display: block;
+    width: 90%;
+    background-color: #d9534f;
+    color: #fff;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-        .show-password {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-        }
+.create-account-btn:hover {
+    background-color: #c9302c;
+}
 
-        .show-password input {
-            margin-right: 5px;
-        }
+.show-password {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
 
-        .alert {
-            background-color: #dff0d8;
-            border-color: #d6e9c6;
-            color: #3c763d;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 15px;
-        }
+.show-password input {
+    margin-right: 5px;
+}
 
-        .alert-danger {
-            background-color: #f2dede;
-            border-color: #ebccd1;
-            color: #a94442;
-        }
+.alert {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #3c763d;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+}
 
+.alert-danger {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442;
+}
+
+/* Media query for background image */
+@media screen and (max-width: 420px) {
+    body {
+        background-image: none; /* Remove background image */
+    }
+}
     </style>
 </head>
 
