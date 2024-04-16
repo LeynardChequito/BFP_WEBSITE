@@ -10,6 +10,8 @@
 
 body {
     margin: 0;
+    background-image: url('/images/bglog.jpg');
+            background-size: cover; 
     font-family: 'Arial', sans-serif;
 }
 
