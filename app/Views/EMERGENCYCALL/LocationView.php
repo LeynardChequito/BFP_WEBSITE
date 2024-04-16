@@ -12,7 +12,6 @@
             padding: 0;
         }
 
-        /* Add a dark overlay around the map card */
         body::before {
             content: "";
             position: fixed;
@@ -20,8 +19,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Adjust opacity as needed */
-            z-index: -1; /* Ensure the overlay is behind other elements */
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
         }
 
         .btn-back {
@@ -43,21 +42,30 @@
 
         #map-container {
             width: 100%;
-            height: 500px;
+            height: 300px;
+            /* Adjust height as needed for smaller screens */
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             position: relative;
         }
 
-        /* Adjust map container's size */
         #map {
             width: 100%;
             height: 100%;
         }
 
+
+        @media only screen and (min-width: 768px) {
+            #map-container {
+                height: 500px;
+                /* Adjust height as needed for larger screens */
+            }
+        }
+
         .map-card {
-            width: 75%;
+            width: 90%;
+            /* Adjust width as needed */
             margin: 20px auto;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -67,7 +75,6 @@
             position: relative;
         }
 
-        /* Style for the BFP Header */
         .bfp-header {
             text-align: center;
             font-size: 24px;
@@ -141,12 +148,14 @@
 </head>
 
 <body>
-<button onclick="history.go(-1);" class="btn-back">Back</button>
+    <button onclick="history.go(-1);" class="btn-back">Back</button>
     <div class="bfp-header">
         Bureau of Fire Protection (BFP)
         <div id="philippineTime" class="philippine-time"></div>
     </div>
-
+    <!-- Add elements to display distance and travel time -->
+    <div id="distance">Distnace: </div>
+    <div id="travelTime">Travel Time: </div>
     <div class="map-card">
         <!-- Map container -->
         <div id="map-container">
@@ -164,6 +173,9 @@
             <div class="legend-item hydrant">
                 <span style="background-color: red;"></span>User in Need
             </div>
+
+
+
         </div>
 
         <!-- Map attribution -->
@@ -510,34 +522,57 @@
                     'return': 'polyline'
                 };
 
-                // Define a callback function to process the routing response:
+                // Define the onResult function
                 var onResult = function(result) {
-                    // ensure that at least one route was found
-                    if (result.routes.length) {
-                        result.routes[0].sections.forEach((section) => {
-                            // Create a linestring to use as a point source for the route line
-                            let linestring = H.geo.LineString.fromFlexiblePolyline(section.polyline);
+                    // Check if result object exists and has routes
+                    if (result && result.routes && result.routes.length > 0) {
+                        // Check if the first route has sections
+                        if (result.routes[0].sections && result.routes[0].sections.length > 0) {
+                            // Clear existing routes
+                            clearRoutes();
 
-                            // Create a polyline to display the route:
-                            let routeLine = new H.map.Polyline(linestring, {
-                                style: {
-                                    strokeColor: 'blue',
-                                    lineWidth: 5
-                                }
+                            // Display the route on the map
+                            result.routes[0].sections.forEach((section) => {
+                                // Create a linestring to use as a point source for the route line
+                                let linestring = H.geo.LineString.fromFlexiblePolyline(section.polyline);
+
+                                // Create a polyline to display the route:
+                                let routeLine = new H.map.Polyline(linestring, {
+                                    style: {
+                                        strokeColor: 'blue',
+                                        lineWidth: 5
+                                    }
+                                });
+
+                                // Add the route polyline to the map and to the routeObjects array:
+                                map.addObject(routeLine);
+                                routeObjects.push(routeLine);
                             });
 
-                            // Add the route polyline to the map and to the routeObjects array:
-                            map.addObject(routeLine);
-                            routeObjects.push(routeLine);
-                        });
+                            // Check if route summary is available and complete
+                            if (result.routes[0].sections[0].summary && result.routes[0].sections[0].summary.length && result.routes[0].sections[0].summary.duration) {
+                                // Display estimated distance and travel time
+                                var distance = result.routes[0].sections[0].summary.length / 1000; // in kilometers
+                                var travelTime = result.routes[0].sections[0].summary.duration / 60; // in minutes
+                                document.getElementById('distance').textContent = 'Estimated Distance: ' + distance.toFixed(2) + ' km';
+                                document.getElementById('travelTime').textContent = 'Estimated Travel Time: ' + travelTime.toFixed(2) + ' minutes';
+                            } else {
+                                console.error('Route summary is undefined or incomplete:', result);
+                                alert('Route information is unavailable or incomplete. Please try again.');
+                            }
+                        } else {
+                            console.error('Route sections are missing or empty:', result);
+                            alert('Route sections are missing or empty. Please try again.');
+                        }
                     } else {
-                        console.error('No route found.');
+                        console.error('No routes found in the result object:', result);
+                        alert('No routes found in the result object. Please try again.');
                     }
                 };
-
                 // Define an error handler for the routing request:
                 var onError = function(error) {
                     console.error('Error calculating route:', error);
+                    alert('Error calculating route. Please try again.');
                 };
 
                 // Perform routing calculation
