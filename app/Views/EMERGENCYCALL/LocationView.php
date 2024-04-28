@@ -61,6 +61,7 @@
                 height: 1500px;
                 /* Adjust height as needed for larger screens */
             }
+            
         }
 
         .map-card {
@@ -173,6 +174,9 @@
             <div class="legend-item hydrant">
                 <span style="background-color: red;"></span>User in Need
             </div>
+
+
+
         </div>
 
         <!-- Map attribution -->
@@ -207,17 +211,6 @@
                     }
                 }
             );
-
-            // Add traffic layer
-            var trafficLayer = platform.createDefaultLayers().vector.normal.traffic;
-            map.addLayer(trafficLayer);
-
-            // Enable traffic incidents
-            var incidentsLayer = platform.getTrafficIncidents({
-                zoom: 14,
-                viewport: map.getViewModel().getLookAtData().bounds
-            });
-            map.addLayer(incidentsLayer);
 
             // add a resize listener to make sure that the map occupies the whole container
             window.addEventListener('resize', () => map.getViewPort().resize());
@@ -296,6 +289,7 @@
             // Call function to get user's geolocation
             getUserGeolocation();
 
+            // Add markers for fire hydrants
             // Add markers for fire hydrants
             var hydrantLocations = [{
                     name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
