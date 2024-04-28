@@ -1,12 +1,3 @@
-To incorporate traffic conditions and display traffic incidents on the map, you can follow these steps:
-
-1. Add the necessary JavaScript library for traffic incidents.
-2. Enable traffic layer on the map.
-3. Subscribe to traffic events to display traffic incidents.
-
-Here's the corrected code with these modifications:
-
-```html
 <!DOCTYPE html>
 <html>
 
@@ -211,8 +202,6 @@ Here's the corrected code with these modifications:
                 defaultLayers.vector.normal.map, {
                     zoom: 14, // Adjusted zoom level
                     center: {
-
-
                         lat: 13.3839, // Adjusted center latitude for Calapan City
                         lng: 121.1860 // Adjusted center longitude for Calapan City
                     }
@@ -336,9 +325,7 @@ Here's the corrected code with these modifications:
 
                     // Add click event listener to the navigate button dynamically
                     hydrantInfo.getElement().querySelector('.navigate-button').addEventListener('click', function() {
-                        navigate
-
-ToMarker(hydrant.lat, hydrant.lng);
+                        navigateToMarker(hydrant.lat, hydrant.lng);
                     });
                 });
             });
