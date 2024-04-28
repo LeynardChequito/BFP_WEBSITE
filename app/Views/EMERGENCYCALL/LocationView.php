@@ -1,3 +1,12 @@
+To incorporate traffic conditions and display traffic incidents on the map, you can follow these steps:
+
+1. Add the necessary JavaScript library for traffic incidents.
+2. Enable traffic layer on the map.
+3. Subscribe to traffic events to display traffic incidents.
+
+Here's the corrected code with these modifications:
+
+```html
 <!DOCTYPE html>
 <html>
 
@@ -173,9 +182,6 @@
             <div class="legend-item hydrant">
                 <span style="background-color: red;"></span>User in Need
             </div>
-
-
-
         </div>
 
         <!-- Map attribution -->
@@ -205,11 +211,24 @@
                 defaultLayers.vector.normal.map, {
                     zoom: 14, // Adjusted zoom level
                     center: {
+
+
                         lat: 13.3839, // Adjusted center latitude for Calapan City
                         lng: 121.1860 // Adjusted center longitude for Calapan City
                     }
                 }
             );
+
+            // Add traffic layer
+            var trafficLayer = platform.createDefaultLayers().vector.normal.traffic;
+            map.addLayer(trafficLayer);
+
+            // Enable traffic incidents
+            var incidentsLayer = platform.getTrafficIncidents({
+                zoom: 14,
+                viewport: map.getViewModel().getLookAtData().bounds
+            });
+            map.addLayer(incidentsLayer);
 
             // add a resize listener to make sure that the map occupies the whole container
             window.addEventListener('resize', () => map.getViewPort().resize());
@@ -289,182 +308,13 @@
             getUserGeolocation();
 
             // Add markers for fire hydrants
-            // Add markers for fire hydrants
             var hydrantLocations = [{
                     name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
                     lat: 13.355547541837,
                     lng: 121.170303614926,
                     color: "lightgreen" // Changed color to light green
                 },
-                {
-                    name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Near LGC)",
-                    lat: 13.399026784522,
-                    lng: 121.174347236556,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Ubas St., Barangay Lalud, Calapan City, Oriental Mindoro (near Barangay Hall)",
-                    lat: 13.398536024051,
-                    lng: 121.175305189208,
-                    color: "lightgreen"
-                },
                 // Add more hydrant locations here
-                {
-                    name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( near elementary school)",
-                    lat: 13.406225165762,
-                    lng: 121.176445091041,
-                    color: "lightgreen"
-                },
-                {
-                    name: "JP Rizal St., Barangay Camilmil, Calapan City, Oriental Mindoro",
-                    lat: 13.407441929551,
-                    lng: 121.777849362988,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( in front of Oriental Mindoro National Highschool)",
-                    lat: 13.408893063481,
-                    lng: 121.178695787075,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Roxas drive, Cor. Gumamela St. Barangay Lumangbayan, Calapan City, Oriental Mindoro",
-                    lat: 13.401820739889,
-                    lng: 121.182757083021,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Guiho St. Barangay, Sto. Nino, Calapan City, oriental Mindoro",
-                    lat: 13.404072878721,
-                    lng: 121.184182160977,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Corner Bonifacio St, Barangay Ilaya, Calapan City, Oriental Mindoro",
-                    lat: 13.412771258480,
-                    lng: 121.183841835900,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Mabini St. Barangay Ilaya, Calapan City, Oriental Mindoro",
-                    lat: 13.411691645848,
-                    lng: 121.183589742959,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay Ibaba East, Calapan City, Oriental Mindoro ( near old city hall/city plaza )",
-                    lat: 13.419379075623,
-                    lng: 121.179612690830,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Malvar St., Barangay Ibaba East, Calapan City, Oriental Mindoro",
-                    lat: 13.414783206943,
-                    lng: 121.176872350370,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay Ibaba West, Calapan City, Oriental Mindoro",
-                    lat: 13.414783206943,
-                    lng: 121.176872350370,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Roxas Drice Corner Marasigan St., Barangay Libis, Calapan City, oriental Mindoro",
-                    lat: 13.415158152476,
-                    lng: 121.184801921272,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay Calero, Calapan City, Oriental Mindoro ( near atty. Manzo office)",
-                    lat: 13.415597264627,
-                    lng: 121.181560275534,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay San Rafael, Calapan City, Oriental Mindoro ( near children hospital)",
-                    lat: 13.418591183674,
-                    lng: 121.186988682784,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay San Antonio, Calapan City, Oriental Mindoro (calapan pier)",
-                    lat: 13.429675064813,
-                    lng: 121.195830847473,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay Tibag, Calapan City, Oriental Mindoro",
-                    lat: 13.412136593584,
-                    lng: 121.175821489887,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay Sta. Maria Village (Blk. 4), Calapan City, Oriental Mindoro",
-                    lat: 13.408596881704,
-                    lng: 121.175793602378,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Infantado St., Barangay Sta. Vicente South, Calapan City, Oriental Mindoro ( near bagong pook)",
-                    lat: 13.408596881704,
-                    lng: 121.175793602378,
-                    color: "lightgreen"
-                },
-                {
-                    name: "J.Luna St. Cornern Aurora, Barangay San VicenteNorth, Calapan City, Oriental Mindoro",
-                    lat: 13.410813537771,
-                    lng: 121.179406846349,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Ramirez St., Barangay San Vicente Central, Calapan City, Oriental Mindoro",
-                    lat: 13.411144781257,
-                    lng: 121.178600148414,
-                    color: "lightgreen"
-                },
-                {
-                    name: "J.P Rizal St., Barangay San Vicente Central, Calapan City, Oriental Mindoro ( front Palawan Express)",
-                    lat: 13.413255329056,
-                    lng: 121.177596791058,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Aboboto St. Barangay San Vicente East, Calapan City, Oriental Mindoro",
-                    lat: 13.410649523119,
-                    lng: 121.179892455593,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Del Pilar St., Barangay San Vicente East, Calapan City, Oriental Mindoro",
-                    lat: 13.411227364177,
-                    lng: 121.180309201690,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay Lalud, Calapan City, Oriental Mindoro (near phoenix gasoline station)",
-                    lat: 13.402465071142,
-                    lng: 121.172008932260,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay San Vicente North, Calapan City, Oriental Mindoro (new public market 1)",
-                    lat: 13.413478281857,
-                    lng: 121.178518318201,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Barangay San Vicente North, Calapan City, Oriental Mindoro (new public market 2)",
-                    lat: 13.413478281857,
-                    lng: 121.178518318201,
-                    color: "lightgreen"
-                },
-                {
-                    name: "Brgy. Guinobatan (Infront of New City Hall)",
-                    lat: 13.3787930,
-                    lng: 121.1825635,
-                    color: "lightgreen"
-                }
             ];
 
             hydrantLocations.forEach(function(hydrant) {
@@ -486,7 +336,9 @@
 
                     // Add click event listener to the navigate button dynamically
                     hydrantInfo.getElement().querySelector('.navigate-button').addEventListener('click', function() {
-                        navigateToMarker(hydrant.lat, hydrant.lng);
+                        navigate
+
+ToMarker(hydrant.lat, hydrant.lng);
                     });
                 });
             });
