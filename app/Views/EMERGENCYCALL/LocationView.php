@@ -174,9 +174,6 @@
             <div class="legend-item hydrant">
                 <span style="background-color: red;"></span>User in Need
             </div>
-
-
-
         </div>
 
         <!-- Map attribution -->
@@ -208,6 +205,13 @@
                     center: {
                         lat: 13.3839, // Adjusted center latitude for Calapan City
                         lng: 121.1860 // Adjusted center longitude for Calapan City
+                    },
+                    // Set bounding box to restrict map movement within Calapan City
+                    bounds: {
+                        top: 13.4227, // Northern boundary
+                        bottom: 13.3669, // Southern boundary
+                        left: 121.1627, // Western boundary
+                        right: 121.2068 // Eastern boundary
                     }
                 }
             );
@@ -290,12 +294,11 @@
             getUserGeolocation();
 
             // Add markers for fire hydrants
-            // Add markers for fire hydrants
             var hydrantLocations = [{
                     name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
                     lat: 13.355547541837,
                     lng: 121.170303614926,
-                    color: "lightgreen" // Changed color to light green
+                    color: "lightgreen" 
                 },
                 {
                     name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Near LGC)",
@@ -309,7 +312,6 @@
                     lng: 121.175305189208,
                     color: "lightgreen"
                 },
-                // Add more hydrant locations here
                 {
                     name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( near elementary school)",
                     lat: 13.406225165762,
