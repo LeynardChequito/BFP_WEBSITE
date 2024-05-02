@@ -189,7 +189,7 @@
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-clustering.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             // Initialize communication with the platform
             const platform = new H.service.Platform({
                 apikey: 'Vitn_s6WLkw5GbaUtITnXneLg20TrdDPZP_-qCDb1ok' // Replace with your actual API key
@@ -205,16 +205,13 @@
                     center: {
                         lat: 13.3839, // Adjusted center latitude for Calapan City
                         lng: 121.1860 // Adjusted center longitude for Calapan City
-                    },
-                    // Set bounding box to restrict map movement within Calapan City
-                    bounds: {
-                        top: 13.4227, // Northern boundary
-                        bottom: 13.3669, // Southern boundary
-                        left: 121.1627, // Western boundary
-                        right: 121.2068 // Eastern boundary
                     }
                 }
             );
+
+            // Set the bounds to restrict map movement to Calapan City area
+            var bounds = new H.geo.Rect(13.3810, 121.1890, 13.3870, 121.1830);
+            map.setViewBounds(bounds);
 
             // add a resize listener to make sure that the map occupies the whole container
             window.addEventListener('resize', () => map.getViewPort().resize());
