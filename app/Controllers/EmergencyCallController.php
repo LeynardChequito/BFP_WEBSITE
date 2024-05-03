@@ -82,7 +82,7 @@ class EmergencyCallController extends BaseController
             // Send the message
             $messaging->send($message);
 
-            return redirect()->to('home')->with('success', 'Emergency call submitted successfully.');
+            return redirect()->to('rescuemap')->with('success', 'Emergency call submitted successfully.');
         } catch (\Throwable $th) {
             // Handle any errors
             return redirect()->back()->withInput()->with('error', $th->getMessage());

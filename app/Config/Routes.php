@@ -9,6 +9,7 @@ use CodeIgniter\Router\RouteCollection;
 // ---------------------USER WEBSITE------------------------------------
 
 // LOGIN
+$routes->get('/', 'LoginController::loginpage');
 $routes->get('login', 'LoginController::login');
 $routes->post('login/processLogin', 'LoginController::processLogin');
 $routes->post('dologin', 'LoginController::dologin');
