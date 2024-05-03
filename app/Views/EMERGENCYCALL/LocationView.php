@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <title>BFP Geolocation</title>
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         /* Reset default margin and padding */
         body {
@@ -145,6 +147,41 @@
         .navigate-button:hover {
             background-color: #0056b3;
         }
+        /* Adjustments for smaller screens */
+@media only screen and (max-width: 768px) {
+    #map-container {
+        height: 400px; /* Adjust height for smaller screens */
+    }
+    .map-card {
+        width: 95%; /* Adjust width for smaller screens */
+    }
+    .legend {
+        top: 10px;
+        left: 10px;
+    }
+}
+
+/* Adjustments for smartphones */
+@media only screen and (max-width: 480px) {
+    #map-container {
+        height: 300px; /* Adjust height for smartphones */
+    }
+    .map-card {
+        width: 100%; /* Adjust width for smartphones */
+    }
+    .legend {
+        top: 5px;
+        left: 5px;
+    }
+    .btn-back {
+        top: 10px;
+        left: 10px;
+    }
+    .bfp-header {
+        font-size: 20px; /* Decrease font size for smartphones */
+    }
+}
+
     </style>
 </head>
 
