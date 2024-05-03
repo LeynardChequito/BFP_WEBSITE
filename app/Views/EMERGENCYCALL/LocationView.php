@@ -174,6 +174,9 @@
             <div class="legend-item hydrant">
                 <span style="background-color: red;"></span>User in Need
             </div>
+
+
+
         </div>
 
         <!-- Map attribution -->
@@ -189,7 +192,7 @@
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-clustering.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             // Initialize communication with the platform
             const platform = new H.service.Platform({
                 apikey: 'Vitn_s6WLkw5GbaUtITnXneLg20TrdDPZP_-qCDb1ok' // Replace with your actual API key
@@ -208,10 +211,6 @@
                     }
                 }
             );
-
-            // Set the bounds to restrict map movement to Calapan City area
-            var bounds = new H.geo.Rect(13.3810, 121.1890, 13.3870, 121.1830);
-            map.setViewBounds(bounds);
 
             // add a resize listener to make sure that the map occupies the whole container
             window.addEventListener('resize', () => map.getViewPort().resize());
@@ -291,11 +290,12 @@
             getUserGeolocation();
 
             // Add markers for fire hydrants
+            // Add markers for fire hydrants
             var hydrantLocations = [{
                     name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
                     lat: 13.355547541837,
                     lng: 121.170303614926,
-                    color: "lightgreen" 
+                    color: "lightgreen" // Changed color to light green
                 },
                 {
                     name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Near LGC)",
@@ -309,6 +309,7 @@
                     lng: 121.175305189208,
                     color: "lightgreen"
                 },
+                // Add more hydrant locations here
                 {
                     name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( near elementary school)",
                     lat: 13.406225165762,
