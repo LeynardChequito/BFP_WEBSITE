@@ -5,10 +5,23 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Emergency Call Form</title>
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
         <link rel="manifest" href="app/Views/manifest.json">
         <style>
+.bureau-of-fire-protection {
+                font-family: "Bebas Neue", sans-serif;
+            font-weight: 400;
+            font-size: 60px;
+            font-style: normal;
+            color: #f5f5f5;
+            margin-top: 0;
+            margin-bottom: 0; 
+            }
             .modal {
                 display: none;
                 position: fixed;
@@ -92,7 +105,8 @@
     <body onload="getLocation();">
         <!-- First Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark default-color" style="background-color: red;">
-            <img src="<?= base_url(); ?>images/Banner03_18Aug2018.png" alt="Logo" class="logo">
+        <img src="<?= base_url(); ?>images/logo.png" alt="Logo" class="logo" style="width: 90px; height: 90px; margin-right: 10px;">
+            <p class="bureau-of-fire-protection">Bureau of Fire Protection</p>
 
 
             <!-- Use Bootstrap grid system for alignment -->
@@ -136,7 +150,8 @@
         <!-- Modal Form -->
         <div id="myModal" class="modal">
             <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
+                
+ <span class="close" onclick="closeModal()">&times;</span>
                 <h4 class="text-center">Emergency Call Form</h4>
 
                 <form id="emergencyCallForm" class="myForm" action="<?= base_url('emergency-call/submit') ?>" method="post" enctype="multipart/form-data" onsubmit="return submitEmergencyCall()">

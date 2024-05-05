@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BFP Geolocation</title>
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <style>
         /* Reset default margin and padding */
         body {
@@ -147,7 +145,7 @@
         .navigate-button:hover {
             background-color: #0056b3;
         }
-        /* Adjustments for smaller screens */
+
 @media only screen and (max-width: 768px) {
     #map-container {
         height: 400px; /* Adjust height for smaller screens */
@@ -160,7 +158,6 @@
         left: 10px;
     }
 }
-
 /* Adjustments for smartphones */
 @media only screen and (max-width: 480px) {
     #map-container {
@@ -181,7 +178,6 @@
         font-size: 20px; /* Decrease font size for smartphones */
     }
 }
-
     </style>
 </head>
 
@@ -212,10 +208,12 @@
                 <span style="background-color: red;"></span>User in Need
             </div>
 
-
-
         </div>
-
+        <div id="route-info">
+    <div id="total-distance">Total Distance: </div>
+    <div id="travel-time">Travel Time: </div>
+    <div id="directions">Directions: </div>
+</div>
         <!-- Map attribution -->
         <div class="map-attribution">
             Map data &copy; 2024 HERE
@@ -326,7 +324,7 @@
             // Call function to get user's geolocation
             getUserGeolocation();
 
-            // Add markers for fire hydrants
+ 
             // Add markers for fire hydrants
             var hydrantLocations = [{
                     name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
@@ -658,4 +656,4 @@
     </script>
 </body>
 
-</html>
+    </html>
