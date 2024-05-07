@@ -13,7 +13,7 @@ class LocationController extends BaseController
 
     public function map()
     {
-        return view('EMERGENCYCALL/LocationView');
+        return view('EMERGENCYCALL/Rescuemap');
     }
 
     public function updateLocation()
