@@ -104,7 +104,7 @@
 
     <body onload="getLocation();">
         <!-- First Navigation Bar -->
-        <nav class="navbar navbar-expand-lg navbar-dark default-color" style="background-color: red;">
+        <nav class="navbar navbar-expand-lg navbar-dark default-color" style="background-image: linear-gradient(to bottom right, black, red);">
         <img src="<?= base_url(); ?>images/logo.png" alt="Logo" class="logo" style="width: 90px; height: 90px; margin-right: 10px;">
             <p class="bureau-of-fire-protection">Bureau of Fire Protection</p>
 

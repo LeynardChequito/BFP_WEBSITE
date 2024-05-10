@@ -8,6 +8,7 @@
     ];
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,7 +20,7 @@
 
     <style>
         body {
-            background-color: #f8f9fa;
+            background-image: linear-gradient(to bottom right, black, red);
             color: #343a40;
         }
 
@@ -33,6 +34,7 @@
             margin-bottom: 20px;
             margin-right: auto;
             margin-left: auto;
+            margin-top: 20px;
         }
 
         .carousel-inner {
@@ -51,10 +53,38 @@
         .btn-news {
             margin-top: 20px;
             text-align: center;
+            position: relative;
+            margin-bottom: 10px; /* Adjust margin as needed */
+            display: grid;
+            grid-template-columns: auto auto auto auto;
+            font-size: 12px;
+            justify-content: space-evenly;
+            gap: 10px; 
         }
 
         .buttons-container {
-            margin-top: 10px;
+            position: relative;
+            margin-top: 10px; /* Adjust margin as needed */
+            margin-bottom: 10px; /* Adjust margin as needed */
+            display: grid;
+            grid-template-columns: auto auto auto auto;
+            font-size: 12px;
+            height: 100px;
+            justify-content: space-evenly;
+            gap: 10px; 
+        }
+        footer {
+            margin-bottom: 0;
+        }
+        .navigation-container {
+            position: relative;
+            margin-top: 10px; /* Adjust margin as needed */
+            margin-bottom: 10px; /* Adjust margin as needed */
+            display: grid;
+            grid-template-columns: auto auto auto auto;
+            font-size: 12px;
+            height: 100px;
+            justify-content: space-evenly;
         }
     </style>
 </head>
@@ -79,32 +109,32 @@
             </div>
         </div>
 
-        <div class="row justify-content-center buttons-container">
-            <!--------------------------------------- NEWS PRESS RELEASE ----------------------------------------------->
-            <div class="col-md-1">
-                <a href="<?= site_url('news') ?>" class="btn btn-danger btn-news">News</a>
-            </div>
+        <div class="navigation-container">
+            <div class="row justify-content-center buttons-container">
+                <!--------------------------------------- NEWS PRESS RELEASE ----------------------------------------------->
+                <div class="col-md-1 offset-md-1">
+                    <a href="<?= site_url('news') ?>" class="btn btn-danger btn-news">News</a>
+                </div>
 
-        
+                <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
+                <div class="col-md-1 offset-md-1">
+                    <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Announcements</a>
+                </div>
 
-            <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-            <div class="col-md-1 offset-md-1">
-                <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Announcements</a>
-            </div>
+                <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
+                <div class="col-md-1 offset-md-1">
+                    <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Safety Tips</a>
+                </div>
 
-            <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-            <div class="col-md-1 offset-md-1">
-                <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Safety Tips</a>
-            </div>
+                <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
+                <div class="col-md-1 offset-md-1">
+                    <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Holidays</a>
+                </div>
 
-            <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-            <div class="col-md-1 offset-md-1">
-                <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Holidays</a>
-            </div>
-
-            <!---------------------------------------  LINK TO OTHER AGENCIES ----------------------------------------------->
-            <div class="col-md-1 offset-md-1">
-                <a href="<?= site_url('news') ?>" class="btn btn-danger">Link To Other Agencies</a>
+                <!---------------------------------------  LINK TO OTHER AGENCIES ----------------------------------------------->
+                <div class="col-md-1 offset-md-1">
+                    <a href="<?= site_url('news') ?>" class="btn btn-danger btn-news">Link To Other Agencies</a>
+                </div>
             </div>
         </div>
     </div>
