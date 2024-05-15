@@ -249,7 +249,7 @@
         // Function to update time every second
         function updateTime() {
             document.getElementById("current-time").textContent = getCurrentTime();
-            setTimeout(updateTime, 1000); // Update time every second
+            setTimeout(updateTime, 1000);
         }
 
         // Initialize Firebase and update time

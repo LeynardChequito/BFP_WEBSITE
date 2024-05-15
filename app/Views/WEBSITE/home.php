@@ -20,7 +20,7 @@
 
     <style>
         body {
-            background-image: linear-gradient(to bottom right, black, red);
+            background-image: linear-gradient(0deg, black, #480000, #f0f0f0);
             color: #343a40;
         }
 
@@ -117,7 +117,7 @@
                 </div>
 
                 <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-                <div class="col-md-1 offset-md-1">
+                <div class="col-md-2 offset-md-1">
                     <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Announcements</a>
                 </div>
 

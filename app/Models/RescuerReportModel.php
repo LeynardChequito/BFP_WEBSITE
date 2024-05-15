@@ -4,10 +4,10 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class EmergencyCallModel extends Model
+class RescuerReportModel extends Model
 {
-    protected $table            = 'emergency_call';
-    protected $primaryKey       = 'emergency_id';
+    protected $table            = 'rescuerincident_report';
+    protected $primaryKey       = 'rescuerreport_id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
@@ -20,8 +20,6 @@ class EmergencyCallModel extends Model
         'additional_info', 
         'photo_upload',
         'user_id',
-        'latitude',
-        'longitude'
     ];
 
     // Dates

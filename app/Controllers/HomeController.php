@@ -16,7 +16,10 @@ class HomeController extends BaseController
     {
         return view('WEBSITE/home');
     }
-
+    public function site()
+    {
+        return view('WEBSITE/site');
+    }
     public function contactUs()
     {
         return view('COMPONENTS/contactus');

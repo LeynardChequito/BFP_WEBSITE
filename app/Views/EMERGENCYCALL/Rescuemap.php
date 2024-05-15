@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -21,10 +21,15 @@
     <!-- Load Esri Leaflet Routing from CDN -->
     <script src="https://unpkg.com/esri-leaflet-routing@3.1.1/dist/esri-leaflet-routing.js"></script>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
+            font-family: 'Arial', sans-serif;
+            /* Use a font similar to Waze.com */
+            background-image: linear-gradient(to bottom right, black, red);
         }
 
         #map {
@@ -36,6 +41,10 @@
             font-family: Arial, Helvetica, sans-serif;
             font-size: 20px;
             color: #323232;
+            width: 100%;
+            height: 100%;
+            height: calc(100% - 50px);
+            /* Adjust height for direction panel */
         }
 
         #directions {
@@ -46,17 +55,60 @@
             right: 20px;
             top: 20px;
             overflow-y: auto;
-            /* Show a scrollbar if needed */
+            background: white;
+            font-family: Arial, Helvetica, Verdana;
+            line-height: 2.25;
+            font-size: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            #directions {
+                width: 90%;
+                /* Adjust width for smaller screens */
+                max-height: 40%;
+                top: unset;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        .popup-content {
+            background-color: #fff;
+            /* White background */
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Arial', sans-serif;
+            /* Use a font similar to Waze.com */
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Light shadow */
+        }
+
+        #directions {
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+            max-height: 50%;
+            bottom: 0;
             background: white;
             font-family: Arial, Helvetica, Verdana;
             line-height: 1.5;
-            font-size: 20px;
+            font-size: 16px;
             padding: 10px;
+            overflow-y: auto;
+            display: none;
+            /* Initially hidden */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
 
         .map-card {
             width: 90%;
-            /* Adjust width as needed */
             margin: 20px auto;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -71,15 +123,16 @@
             font-size: 24px;
             font-weight: bold;
             color: #007bff;
+            /* Waze.com header color */
             padding: 20px 0;
             background-color: #f8f9fa;
+            /* Waze.com header background color */
             margin: 0;
         }
 
         #map-container {
             width: 100%;
-            height: 800px;
-            /* Adjust height as needed for smaller screens */
+            height: 50vh;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -91,17 +144,22 @@
             top: 20px;
             left: 20px;
             background-color: #007bff;
+            /* Waze.com button color */
             color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            font-family: 'Arial', sans-serif;
+            /* Use a font similar to Waze.com */
         }
 
         .btn-back:hover {
             background-color: #0056b3;
+            /* Darker shade for hover effect */
         }
+
         .bfp-header {
             text-align: center;
             font-size: 24px;
@@ -111,46 +169,121 @@
             background-color: #f8f9fa;
             margin: 0;
         }
+
+
+        .show-steps {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Arial', sans-serif;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            #directions {
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            #directions {
+                font-size: 35px;
+                width: 30%;
+                max-height: 40%;
+            }
+
+            #map-container {
+                width: 100%;
+                height: 65vh;
+            }
+
+            #map {
+                width: 100%;
+                height: 80%;
+            }
+
+            .hydrant-suggestion {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hydrant-suggestion h4 {
+            margin: 0;
+            color: #333;
+        }
+
+        .hydrant-suggestion p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .navigate-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Arial', sans-serif;
+            margin-top: 10px;
+        }
+
+        .navigate-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 
 </head>
 
 <body>
-    <button onclick="history.go(-1);" class="btn-back">Back</button>
-    <div class="bfp-header">
-        Bureau of Fire Protection (BFP)
-        <div id="philippineTime" class="philippine-time"></div>
-    </div>
+
+
     <div class="map-card">
-        <!-- Map container -->
+    <div class="bfp-header">
+            <button onclick="history.go(-1);" class="btn-back">Back</button>
+            <div id="philippineTime" class="philippine-time"></div>
+        </div>
+        
         <div id="map-container">
             <div id="map"></div>
         </div>
+        <div class="bfp-header">
+            <div id="hydrant-suggestions" class="hydrant-suggestions"></div>
+            <div id="directions"> Click on the map to create a start and end for the route.</div>
+        </div>
     </div>
+
     <script>
- function getCurrentTimeInPhilippines() {
-                const currentTime = new Date();
-                const utcOffset = 0; // GMT+8:00 for Philippines
-                const philippinesTime = new Date(currentTime.getTime() + (utcOffset * 3600000)); // Adding offset in milliseconds
+    
+        function getCurrentTimeInPhilippines() {
+            const currentTime = new Date();
+            const utcOffset = 0; // GMT+8:00 for Philippines
+            const philippinesTime = new Date(currentTime.getTime() + (utcOffset * 3600000)); // Adding offset in milliseconds
 
-                // Format date components
-                const day = philippinesTime.getDate();
-                const month = philippinesTime.toLocaleString('default', {
-                    month: 'long'
-                });
-                const year = philippinesTime.getFullYear();
-                const time = philippinesTime.toLocaleTimeString();
+            // Format date components
+            const day = philippinesTime.getDate();
+            const month = philippinesTime.toLocaleString('default', {
+                month: 'long'
+            });
+            const year = philippinesTime.getFullYear();
+            const time = philippinesTime.toLocaleTimeString();
 
-                return `${month} ${day}, ${year} ${time}`;
-            }
+            return `${month} ${day}, ${year} ${time}`;
+        }
 
-            // Function to update time display every second
-            function updateTime() {
-                document.getElementById("philippineTime").textContent = "Philippine Standard Time: " + getCurrentTimeInPhilippines();
-                setTimeout(updateTime, 1000); // Update time every second
-            }
-            updateTime();
-        
+        // Function to update time display every second
+        function updateTime() {
+            document.getElementById("philippineTime").textContent = "Philippine Standard Time: " + getCurrentTimeInPhilippines();
+            setTimeout(updateTime, 1000); // Update time every second
+        }
+        updateTime();
+
 
         const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs";
 
@@ -160,12 +293,11 @@
             zoom: 14
         })
 
-        map.setView([13.3839, 121.1860], 14); // Default location
+        map.setView([13.3839, 121.1860], 14); // Calapan City location
 
         L.esri.Vector.vectorBasemapLayer(basemapEnum, {
             apiKey: apiKey
         }).addTo(map);
-
         const directions = document.createElement("div");
         directions.id = "directions";
         directions.innerHTML = "Click on the map to create a start and end for the route.";
@@ -173,209 +305,96 @@
 
         const startLayerGroup = L.layerGroup().addTo(map);
         const endLayerGroup = L.layerGroup().addTo(map);
-
         const routeLines = L.layerGroup().addTo(map);
 
-        // Define fire hydrant data
+        // Define fire hydrant
         const fireHydrants = [{
                 name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
-                lat: 13.355547541837,
-                lng: 121.170303614926,
+                lat: 13.370076,
+                lng: 121.167853,
                 color: "lightgreen"
             },
             {
                 name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Near LGC)",
-                lat: 13.399026784522,
-                lng: 121.174347236556,
+                lat: 13.400788,
+                lng: 121.171269,
                 color: "lightgreen"
             },
             {
                 name: "Ubas St., Barangay Lalud, Calapan City, Oriental Mindoro (near Barangay Hall)",
-                lat: 13.398536024051,
-                lng: 121.175305189208,
+                lat: 13.399337,
+                lng: 121.173764,
                 color: "lightgreen"
             },
             {
                 name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( near elementary school)",
-                lat: 13.406225165762,
-                lng: 121.176445091041,
-                color: "lightgreen"
-            },
-            {
-                name: "JP Rizal St., Barangay Camilmil, Calapan City, Oriental Mindoro",
-                lat: 13.407441929551,
-                lng: 121.777849362988,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( in front of Oriental Mindoro National Highschool)",
-                lat: 13.408893063481,
-                lng: 121.178695787075,
-                color: "lightgreen"
-            },
-            {
-                name: "Roxas drive, Cor. Gumamela St. Barangay Lumangbayan, Calapan City, Oriental Mindoro",
-                lat: 13.401820739889,
-                lng: 121.182757083021,
-                color: "lightgreen"
-            },
-            {
-                name: "Guiho St. Barangay, Sto. Nino, Calapan City, oriental Mindoro",
-                lat: 13.404072878721,
-                lng: 121.184182160977,
-                color: "lightgreen"
-            },
-            {
-                name: "Corner Bonifacio St, Barangay Ilaya, Calapan City, Oriental Mindoro",
-                lat: 13.412771258480,
-                lng: 121.183841835900,
-                color: "lightgreen"
-            },
-            {
-                name: "Mabini St. Barangay Ilaya, Calapan City, Oriental Mindoro",
-                lat: 13.411691645848,
-                lng: 121.183589742959,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay Ibaba East, Calapan City, Oriental Mindoro ( near old city hall/city plaza )",
-                lat: 13.419379075623,
-                lng: 121.179612690830,
-                color: "lightgreen"
-            },
-            {
-                name: "Malvar St., Barangay Ibaba East, Calapan City, Oriental Mindoro",
-                lat: 13.414783206943,
-                lng: 121.176872350370,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay Ibaba West, Calapan City, Oriental Mindoro",
-                lat: 13.414783206943,
-                lng: 121.176872350370,
-                color: "lightgreen"
-            },
-            {
-                name: "Roxas Drice Corner Marasigan St., Barangay Libis, Calapan City, oriental Mindoro",
-                lat: 13.415158152476,
-                lng: 121.184801921272,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay Calero, Calapan City, Oriental Mindoro ( near atty. Manzo office)",
-                lat: 13.415597264627,
-                lng: 121.181560275534,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay San Rafael, Calapan City, Oriental Mindoro ( near children hospital)",
-                lat: 13.418591183674,
-                lng: 121.186988682784,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay San Antonio, Calapan City, Oriental Mindoro (calapan pier)",
-                lat: 13.429675064813,
-                lng: 121.195830847473,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay Tibag, Calapan City, Oriental Mindoro",
-                lat: 13.412136593584,
-                lng: 121.175821489887,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay Sta. Maria Village (Blk. 4), Calapan City, Oriental Mindoro",
-                lat: 13.408596881704,
-                lng: 121.175793602378,
-                color: "lightgreen"
-            },
-            {
-                name: "Infantado St., Barangay Sta. Vicente South, Calapan City, Oriental Mindoro ( near bagong pook)",
-                lat: 13.408596881704,
-                lng: 121.175793602378,
-                color: "lightgreen"
-            },
-            {
-                name: "J.Luna St. Cornern Aurora, Barangay San VicenteNorth, Calapan City, Oriental Mindoro",
-                lat: 13.410813537771,
-                lng: 121.179406846349,
-                color: "lightgreen"
-            },
-            {
-                name: "Ramirez St., Barangay San Vicente Central, Calapan City, Oriental Mindoro",
-                lat: 13.411144781257,
-                lng: 121.178600148414,
-                color: "lightgreen"
-            },
-            {
-                name: "J.P Rizal St., Barangay San Vicente Central, Calapan City, Oriental Mindoro ( front Palawan Express)",
-                lat: 13.413255329056,
-                lng: 121.177596791058,
-                color: "lightgreen"
-            },
-            {
-                name: "Aboboto St. Barangay San Vicente East, Calapan City, Oriental Mindoro",
-                lat: 13.410649523119,
-                lng: 121.179892455593,
-                color: "lightgreen"
-            },
-            {
-                name: "Del Pilar St., Barangay San Vicente East, Calapan City, Oriental Mindoro",
-                lat: 13.411227364177,
-                lng: 121.180309201690,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay Lalud, Calapan City, Oriental Mindoro (near phoenix gasoline station)",
-                lat: 13.402465071142,
-                lng: 121.172008932260,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay San Vicente North, Calapan City, Oriental Mindoro (new public market 1)",
-                lat: 13.413478281857,
-                lng: 121.178518318201,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay San Vicente North, Calapan City, Oriental Mindoro (new public market 2)",
-                lat: 13.413478281857,
-                lng: 121.178518318201,
-                color: "lightgreen"
-            },
-            {
-                name: "Brgy. Guinobatan (Infront of New City Hall)",
-                lat: 13.3787930,
-                lng: 121.1825635,
+                lat: 13.404487,
+                lng: 121.178001,
                 color: "lightgreen"
             }
         ];
 
         // Define fire hydrant icon
         const hydrantIcon = L.icon({
-            iconUrl: 'https://img.icons8.com/cotton/64/000000/fire-hydrant--v1.png', // Corrected path to the custom icon
+            iconUrl: 'https://img.icons8.com/cotton/64/000000/fire-hydrant--v1.png',
             iconSize: [60, 60],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
             shadowSize: [41, 41]
         });
 
-        // Add fire hydrant markers to the map
+
         fireHydrants.forEach(hydrant => {
             const marker = L.marker([hydrant.lat, hydrant.lng], {
                 icon: hydrantIcon
             }).addTo(map);
 
             marker.bindPopup(`
-    <div>
-      <p><strong>${hydrant.name}</strong></p>
-      <button onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Navigate</button>
-    </div>
-  `);
+            <div>
+                <p><strong>${hydrant.name}</strong></p>
+                <button onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
+                <button onclick="cancelRoute()">Cancel Route</button>
+            </div>
+            `);
         });
 
+        function cancelRoute() 
+            {
+                startCoords = null;
+                endCoords = null;
+                routeLines.clearLayers();
+                toggleDirections();
+                document.getElementById("directions").innerHTML = "Route canceled. Click on the map to create a new route.";
+            }
+
+        // Function to show rescuer's geolocation
+        function showRescuerLocation(position) {
+            const rescuerLatitude = position.coords.latitude;
+            const rescuerLongitude = position.coords.longitude;
+
+            map.setView([rescuerLatitude, rescuerLongitude], 16); // Set map view to rescuer's location
+
+            const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude]).addTo(map);
+            rescuerMarker.bindPopup("'You are here.' -Rescuer").openPopup();
+
+            // Set rescuer's geolocation as starting point
+            startCoords = [rescuerLongitude, rescuerLatitude];
+        }
+
+        // Call function to get rescuer's geolocation
+        getRescuerLocation();
+
+        function toggleDirections() {
+            const directionsDiv = document.getElementById("directions");
+            const showStepsBtn = document.getElementById("show-steps");
+            if (directionsDiv.style.display === "none") {
+                directionsDiv.style.display = "block";
+                showStepsBtn.textContent = "Hide Steps";
+            } else {
+                directionsDiv.style.display = "none";
+                showStepsBtn.textContent = "Show Steps";
+            }
+        }
 
         function navigateToHydrant(lat, lng) {
             endCoords = [lng, lat];
@@ -387,66 +406,62 @@
         let endCoords = null;
 
         function updateRoute() {
-            if (!startCoords || !endCoords) {
-                alert("Please select both start and end points.");
-                return;
-            }
+    if (!startCoords || !endCoords) {
+        alert("Please reload the page.");
+        return;
+    }
 
-            // Create the arcgis-rest-js authentication object to use later.
-            const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
+    // Create the arcgis-rest-js authentication object to use later.
+    const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
 
-            // make the API request
-            arcgisRest
-                .solveRoute({
-                    stops: [startCoords, endCoords],
-                    endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
-                    authentication
-                })
+    // Make the API request
+    arcgisRest.solveRoute({
+        stops: [startCoords, endCoords],
+        endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
+        authentication
+    }).then((response) => {
+        routeLines.clearLayers();
+        L.geoJSON(response.routes.geoJson).addTo(routeLines);
+        const directionsHTML = response.directions[0].features.map((f) => f.attributes.text).join("<br/>");
+        document.getElementById("directions").innerHTML = directionsHTML;
+        startCoords = null;
+        endCoords = null;
+    }).catch((error) => {
+        console.error(error);
+        alert("There was a problem using the route service. See the console for details.");
+    });
+}
 
-                .then((response) => {
+// Function to show rescuer's geolocation
+function showRescuerLocation(position) {
+    const rescuerLatitude = position.coords.latitude;
+    const rescuerLongitude = position.coords.longitude;
 
-                    routeLines.clearLayers();
-                    L.geoJSON(response.routes.geoJson).addTo(routeLines);
+    map.setView([rescuerLatitude, rescuerLongitude], 16); // Set map view to rescuer's location
 
-                    const directionsHTML = response.directions[0].features.map((f) => f.attributes.text).join("<br/>");
-                    directions.innerHTML = directionsHTML;
-                    startCoords = null;
-                    endCoords = null;
+    const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude]).addTo(map);
+    rescuerMarker.bindPopup("'You are here.' -Rescuer").openPopup();
 
-                })
+    // Set rescuer's geolocation as starting point
+    startCoords = [rescuerLongitude, rescuerLatitude];
 
-                .catch((error) => {
-                    console.error(error);
-                    alert("There was a problem using the route service. See the console for details.");
-                });
+    // Suggest nearest fire hydrants
+    suggestNearestHydrants({ lat: rescuerLatitude, lng: rescuerLongitude });
+}
 
-        }
+// Call function to get rescuer's geolocation
+getRescuerLocation();
 
-        // Function to get user's geolocation
-        function getUserLocation() {
+
+        // Function to get rescuer's geolocation
+        function getRescuerLocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showUserLocation);
+                navigator.geolocation.getCurrentPosition(showRescuerLocation);
             } else {
                 console.log("Geolocation is not supported by this browser.");
             }
         }
 
-        // Function to show user's geolocation
-        function showUserLocation(position) {
-            const userLatitude = position.coords.latitude;
-            const userLongitude = position.coords.longitude;
-
-            map.setView([userLatitude, userLongitude], 14); // Set map view to user's location
-
-            const userMarker = L.marker([userLatitude, userLongitude]).addTo(map);
-            userMarker.bindPopup("'You are here.' -Rescuer").openPopup();
-
-            // Set user's geolocation as starting point
-            startCoords = [userLongitude, userLatitude];
-        }
-
-        // Call function to get user's geolocation
-        getUserLocation();
 
         map.on("click", (e) => {
             const coordinates = [e.latlng.lng, e.latlng.lat];
@@ -461,8 +476,9 @@
                 startCoords = coordinates;
 
                 currentStep = "end";
+                document.getElementById("directions").innerHTML = "Your Location";
 
-                // Directly calculate the route when the user clicks on the map
+                // Directly calculate the route when the rescuer clicks on the map
                 if (startCoords && endCoords) {
                     updateRoute();
                 }
@@ -473,14 +489,75 @@
                 endCoords = coordinates;
 
                 currentStep = "start";
-
-                // Directly calculate the route when the user clicks on the map
+                document.getElementById("directions").innerHTML = "Your Location";
+                // Directly calculate the route when the rescuer clicks on the map
                 if (startCoords && endCoords) {
                     updateRoute();
                 }
             }
 
         });
+        
+        function suggestNearestHydrants(location) {
+            const nearestHydrants = fireHydrants.filter(hydrant => {
+                const distance = getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng);
+                return distance <= 2000; // 2000 meters (2 kilometers)
+            });
+
+            // Display suggestions
+            const suggestionsContainer = document.getElementById("hydrant-suggestions");
+            suggestionsContainer.innerHTML = ""; // Clear previous suggestions
+
+            nearestHydrants.forEach(hydrant => {
+                const suggestionDiv = document.createElement("div");
+                suggestionDiv.classList.add("hydrant-suggestion");
+
+                suggestionDiv.innerHTML = `
+                    <h4>${hydrant.name}</h4>
+                    <p>Distance: ${getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng).toFixed(2)} meters</p>
+                    //EstimatedTime
+                    <button class="navigate-btn" onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
+                    <button class="show-steps" onclick="toggleDirections()">Show Steps</button>
+                `;
+
+                suggestionsContainer.appendChild(suggestionDiv);
+            });
+        }
+
+        // Function to calculate distance between two points (in meters)
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Earth's radius in meters
+            const φ1 = toRadians(lat1);
+            const φ2 = toRadians(lat2);
+            const Δφ = toRadians(lat2 - lat1);
+            const Δλ = toRadians(lon2 - lon1);
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            const distance = R * c;
+            return distance;
+        }
+
+        // Function to convert degrees to radians
+        function toRadians(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        // Call function to get rescuer's geolocation
+        getRescuerLocation();
+
+        // Map event listener to suggest nearest hydrants when clicking on the map
+        map.on("click", (e) => {
+            const location = {
+                lat: e.latlng.lat,
+                lng: e.latlng.lng
+            };
+            suggestNearestHydrants(location);
+        });
+
     </script>
 </body>
 

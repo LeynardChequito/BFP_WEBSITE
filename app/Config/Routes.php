@@ -26,7 +26,7 @@ $routes->get('logout', 'HomeController::logout');
 $routes->get('achievements', 'HomeController::achievements');
 $routes->get('contacts', 'HomeController::contacts');
 $routes->get('activities', 'HomeController::activities');
-// $routes->get('/site', 'HomeController::home');
+$routes->get('/site', 'HomeController::site');
 
 //ALBUM
 $routes->get('album', 'HomeController::album');
@@ -52,7 +52,13 @@ $routes->get('admin-logout', 'ANavigationController::adminLogout');
 $routes->get('admin-dashboard', 'ANavigationController::adminHome');
 
 $routes->get('admin-notif', 'AHomeController::adminNotif');
+
+
+
 // ---------------------OTHER FUNCTIONS------------------------------------
+
+
+
 // NEWS
 $routes->get('news', 'NewsController::news');
 $routes->get('news/(:segment)', 'NewsController::show/$1');
@@ -74,19 +80,18 @@ $routes->get('delete/(:segment)', 'CarouselController::delete/$1');
 $routes->get('graph', 'GraphController::graph');
 
 
-// SOS
-$routes->get('security', 'SecurityController::sos');
-$routes->post('security/capture-fire-incident', 'SecurityController::captureFireIncident');
-$routes->post('security/send-to-admin-dashboard', 'SecurityController::sendToAdminDashboard');
-
-
 $routes->get('user-location', 'LocationController::showUserLocation');
 $routes->post('location/update', 'LocationController::updateLocation');
 $routes->get('rescuemap', 'LocationController::map');
 
 
-//EMERGENCY CALL
-$routes->get('emergency-call', 'EmergencyCallController::emergencycall');
-$routes->post('emergency-call/submit', 'EmergencyCallController::submitEmergencyCall');
-$routes->get('emergency', 'EmergencyCallController::emergency');
-$routes->get('sitecall', 'EmergencyCallController::sitecall');
+//RESCUER REPORT
+$routes->get('emergency-call', 'RescuerReportController::emergencycall');
+$routes->post('emergency-call/submit', 'RescuerReportController::submitEmergencyCall');
+$routes->get('emergency', 'RescuerReportController::emergency');
+$routes->get('sitecall', 'RescuerReportController::sitecall');
+
+//COMMUNITY REPORT
+$routes->get('submitcall', 'CommunityReportController::submitcall');
+$routes->post('communityreport/submit', 'CommunityReportController::submitCommunityReport');
+$routes->post('getEmergencyCallCoordinates', 'CommunityReportController::getEmergencyCallCoordinates');

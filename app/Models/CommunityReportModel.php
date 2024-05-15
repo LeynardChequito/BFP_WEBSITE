@@ -4,15 +4,15 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class LocationsModel extends Model
+class CommunityReportModel extends Model
 {
-    protected $table            = 'locations';
-    protected $primaryKey       = 'location_id';
+    protected $table            = 'community_report';
+    protected $primaryKey       = 'communityreport_id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['user_id', 'latitude', 'longitude'];
+    protected $allowedFields    = ['latitude', 'longitude', 'fullName', 'user_id'];
 
     // Dates
     protected $useTimestamps = false;

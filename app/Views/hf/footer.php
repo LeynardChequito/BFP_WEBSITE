@@ -25,6 +25,9 @@
         .footer-content p {
             margin: 0;
         }
+        .footer-content span{
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
@@ -44,7 +47,7 @@
           ORIENTAL MINDORO, MIMAROPA</p>
       </div>
       <div class="footer-content">
-          <span><strong>BFP CALAPAN CITY OFFICIAL WEBSITE &copy; 2024</strong></span>
+          <span><strong>BFP CALAPAN CITY  </br> OFFICIAL WEBSITE &copy; 2024</strong></span>
       </div>
   </footer>
 </nav>

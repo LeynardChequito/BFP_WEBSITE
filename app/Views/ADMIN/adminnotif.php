@@ -40,12 +40,12 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- <div class="container">
         <h1>Notification Receiver</h1>
 
         <div id="notificationContainer" class="message"></div>
         <div>Device Token: <span id="deviceToken"></span></div>
-    </div>
+    </div> -->
 
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -75,6 +75,10 @@ fcm.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5
 
     fcm.onMessage((data) => {
     console.log('onMessage: ', data)
+
+    fcm.onBackgroundMessage((data) => {
+    console.log('onBackgroundMessage: ', data)
+
 
  Notification.requestPermission((status) => {
             console.log('requestPermission:', status);

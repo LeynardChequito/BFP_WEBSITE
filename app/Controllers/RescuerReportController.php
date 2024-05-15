@@ -3,18 +3,18 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\EmergencyCallModel;
+use App\Models\RescuerReportModel;
 use App\Models\AccountModel;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 
-class EmergencyCallController extends BaseController
+class RescuerReportController extends BaseController
 {
     private $emergencyCall;
 
     public function __construct()
     {
-        $this->emergencyCall = new EmergencyCallModel();
+        $this->emergencyCall = new RescuerReportModel();
     }
 
     public function submitEmergencyCall()
