@@ -23,6 +23,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
@@ -51,6 +52,10 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.4);
         }
+        .modal-footer {
+            border-top: none;
+            justify-content: center;
+        }
 
         .modal-content {
             background-color: #fefefe;
@@ -60,8 +65,15 @@
             width: 80%;
             max-width: 600px;
             border-radius: 10px;
+        
         }
 
+        .modal-header {
+            border-bottom: none;
+        }
+        .modal-header .close {
+            margin: -1rem -1rem -1rem auto;
+        }
         .close {
             color: #aaa;
             float: right;
@@ -117,25 +129,43 @@
             background-color: #f5f5f5;
             padding: 8px;
         }
+        .navbar-dark .navbar-nav .nav-link {
+            font-size: 16px;
+        }
+        .navbar-brand img {
+            width: 90px;
+            height: 90px;
+        }
 
-        /* Map container */
+        .navbar-brand p {
+            font-family: "Bebas Neue", sans-serif;
+            font-size: 24px;
+            margin: 0;
+        }
+
         #map {
             height: 400px;
+        }
+        button[type="submit"] {
+            width: 100%;
+        }
+        .form-control[readonly] {
+            background-color: #e9ecef;
+            opacity: 1;
         }
     </style>
 </head>
 
 <body onload="getLocation();">
     <!-- First Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark default-color" style="background-image: linear-gradient(150deg, black, red);">
-        <img src="<?= base_url(); ?>images/logo.png" alt="Logo" class="logo img-fluid" style="width: 90px; height: 90px; margin-right: 10px;">
-        <p class="bureau-of-fire-protection">Bureau of Fire Protection</p>
-
-
-        <!-- Use Bootstrap grid system for alignment -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-image: linear-gradient(150deg, black, red);">
+        <a class="navbar-brand" href="#">
+            <img src="<?= base_url(); ?>images/logo.png" alt="Logo">
+            <p class="d-inline-block text-white ml-2">Bureau of Fire Protection</p>
+        </a>
         <div class="ml-auto row align-items-center">
             <div class="col-auto">
-                <button id="btncall" class="btn btn-success my-2 my-sm-0" onclick="openModal()">Emergency Call </button>
+                <button id="btncall" class="btn btn-success my-2 my-sm-0" onclick="openModal()">Emergency Call</button>
             </div>
             <div class="col-auto text-white">
                 <span class="font-weight-bold">Ph Standard Time:</span>
@@ -147,7 +177,7 @@
 
 
     <!-- Second Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -171,21 +201,36 @@
 
     <!-- Modal -->
     <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h4 class="text-center">Emergency Call Form</h4>
-            <form action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
-                <label for="fullName">Your Name: </label>
-                <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
-                <label for="latitude">Latitude: </label>
-                <input type="text" id="latitude" name="latitude"  class="form-control readonly" readonly>
-                <label for="longitude">Longitude: </label>
-                <input type="text" id="longitude" name="longitude"  class="form-control readonly" readonly>
-                <button type="submit">Submit</button>
-            </form>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Emergency Call Form</h5>
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
+                        <div class="form-group">
+                            <label for="fullName">Your Name:</label>
+                            <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude">Latitude:</label>
+                            <input type="text" id="latitude" name="latitude" class="form-control readonly" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">Longitude:</label>
+                            <input type="text" id="longitude" name="longitude" class="form-control readonly" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="fileproof">Upload File Proof (Image/Video)</label>
+                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*;capture=camera,video/*;capture=camcorder" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-
     <script>
         const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs";
         // Initialize Leaflet map

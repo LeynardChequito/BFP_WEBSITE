@@ -12,7 +12,7 @@ class CommunityReportModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['latitude', 'longitude', 'fullName', 'user_id'];
+    protected $allowedFields    = ['latitude', 'longitude', 'fullName', 'user_id', 'fileproof'];
 
     // Dates
     protected $useTimestamps = false;

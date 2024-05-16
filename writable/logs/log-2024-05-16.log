@@ -1,0 +1,264 @@
+CRITICAL - 2024-05-16 03:56:11 --> ParseError: syntax error, unexpected token "public"
+in APPPATH\Controllers\CommunityReportController.php on line 81.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(288): CodeIgniter\Autoloader\Autoloader->includeFile('C:\\laragon\\www\\BFP_WEBSITE\\app\\Controllers\\CommunityReportController.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(266): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\CommunityReportController')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\CommunityReportController')
+ 4 SYSTEMPATH\CodeIgniter.php(899): class_exists('\\App\\Controllers\\CommunityReportController', true)
+ 5 SYSTEMPATH\CodeIgniter.php(489): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:00:12 --> ParseError: syntax error, unexpected token "public"
+in APPPATH\Controllers\CommunityReportController.php on line 81.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(288): CodeIgniter\Autoloader\Autoloader->includeFile('C:\\laragon\\www\\BFP_WEBSITE\\app\\Controllers\\CommunityReportController.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(266): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\CommunityReportController')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\CommunityReportController')
+ 4 SYSTEMPATH\CodeIgniter.php(899): class_exists('\\App\\Controllers\\CommunityReportController', true)
+ 5 SYSTEMPATH\CodeIgniter.php(489): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:03:18 --> ParseError: syntax error, unexpected token "public"
+in APPPATH\Controllers\CommunityReportController.php on line 81.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(288): CodeIgniter\Autoloader\Autoloader->includeFile('C:\\laragon\\www\\BFP_WEBSITE\\app\\Controllers\\CommunityReportController.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(266): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\CommunityReportController')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\CommunityReportController')
+ 4 SYSTEMPATH\CodeIgniter.php(899): class_exists('\\App\\Controllers\\CommunityReportController', true)
+ 5 SYSTEMPATH\CodeIgniter.php(489): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:08 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:11 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:12 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:13 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:13 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:14 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:15 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:15 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:15 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:15 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:16 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:21 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:22 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:22 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:31 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:32 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:43 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:44 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:45 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:45 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:45 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:45 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:48 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:48 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:48 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+CRITICAL - 2024-05-16 04:12:49 --> CodeIgniter\Security\Exceptions\SecurityException: The action you requested is not allowed.
+in SYSTEMPATH\Security\Security.php on line 300.
+ 1 SYSTEMPATH\Security\Security.php(300): CodeIgniter\Security\Exceptions\SecurityException::forDisallowedAction()
+ 2 SYSTEMPATH\Filters\CSRF.php(56): CodeIgniter\Security\Security->verify(Object(CodeIgniter\HTTP\IncomingRequest))
+ 3 SYSTEMPATH\Filters\Filters.php(184): CodeIgniter\Filters\CSRF->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 4 SYSTEMPATH\CodeIgniter.php(474): CodeIgniter\Filters\Filters->run('dologin', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
