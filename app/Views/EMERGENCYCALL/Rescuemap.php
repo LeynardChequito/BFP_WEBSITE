@@ -254,7 +254,8 @@
             <div id="map"></div>
         </div>
         <div class="bfp-header">
-            <div id="hydrant-suggestions" class="hydrant-suggestions"></div>
+        <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
+            <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
             <div id="directions"> Click on the map to create a start and end for the route.</div>
         </div>
     </div>
@@ -290,7 +291,7 @@
         const basemapEnum = "arcgis/navigation";
 
         const map = L.map("map", {
-            zoom: 14
+            zoom: 18
         })
 
         map.setView([13.3839, 121.1860], 14); // Calapan City location
@@ -514,8 +515,8 @@ getRescuerLocation();
 
                 suggestionDiv.innerHTML = `
                     <h4>${hydrant.name}</h4>
-                    <p>Distance: ${getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng).toFixed(2)} meters</p>
-                    //EstimatedTime
+                    <p>Distance: ${getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng).toFixed(2)}meters</p>
+                    <p>Estimated Time: (Unavailable)</p>
                     <button class="navigate-btn" onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
                     <button class="show-steps" onclick="toggleDirections()">Show Steps</button>
                 `;
