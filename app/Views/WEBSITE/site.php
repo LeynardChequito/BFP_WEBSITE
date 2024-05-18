@@ -38,9 +38,11 @@
             margin-top: 0;
             margin-bottom: 0;
         }
+
         #map {
             height: 400px;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -52,6 +54,7 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.4);
         }
+
         .modal-footer {
             border-top: none;
             justify-content: center;
@@ -65,15 +68,17 @@
             width: 80%;
             max-width: 600px;
             border-radius: 10px;
-        
+
         }
 
         .modal-header {
             border-bottom: none;
         }
+
         .modal-header .close {
             margin: -1rem -1rem -1rem auto;
         }
+
         .close {
             color: #aaa;
             float: right;
@@ -129,9 +134,11 @@
             background-color: #f5f5f5;
             padding: 8px;
         }
+
         .navbar-dark .navbar-nav .nav-link {
             font-size: 16px;
         }
+
         .navbar-brand img {
             width: 90px;
             height: 90px;
@@ -146,9 +153,11 @@
         #map {
             height: 400px;
         }
+
         button[type="submit"] {
             width: 100%;
         }
+
         .form-control[readonly] {
             background-color: #e9ecef;
             opacity: 1;
@@ -232,87 +241,92 @@
         </div>
     </div>
     <script>
-        const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs";
-        // Initialize Leaflet map
-        var map = L.map('map').setView([13.3839, 121.1860], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listener when DOM is fully loaded
+        var emergencyForm = document.getElementById('emergencyForm');
+        if (emergencyForm) {
+            emergencyForm.addEventListener('submit', function(event) {
+                event.preventDefault();
 
-        // Function to handle form submission
-        document.getElementById('emergencyCallForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent default form submission
+                var formData = new FormData(this);
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
 
-            const userName = document.getElementById('userName').value;
-            const userCoords = [13.3839, 121.1860]; // Simulated user coordinates (replace with actual)
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            alert("Form submitted successfully!");
 
-            // Simulate server-side processing delay (1 second)
-            setTimeout(() => {
-                // Update main map with new emergency call marker
-                updateMainMapWithEmergencyCall(userName, userCoords);
-            }, 1000);
-        });
+                            window.parent.postMessage({
+                                action: 'updateMap',
+                                data: {
+                                    latitude: formData.get('latitude'),
+                                    longitude: formData.get('longitude'),
+                                    fullName: formData.get('fullName')
+                                }
+                            }, '*');
+                            closeModal();
+                        } else {
+                            alert("Form submission failed: " + response.message);
+                        }
+                    }
+                };
 
-        // Function to update main map with new emergency call marker
-        function updateMainMapWithEmergencyCall(userName, userCoords) {
-            // Add marker to main map with user's coordinates and name
-            const marker = L.marker(userCoords).addTo(map);
-            marker.bindPopup(`<strong>${userName}</strong><br>Coordinates: ${userCoords[0]}, ${userCoords[1]}`).openPopup();
+                xhr.send(formData);
+            });
+        } else {
+            console.error("Element with id 'emergencyForm' not found.");
         }
-    </script>
-    <script>
-       // Function to get the user's current location
-       function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition);
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
+    });
+
+    // Function to get the user's current location
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            alert("Geolocation is not supported by this browser.");
         }
+    }
 
-        // Function to display user's current position on the modal form
-        function showPosition(position) {
-            var lat = position.coords.latitude;
-            var lng = position.coords.longitude;
+    // Function to display user's current position on the modal form
+    function showPosition(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
 
-            // Update the input fields in the modal form with the user's coordinates
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
-        }
+        // Update the input fields in the modal form with the user's coordinates
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+    }
 
-        // Function to open the modal and get the user's location
-        function openModal() {
-            document.getElementById("myModal").style.display = "block";
-            getLocation(); // Get the user's current location
-        }
+    // Function to open the modal and get the user's location
+    function openModal() {
+        document.getElementById("myModal").style.display = "block";
+        getLocation(); // Get the user's current location
+    }
 
-        // Function to close the modal
-        function closeModal() {
-            document.getElementById("myModal").style.display = "none";
-        }
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+    }
 
-        // Function to submit the form
-        function submitForm() {
-            // You can add form submission logic here
-            alert("Form submitted successfully!"); // Example alert, replace with actual submission logic
-        }
+    // Function to update Philippine time
+    function updatePhilippineTime() {
+        const options = {
+            timeZone: 'Asia/Manila',
+            hour12: true,
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric'
+        };
+        const philippineTime = new Date().toLocaleString('en-US', options);
+        document.getElementById('philippineTime').innerText = philippineTime;
+    }
 
-        // Function to update Philippine time
-        function updatePhilippineTime() {
-            const options = {
-                timeZone: 'Asia/Manila',
-                hour12: true,
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric'
-            };
-            const philippineTime = new Date().toLocaleString('en-US', options);
-            document.getElementById('philippineTime').innerText = philippineTime;
-        }
-
-        // Update time initially and set interval to update every second
-        updatePhilippineTime();
-        setInterval(updatePhilippineTime, 1000);
-    </script>
-
+    // Update time initially and set interval to update every second
+    updatePhilippineTime();
+    setInterval(updatePhilippineTime, 1000);
+</script>
 
     <!-- Your other scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CommunityReportModel;
-use App\Models\AccountModel;
+use Config\Services;
 
 class CommunityReportController extends BaseController
 {
@@ -12,13 +12,14 @@ class CommunityReportController extends BaseController
 
     public function __construct()
     {
-        $this->session = \Config\Services::session();
+        $this->session = Services::session();
     }
 
     public function submitcall()
     {
         return view('WEBSITE/site');
     }
+
     public function submitCommunityReport()
     {
         helper(['form', 'url', 'session']);
@@ -53,28 +54,27 @@ class CommunityReportController extends BaseController
         if ($this->validate($rules, $messages)) {
             $CommunityReportModel = new CommunityReportModel();
 
-            // Handle file upload
-            
-                
-                $fileproof = $this->request->getFile('fileproof');
+            $fileproof = $this->request->getFile('fileproof');
+            if ($fileproof->isValid() && !$fileproof->hasMoved()) {
                 $fileproofname = $fileproof->getRandomName();
                 $fileproof->move(ROOTPATH . 'public/community_report', $fileproofname);
-            // Build data array
-            $data = [
-                'fullName' => $this->request->getVar('fullName'),
-                'latitude' => $this->request->getVar('latitude'),
-                'longitude' => $this->request->getVar('longitude'),
-                'fileproof' => $fileproofname,
-            ];
 
-            // Insert data into the database
-            $CommunityReportModel->insert($data);
+                $data = [
+                    'fullName' => $this->request->getVar('fullName'),
+                    'latitude' => $this->request->getVar('latitude'),
+                    'longitude' => $this->request->getVar('longitude'),
+                    'fileproof' => $fileproofname,
+                ];
 
-            // Set success message
-            $this->session->setFlashdata('success', 'Emergency Call successfully submitted!');
+                $CommunityReportModel->insert($data);
 
-            // Redirect to home page after successful submission
-            return redirect()->to('home');
+                $this->session->setFlashdata('success', 'Emergency Call successfully submitted!');
+
+                return redirect()->to('home');
+            } else {
+                $this->session->setFlashdata('failed', 'Failed to upload file proof.');
+                return redirect()->back()->withInput();
+            }
         } else {
             $data['validation'] = $this->validator;
             $this->session->setFlashdata('failed', 'Failed! Emergency Call unsent. Please Try Again.');
@@ -82,7 +82,6 @@ class CommunityReportController extends BaseController
         }
     }
 
-    // Add this method inside your CommunityReportController class
     public function getEmergencyCallCoordinates()
     {
         $communityReportModel = new CommunityReportModel();
@@ -97,11 +96,24 @@ class CommunityReportController extends BaseController
                     'longitude' => $call['longitude']
                 ];
             }
-            // Pass the coordinates to the view
             return view('EMERGENCYCALL/Rescuemap', ['emergencyCalls' => $coordinates]);
         } else {
-            // If no emergency calls found, pass an empty array to the view
             return view('EMERGENCYCALL/Rescuemap', ['emergencyCalls' => []]);
         }
+    }
+
+    public function getRecentReports()
+    {
+        $model = new CommunityReportModel();
+    
+    // Get the current date
+    $currentDate = date('Y-m-d');
+
+    // Adjust the query to get the reports for the current date only
+    $reports = $model->where('DATE(timestamp)', $currentDate)
+                     ->orderBy('timestamp', 'DESC')
+                     ->findAll();
+
+    return $this->response->setJSON($reports);
     }
 }

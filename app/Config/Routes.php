@@ -95,3 +95,4 @@ $routes->get('sitecall', 'RescuerReportController::sitecall');
 $routes->get('submitcall', 'CommunityReportController::submitcall');
 $routes->post('communityreport/submit', 'CommunityReportController::submitCommunityReport');
 $routes->post('getEmergencyCallCoordinates', 'CommunityReportController::getEmergencyCallCoordinates');
+$routes->get('reports-recent', 'CommunityReportController::getRecentReports');

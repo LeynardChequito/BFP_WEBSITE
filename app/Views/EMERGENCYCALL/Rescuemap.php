@@ -206,37 +206,37 @@
             }
 
             .hydrant-suggestion {
-            background-color: #fff;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+                background-color: #fff;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
 
-        .hydrant-suggestion h4 {
-            margin: 0;
-            color: #333;
-        }
+            .hydrant-suggestion h4 {
+                margin: 0;
+                color: #333;
+            }
 
-        .hydrant-suggestion p {
-            margin: 5px 0;
-            color: #666;
-        }
+            .hydrant-suggestion p {
+                margin: 5px 0;
+                color: #666;
+            }
 
-        .navigate-btn {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Arial', sans-serif;
-            margin-top: 10px;
-        }
+            .navigate-btn {
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-family: 'Arial', sans-serif;
+                margin-top: 10px;
+            }
 
-        .navigate-btn:hover {
-            background-color: #0056b3;
-        }
+            .navigate-btn:hover {
+                background-color: #0056b3;
+            }
     </style>
 
 </head>
@@ -245,23 +245,22 @@
 
 
     <div class="map-card">
-    <div class="bfp-header">
+        <div class="bfp-header">
             <button onclick="history.go(-1);" class="btn-back">Back</button>
             <div id="philippineTime" class="philippine-time"></div>
         </div>
-        
+
         <div id="map-container">
             <div id="map"></div>
         </div>
         <div class="bfp-header">
-        <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
+            <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
             <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
             <div id="directions"> Click on the map to create a start and end for the route.</div>
         </div>
     </div>
 
     <script>
-    
         function getCurrentTimeInPhilippines() {
             const currentTime = new Date();
             const utcOffset = 0; // GMT+8:00 for Philippines
@@ -298,7 +297,7 @@
 
         L.esri.Vector.vectorBasemapLayer(basemapEnum, {
             apiKey: apiKey
-        }).addTo(map);
+        }, 'Streets').addTo(map);
         const directions = document.createElement("div");
         directions.id = "directions";
         directions.innerHTML = "Click on the map to create a start and end for the route.";
@@ -359,14 +358,89 @@
             `);
         });
 
-        function cancelRoute() 
-            {
-                startCoords = null;
-                endCoords = null;
-                routeLines.clearLayers();
-                toggleDirections();
-                document.getElementById("directions").innerHTML = "Route canceled. Click on the map to create a new route.";
+        
+
+        /* Define a custom icon for users in need */
+        const userIcon = L.icon({
+            iconUrl: 'https://img.icons8.com/flat-round/64/000000/fire-element.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
+
+        async function getRecentReports() {
+            try {
+                const response = await fetch('http://localhost:8080/reports-recent');
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (error) {
+                    console.error('Error parsing JSON:', error, 'Response Text:', text);
+                    return;
+                }
+
+                if (response.ok && Array.isArray(data)) {
+                    data.forEach(report => {
+                        if (report.location && report.location.coordinates && report.location.coordinates.length === 2) {
+                            const [longitude, latitude] = report.location.coordinates;
+                            const marker = L.marker([latitude, longitude]).addTo(map);
+                            marker.bindPopup(`
+                                <div class="popup-content">
+                                    <h3>${report.incidentType}</h3>
+                                    <p>${report.date}</p>
+                                    <p>${report.details}</p>
+                                </div>
+                            `);
+                        } else {
+                            console.warn('Invalid report location:', report.location);
+                        }
+                    });
+                } else {
+                    console.error('Failed to fetch recent reports:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching recent reports:', error);
             }
+        }
+
+        getRecentReports();
+        async function fetchRecentReports() {
+            try {
+                const response = await fetch('reports-recent');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Error fetching reports:", error);
+            }
+        }
+
+        async function initializeMap() {
+            const usersInNeed = await fetchRecentReports();
+
+            if (usersInNeed && Array.isArray(usersInNeed)) {
+                usersInNeed.forEach(user => {
+                    const marker = L.marker([user.latitude, user.longitude], { icon: userIcon }).addTo(map);
+                    marker.bindPopup(`
+                        <div class="popup-content">
+                            <h4>User in Need: ${user.fullName}</h4>
+                            <p><strong>File Proof: </strong> ${user.fileproof}</p>
+                            <button onclick="navigateTo(${user.latitude}, ${user.longitude})" class="navigate-btn">Go Now</button>
+                        </div>
+                    `);
+                });
+            }
+        }
+
+        initializeMap();
+        
+        function cancelRoute() {
+            startCoords = null;
+            endCoords = null;
+            routeLines.clearLayers();
+            toggleDirections();
+            document.getElementById("directions").innerHTML = "Route canceled. Click on the map to create a new route.";
+        }
 
         // Function to show rescuer's geolocation
         function showRescuerLocation(position) {
@@ -407,51 +481,54 @@
         let endCoords = null;
 
         function updateRoute() {
-    if (!startCoords || !endCoords) {
-        alert("Please reload the page.");
-        return;
-    }
+            if (!startCoords || !endCoords) {
+                alert("Please reload the page.");
+                return;
+            }
 
-    // Create the arcgis-rest-js authentication object to use later.
-    const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
+            // Create the arcgis-rest-js authentication object to use later.
+            const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
 
-    // Make the API request
-    arcgisRest.solveRoute({
-        stops: [startCoords, endCoords],
-        endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
-        authentication
-    }).then((response) => {
-        routeLines.clearLayers();
-        L.geoJSON(response.routes.geoJson).addTo(routeLines);
-        const directionsHTML = response.directions[0].features.map((f) => f.attributes.text).join("<br/>");
-        document.getElementById("directions").innerHTML = directionsHTML;
-        startCoords = null;
-        endCoords = null;
-    }).catch((error) => {
-        console.error(error);
-        alert("There was a problem using the route service. See the console for details.");
-    });
-}
+            // Make the API request
+            arcgisRest.solveRoute({
+                stops: [startCoords, endCoords],
+                endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
+                authentication
+            }).then((response) => {
+                routeLines.clearLayers();
+                L.geoJSON(response.routes.geoJson).addTo(routeLines);
+                const directionsHTML = response.directions[0].features.map((f) => f.attributes.text).join("<br/>");
+                document.getElementById("directions").innerHTML = directionsHTML;
+                startCoords = null;
+                endCoords = null;
+            }).catch((error) => {
+                console.error(error);
+                alert("There was a problem using the route service. See the console for details.");
+            });
+        }
 
-// Function to show rescuer's geolocation
-function showRescuerLocation(position) {
-    const rescuerLatitude = position.coords.latitude;
-    const rescuerLongitude = position.coords.longitude;
+        // Function to show rescuer's geolocation
+        function showRescuerLocation(position) {
+            const rescuerLatitude = position.coords.latitude;
+            const rescuerLongitude = position.coords.longitude;
 
-    map.setView([rescuerLatitude, rescuerLongitude], 16); // Set map view to rescuer's location
+            map.setView([rescuerLatitude, rescuerLongitude], 16); // Set map view to rescuer's location
 
-    const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude]).addTo(map);
-    rescuerMarker.bindPopup("'You are here.' -Rescuer").openPopup();
+            const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude]).addTo(map);
+            rescuerMarker.bindPopup("'You are here.' -Rescuer").openPopup();
 
-    // Set rescuer's geolocation as starting point
-    startCoords = [rescuerLongitude, rescuerLatitude];
+            // Set rescuer's geolocation as starting point
+            startCoords = [rescuerLongitude, rescuerLatitude];
 
-    // Suggest nearest fire hydrants
-    suggestNearestHydrants({ lat: rescuerLatitude, lng: rescuerLongitude });
-}
+            // Suggest nearest fire hydrants
+            suggestNearestHydrants({
+                lat: rescuerLatitude,
+                lng: rescuerLongitude
+            });
+        }
 
-// Call function to get rescuer's geolocation
-getRescuerLocation();
+        // Call function to get rescuer's geolocation
+        getRescuerLocation();
 
 
         // Function to get rescuer's geolocation
@@ -498,7 +575,7 @@ getRescuerLocation();
             }
 
         });
-        
+
         function suggestNearestHydrants(location) {
             const nearestHydrants = fireHydrants.filter(hydrant => {
                 const distance = getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng);
@@ -558,6 +635,7 @@ getRescuerLocation();
             };
             suggestNearestHydrants(location);
         });
+
 
     </script>
 </body>
