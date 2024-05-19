@@ -106,11 +106,11 @@ class CommunityReportController extends BaseController
     {
         $model = new CommunityReportModel();
     
-    // Get the current date
-    $currentDate = date('Y-m-d');
+    // Get the timestamp for 8 hours ago
+    $eightHoursAgo = date('Y-m-d H:i:s', strtotime('-8 hours'));
 
-    // Adjust the query to get the reports for the current date only
-    $reports = $model->where('DATE(timestamp)', $currentDate)
+    // Adjust the query to get reports newer than 8 hours ago
+    $reports = $model->where('timestamp >=', $eightHoursAgo)
                      ->orderBy('timestamp', 'DESC')
                      ->findAll();
 

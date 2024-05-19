@@ -58,10 +58,13 @@
             background: white;
             font-family: Arial, Helvetica, Verdana;
             line-height: 2.25;
-            font-size: 20px;
+            font-size: 16px;
             padding: 10px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
 
         @media (max-width: 768px) {
@@ -86,25 +89,6 @@
             font-size: 16px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             /* Light shadow */
-        }
-
-        #directions {
-            position: absolute;
-            z-index: 1000;
-            width: 100%;
-            max-height: 50%;
-            bottom: 0;
-            background: white;
-            font-family: Arial, Helvetica, Verdana;
-            line-height: 1.5;
-            font-size: 16px;
-            padding: 10px;
-            overflow-y: auto;
-            display: none;
-            /* Initially hidden */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
         }
 
         .map-card {
@@ -237,6 +221,23 @@
             .navigate-btn:hover {
                 background-color: #0056b3;
             }
+            .fileProofContainer {
+                width: 270px;
+                height: 170px;
+                
+                overflow: hidden;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .fileProofContainer img,
+            .fileProofContainer video {
+                width: 250px;
+                height: 150px;
+                object-fit:cover;
+            }
+
+            }
     </style>
 
 </head>
@@ -253,6 +254,12 @@
         <div id="map-container">
             <div id="map"></div>
         </div>
+        <div class="bfp-header">
+            <label for="user-suggestions">Suggested Nearby Users in Need: </label>
+            <div id="user-suggestions" name="user-suggestions" class="user-suggestions"></div>
+            <div id="directions"> Click on the map to create a start and end for the route.</div>
+        </div>
+
         <div class="bfp-header">
             <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
             <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
@@ -290,7 +297,7 @@
         const basemapEnum = "arcgis/navigation";
 
         const map = L.map("map", {
-            zoom: 18
+            zoom: 14
         })
 
         map.setView([13.3839, 121.1860], 14); // Calapan City location
@@ -358,81 +365,104 @@
             `);
         });
 
-        
+        const userMarker = L.icon({
+    iconUrl: 'https://img.icons8.com/flat-round/64/000000/fire-element.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+});
 
-        /* Define a custom icon for users in need */
-        const userIcon = L.icon({
-            iconUrl: 'https://img.icons8.com/flat-round/64/000000/fire-element.png',
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
+function showNotification(message) {
+    // Check if the browser supports notifications
+    if (!("Notification" in window)) {
+        console.warn("This browser does not support desktop notifications.");
+        return;
+    }
+
+    // Check if the user has granted permission to show notifications
+    if (Notification.permission === "granted") {
+        // If the user has granted permission, show the notification
+        new Notification(message);
+    } else if (Notification.permission !== "denied") {
+        // If the user hasn't denied permission, request permission
+        Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+                // If the user grants permission, show the notification
+                new Notification(message);
+            }
         });
+    }
+}
 
-        async function getRecentReports() {
-            try {
-                const response = await fetch('http://localhost:8080/reports-recent');
-                const text = await response.text();
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (error) {
-                    console.error('Error parsing JSON:', error, 'Response Text:', text);
-                    return;
-                }
+async function getRecentReports() {
+    try {
+        const response = await fetch('https://bfpcalapancity.online/reports-recent/');
+        const data = await response.json();
 
-                if (response.ok && Array.isArray(data)) {
-                    data.forEach(report => {
-                        if (report.location && report.location.coordinates && report.location.coordinates.length === 2) {
-                            const [longitude, latitude] = report.location.coordinates;
-                            const marker = L.marker([latitude, longitude]).addTo(map);
-                            marker.bindPopup(`
-                                <div class="popup-content">
-                                    <h3>${report.incidentType}</h3>
-                                    <p>${report.date}</p>
-                                    <p>${report.details}</p>
-                                </div>
-                            `);
-                        } else {
-                            console.warn('Invalid report location:', report.location);
+        if (response.ok && Array.isArray(data)) {
+            if (data.length > 0) {
+                showNotification("New reports have been added.");
+            }
+
+            data.forEach(report => {
+                if (report.latitude && report.longitude) {
+                    const { latitude, longitude, fullName, fileproof, timestamp } = report;
+                    const marker = L.marker([latitude, longitude], { icon: userMarker }).addTo(map);
+                    const popupContent = `
+                        <div class="popup-content">
+                            <h4>User in Need: ${fullName}</h4>
+                            <p><strong>Timestamp:</strong> ${timestamp}</p>
+                            <p><strong>File Proof:</strong></p>
+                            <div id="fileProofContainer_${fileproof}" class="fileProofContainer"></div>
+                            <button onclick="navigateTo(${latitude}, ${longitude})" class="navigate-btn">Go Now</button>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
+
+                    // Ensure the popup is opened before trying to append the file proof
+                    marker.on('popupopen', () => {
+                        if (fileproof) {
+                            displayFileProof(fileproof, `fileProofContainer_${fileproof}`);
                         }
                     });
                 } else {
-                    console.error('Failed to fetch recent reports:', response.statusText);
+                    console.warn('Invalid report location:', report);
                 }
-            } catch (error) {
-                console.error('Error fetching recent reports:', error);
-            }
+            });
+        } else {
+            console.error('Failed to fetch recent reports:', response.statusText);
         }
+    } catch (error) {
+        console.error('Error fetching recent reports:', error);
+    }
+}
 
-        getRecentReports();
-        async function fetchRecentReports() {
-            try {
-                const response = await fetch('reports-recent');
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error("Error fetching reports:", error);
-            }
-        }
+function displayFileProof(fileProofURL, containerId) {
+    const baseURL = '/community_report/';
+    const fullURL = baseURL + fileProofURL;
 
-        async function initializeMap() {
-            const usersInNeed = await fetchRecentReports();
+    const fileProofContainer = document.getElementById(containerId);
 
-            if (usersInNeed && Array.isArray(usersInNeed)) {
-                usersInNeed.forEach(user => {
-                    const marker = L.marker([user.latitude, user.longitude], { icon: userIcon }).addTo(map);
-                    marker.bindPopup(`
-                        <div class="popup-content">
-                            <h4>User in Need: ${user.fullName}</h4>
-                            <p><strong>File Proof: </strong> ${user.fileproof}</p>
-                            <button onclick="navigateTo(${user.latitude}, ${user.longitude})" class="navigate-btn">Go Now</button>
-                        </div>
-                    `);
-                });
-            }
-        }
+    if (!fileProofContainer) {
+        console.error(`Container with ID ${containerId} not found.`);
+        return;
+    }
 
-        initializeMap();
+    if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
+        const video = document.createElement("video");
+        video.src = fullURL;
+        video.controls = true;
+        fileProofContainer.appendChild(video);
+    } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
+        const img = document.createElement("img");
+        img.src = fullURL;
+        fileProofContainer.appendChild(img);
+    } else {
+        fileProofContainer.innerHTML = "Unsupported file type";
+    }
+}
+getRecentReports();
+
         
         function cancelRoute() {
             startCoords = null;
@@ -447,7 +477,7 @@
             const rescuerLatitude = position.coords.latitude;
             const rescuerLongitude = position.coords.longitude;
 
-            map.setView([rescuerLatitude, rescuerLongitude], 16); // Set map view to rescuer's location
+            map.setView([rescuerLatitude, rescuerLongitude], 1); // Set map view to rescuer's location
 
             const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude]).addTo(map);
             rescuerMarker.bindPopup("'You are here.' -Rescuer").openPopup();
@@ -636,7 +666,7 @@
             suggestNearestHydrants(location);
         });
 
-
+        
     </script>
 </body>
 
