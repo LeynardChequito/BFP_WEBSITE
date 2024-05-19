@@ -13,6 +13,12 @@ class CommunityReportController extends BaseController
     public function __construct()
     {
         $this->session = Services::session();
+         // Set the timezone for the application
+         date_default_timezone_set('Asia/Manila');
+
+         // Set the timezone for the database connection
+         $db = \Config\Database::connect();
+         $db->query("SET time_zone = 'Asia/Manila'");
     }
 
     public function submitcall()
