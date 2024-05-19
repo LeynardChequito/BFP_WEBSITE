@@ -438,7 +438,7 @@ async function getRecentReports() {
 }
 
 function displayFileProof(fileProofURL, containerId) {
-    const baseURL = '/community_report/';
+    const baseURL = '/files/public_html/bfpcalapancity/public/community_report/';
     const fullURL = baseURL + fileProofURL;
 
     const fileProofContainer = document.getElementById(containerId);
