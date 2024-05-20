@@ -257,54 +257,58 @@
         <div class="bfp-header">
             <label for="user-suggestions">Suggested Nearby Users in Need: </label>
             <div id="user-suggestions" name="user-suggestions" class="user-suggestions"></div>
-            <div id="directions"> Click on the map to create a start and end for the route.</div>
+            <div id="directions" style="display:none;"></div>
+    <button id="show-steps" onclick="toggleDirections()">Show Steps</button>
         </div>
 
         <div class="bfp-header">
             <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
             <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
-            <div id="directions"> Click on the map to create a start and end for the route.</div>
+            <button id="directions" onclick="toggleDirections()">Show Steps</button>
+            <!-- <div id="directions" style="display:none;"> Click on the map to create a start and end for the route.</div> -->
         </div>
     </div>
 
     <script>
+        // Function to reload the site
+        function reloadSite() {
+            location.reload();
+        }
+
+        // Set interval to reload the site every 30 minutes (30 * 60 * 1000 milliseconds)
+        setInterval(reloadSite, 30 * 60 * 1000);
+
+        // Function to update time display every second 
+        function updateTime() {
+            document.getElementById("philippineTime").textContent = "Philippine Standard Time: " + getCurrentTimeInPhilippines();
+            setTimeout(updateTime, 1000); // Update time every second
+        }
+
         function getCurrentTimeInPhilippines() {
             const currentTime = new Date();
-            const utcOffset = 0; // GMT+8:00 for Philippines
+            const utcOffset = 8; // GMT+8:00 for Philippines
             const philippinesTime = new Date(currentTime.getTime() + (utcOffset * 3600000)); // Adding offset in milliseconds
 
             // Format date components
             const day = philippinesTime.getDate();
-            const month = philippinesTime.toLocaleString('default', {
-                month: 'long'
-            });
+            const month = philippinesTime.toLocaleString('default', { month: 'long' });
             const year = philippinesTime.getFullYear();
             const time = philippinesTime.toLocaleTimeString();
 
             return `${month} ${day}, ${year} ${time}`;
         }
 
-        // Function to update time display every second
-        function updateTime() {
-            document.getElementById("philippineTime").textContent = "Philippine Standard Time: " + getCurrentTimeInPhilippines();
-            setTimeout(updateTime, 1000); // Update time every second
-        }
         updateTime();
 
-
         const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs";
-
         const basemapEnum = "arcgis/navigation";
-
-        const map = L.map("map", {
-            zoom: 14
-        })
+        const map = L.map("map", { zoom: 14 });
 
         map.setView([13.3839, 121.1860], 14); // Calapan City location
 
-        L.esri.Vector.vectorBasemapLayer(basemapEnum, {
-            apiKey: apiKey
-        }, 'Streets').addTo(map);
+        L.esri.Vector.vectorBasemapLayer(basemapEnum, { apiKey: apiKey }, 'Streets').addTo(map);
+
+        // Directions container
         const directions = document.createElement("div");
         directions.id = "directions";
         directions.innerHTML = "Click on the map to create a start and end for the route.";
@@ -314,34 +318,14 @@
         const endLayerGroup = L.layerGroup().addTo(map);
         const routeLines = L.layerGroup().addTo(map);
 
-        // Define fire hydrant
-        const fireHydrants = [{
-                name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
-                lat: 13.370076,
-                lng: 121.167853,
-                color: "lightgreen"
-            },
-            {
-                name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Near LGC)",
-                lat: 13.400788,
-                lng: 121.171269,
-                color: "lightgreen"
-            },
-            {
-                name: "Ubas St., Barangay Lalud, Calapan City, Oriental Mindoro (near Barangay Hall)",
-                lat: 13.399337,
-                lng: 121.173764,
-                color: "lightgreen"
-            },
-            {
-                name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( near elementary school)",
-                lat: 13.404487,
-                lng: 121.178001,
-                color: "lightgreen"
-            }
+        // Fire hydrant marker
+        const fireHydrants = [
+            { name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)", lat: 13.370076, lng: 121.167853, color: "lightgreen" },
+            { name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Near LGC)", lat: 13.400788, lng: 121.171269, color: "lightgreen" },
+            { name: "Ubas St., Barangay Lalud, Calapan City, Oriental Mindoro (near Barangay Hall)", lat: 13.399337, lng: 121.173764, color: "lightgreen" },
+            { name: "Barangay Camilmil, Calapan City, Oriental Mindoro (near elementary school)", lat: 13.404487, lng: 121.178001, color: "lightgreen" }
         ];
 
-        // Define fire hydrant icon
         const hydrantIcon = L.icon({
             iconUrl: 'https://img.icons8.com/cotton/64/000000/fire-hydrant--v1.png',
             iconSize: [60, 60],
@@ -350,120 +334,18 @@
             shadowSize: [41, 41]
         });
 
-
         fireHydrants.forEach(hydrant => {
-            const marker = L.marker([hydrant.lat, hydrant.lng], {
-                icon: hydrantIcon
-            }).addTo(map);
+            const marker = L.marker([hydrant.lat, hydrant.lng], { icon: hydrantIcon }).addTo(map);
 
             marker.bindPopup(`
-            <div>
-                <p><strong>${hydrant.name}</strong></p>
-                <button onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
-                <button onclick="cancelRoute()">Cancel Route</button>
-            </div>
+                <div>
+                    <p><strong>${hydrant.name}</strong></p>
+                    <button onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
+                    <button onclick="cancelRoute()">Cancel Route</button>
+                </div>
             `);
         });
 
-        const userMarker = L.icon({
-    iconUrl: 'https://img.icons8.com/flat-round/64/000000/fire-element.png',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32]
-});
-
-function showNotification(message) {
-    // Check if the browser supports notifications
-    if (!("Notification" in window)) {
-        console.warn("This browser does not support desktop notifications.");
-        return;
-    }
-
-    // Check if the user has granted permission to show notifications
-    if (Notification.permission === "granted") {
-        // If the user has granted permission, show the notification
-        new Notification(message);
-    } else if (Notification.permission !== "denied") {
-        // If the user hasn't denied permission, request permission
-        Notification.requestPermission().then(function (permission) {
-            if (permission === "granted") {
-                // If the user grants permission, show the notification
-                new Notification(message);
-            }
-        });
-    }
-}
-
-async function getRecentReports() {
-    try {
-        const response = await fetch('https://bfpcalapancity.online/reports-recent/');
-        const data = await response.json();
-
-        if (response.ok && Array.isArray(data)) {
-            if (data.length > 0) {
-                showNotification("New reports have been added.");
-            }
-
-            data.forEach(report => {
-                if (report.latitude && report.longitude) {
-                    const { latitude, longitude, fullName, fileproof, timestamp } = report;
-                    const marker = L.marker([latitude, longitude], { icon: userMarker }).addTo(map);
-                    const popupContent = `
-                        <div class="popup-content">
-                            <h4>User in Need: ${fullName}</h4>
-                            <p><strong>Timestamp:</strong> ${timestamp}</p>
-                            <p><strong>File Proof:</strong></p>
-                            <div id="fileProofContainer_${fileproof}" class="fileProofContainer"></div>
-                            <button onclick="navigateTo(${latitude}, ${longitude})" class="navigate-btn">Go Now</button>
-                        </div>
-                    `;
-                    marker.bindPopup(popupContent);
-
-                    // Ensure the popup is opened before trying to append the file proof
-                    marker.on('popupopen', () => {
-                        if (fileproof) {
-                            displayFileProof(fileproof, `fileProofContainer_${fileproof}`);
-                        }
-                    });
-                } else {
-                    console.warn('Invalid report location:', report);
-                }
-            });
-        } else {
-            console.error('Failed to fetch recent reports:', response.statusText);
-        }
-    } catch (error) {
-        console.error('Error fetching recent reports:', error);
-    }
-}
-
-function displayFileProof(fileProofURL, containerId) {
-    const baseURL = '/bfpcalapancity/public/community_report/';
-    const fullURL = baseURL + fileProofURL;
-
-    const fileProofContainer = document.getElementById(containerId);
-
-    if (!fileProofContainer) {
-        console.error(`Container with ID ${containerId} not found.`);
-        return;
-    }
-
-    if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
-        const video = document.createElement("video");
-        video.src = fullURL;
-        video.controls = true;
-        fileProofContainer.appendChild(video);
-    } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
-        const img = document.createElement("img");
-        img.src = fullURL;
-        fileProofContainer.appendChild(img);
-    } else {
-        fileProofContainer.innerHTML = "Unsupported file type";
-    }
-}
-getRecentReports();
-
-        
         function cancelRoute() {
             startCoords = null;
             endCoords = null;
@@ -472,69 +354,9 @@ getRecentReports();
             document.getElementById("directions").innerHTML = "Route canceled. Click on the map to create a new route.";
         }
 
-        // Function to show rescuer's geolocation
-        function showRescuerLocation(position) {
-            const rescuerLatitude = position.coords.latitude;
-            const rescuerLongitude = position.coords.longitude;
-
-            map.setView([rescuerLatitude, rescuerLongitude], 1); // Set map view to rescuer's location
-
-            const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude]).addTo(map);
-            rescuerMarker.bindPopup("'You are here.' -Rescuer").openPopup();
-
-            // Set rescuer's geolocation as starting point
-            startCoords = [rescuerLongitude, rescuerLatitude];
-        }
-
-        // Call function to get rescuer's geolocation
-        getRescuerLocation();
-
-        function toggleDirections() {
-            const directionsDiv = document.getElementById("directions");
-            const showStepsBtn = document.getElementById("show-steps");
-            if (directionsDiv.style.display === "none") {
-                directionsDiv.style.display = "block";
-                showStepsBtn.textContent = "Hide Steps";
-            } else {
-                directionsDiv.style.display = "none";
-                showStepsBtn.textContent = "Show Steps";
-            }
-        }
-
         function navigateToHydrant(lat, lng) {
             endCoords = [lng, lat];
             updateRoute();
-        }
-
-        let currentStep = "start";
-        let startCoords = null;
-        let endCoords = null;
-
-        function updateRoute() {
-            if (!startCoords || !endCoords) {
-                alert("Please reload the page.");
-                return;
-            }
-
-            // Create the arcgis-rest-js authentication object to use later.
-            const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
-
-            // Make the API request
-            arcgisRest.solveRoute({
-                stops: [startCoords, endCoords],
-                endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
-                authentication
-            }).then((response) => {
-                routeLines.clearLayers();
-                L.geoJSON(response.routes.geoJson).addTo(routeLines);
-                const directionsHTML = response.directions[0].features.map((f) => f.attributes.text).join("<br/>");
-                document.getElementById("directions").innerHTML = directionsHTML;
-                startCoords = null;
-                endCoords = null;
-            }).catch((error) => {
-                console.error(error);
-                alert("There was a problem using the route service. See the console for details.");
-            });
         }
 
         // Function to show rescuer's geolocation
@@ -551,17 +373,52 @@ getRecentReports();
             startCoords = [rescuerLongitude, rescuerLatitude];
 
             // Suggest nearest fire hydrants
-            suggestNearestHydrants({
-                lat: rescuerLatitude,
-                lng: rescuerLongitude
+            suggestNearestHydrants({ lat: rescuerLatitude, lng: rescuerLongitude });
+        }
+
+        function toggleDirections() {
+            const directionsDiv = document.getElementById("directions");
+            const showStepsBtn = document.getElementById("show-steps");
+            if (directionsDiv.style.display === "none") {
+                directionsDiv.style.display = "block";
+                showStepsBtn.textContent = "Hide Steps";
+            } else {
+                directionsDiv.style.display = "none";
+                showStepsBtn.textContent = "Show Steps";
+            }
+        }
+
+        let startCoords = null;
+        let endCoords = null;
+
+        function updateRoute() {
+            if (!startCoords || !endCoords) {
+                alert("Please reload the page.");
+                return;
+            }
+
+            const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
+
+            arcgisRest.solveRoute({
+                stops: [startCoords, endCoords],
+                endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
+                authentication
+            }).then((response) => {
+                routeLines.clearLayers();
+                L.geoJSON(response.routes.geoJson).addTo(routeLines);
+                const directionsHTML = response.directions[0].features.map((f) => {
+                    const { text, length, time } = f.attributes;
+                    return `<p>${text} (${length.toFixed(2)} km, ${time.toFixed(2)} minutes)</p>`;
+                }).join("");
+                document.getElementById("directions").innerHTML = directionsHTML;
+                startCoords = null;
+                endCoords = null;
+            }).catch((error) => {
+                console.error(error);
+                alert("There was a problem using the route service. See the console for details.");
             });
         }
 
-        // Call function to get rescuer's geolocation
-        getRescuerLocation();
-
-
-        // Function to get rescuer's geolocation
         function getRescuerLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showRescuerLocation);
@@ -570,41 +427,7 @@ getRecentReports();
             }
         }
 
-
-        map.on("click", (e) => {
-            const coordinates = [e.latlng.lng, e.latlng.lat];
-
-            if (currentStep === "start") {
-
-                startLayerGroup.clearLayers();
-                endLayerGroup.clearLayers();
-                routeLines.clearLayers();
-
-                L.marker(e.latlng).addTo(startLayerGroup);
-                startCoords = coordinates;
-
-                currentStep = "end";
-                document.getElementById("directions").innerHTML = "Your Location";
-
-                // Directly calculate the route when the rescuer clicks on the map
-                if (startCoords && endCoords) {
-                    updateRoute();
-                }
-
-            } else {
-
-                L.marker(e.latlng).addTo(endLayerGroup);
-                endCoords = coordinates;
-
-                currentStep = "start";
-                document.getElementById("directions").innerHTML = "Your Location";
-                // Directly calculate the route when the rescuer clicks on the map
-                if (startCoords && endCoords) {
-                    updateRoute();
-                }
-            }
-
-        });
+        getRescuerLocation();
 
         function suggestNearestHydrants(location) {
             const nearestHydrants = fireHydrants.filter(hydrant => {
@@ -612,7 +435,6 @@ getRecentReports();
                 return distance <= 2000; // 2000 meters (2 kilometers)
             });
 
-            // Display suggestions
             const suggestionsContainer = document.getElementById("hydrant-suggestions");
             suggestionsContainer.innerHTML = ""; // Clear previous suggestions
 
@@ -622,7 +444,7 @@ getRecentReports();
 
                 suggestionDiv.innerHTML = `
                     <h4>${hydrant.name}</h4>
-                    <p>Distance: ${getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng).toFixed(2)}meters</p>
+                    <p>Distance: ${getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng).toFixed(2)} meters</p>
                     <p>Estimated Time: (Unavailable)</p>
                     <button class="navigate-btn" onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
                     <button class="show-steps" onclick="toggleDirections()">Show Steps</button>
@@ -632,7 +454,6 @@ getRecentReports();
             });
         }
 
-        // Function to calculate distance between two points (in meters)
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371e3; // Earth's radius in meters
             const φ1 = toRadians(lat1);
@@ -649,24 +470,107 @@ getRecentReports();
             return distance;
         }
 
-        // Function to convert degrees to radians
         function toRadians(degrees) {
             return degrees * (Math.PI / 180);
         }
 
-        // Call function to get rescuer's geolocation
-        getRescuerLocation();
-
-        // Map event listener to suggest nearest hydrants when clicking on the map
-        map.on("click", (e) => {
-            const location = {
-                lat: e.latlng.lat,
-                lng: e.latlng.lng
-            };
-            suggestNearestHydrants(location);
+        const userMarker = L.icon({
+            iconUrl: 'https://img.icons8.com/flat-round/64/000000/fire-element.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
         });
 
-        
+        function showNotification(message) {
+            if (!("Notification" in window)) {
+                console.warn("This browser does not support desktop notifications.");
+                return;
+            }
+
+            if (Notification.permission === "granted") {
+                new Notification(message);
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(function (permission) {
+                    if (permission === "granted") {
+                        new Notification(message);
+                    }
+                });
+            }
+        }
+
+        async function getRecentReports() {
+            try {
+                const response = await fetch('http://localhost:8080/reports-recent/');
+                const data = await response.json();
+
+                if (response.ok && Array.isArray(data)) {
+                    if (data.length > 0) {
+                        showNotification("New reports have been added.");
+                    }
+
+                    data.forEach(report => {
+                        if (report.latitude && report.longitude) {
+                            const { latitude, longitude, fullName, fileproof, timestamp } = report;
+                            const marker = L.marker([latitude, longitude], { icon: userMarker }).addTo(map);
+                            const popupContent = `
+                                <div class="popup-content">
+                                    <h4>User in Need: ${fullName}</h4>
+                                    <p><strong>Timestamp:</strong> ${timestamp}</p>
+                                    <p><strong>File Proof:</strong></p>
+                                    <div id="fileProofContainer_${fileproof}" class="fileProofContainer"></div>
+                                    <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
+                                </div>
+                            `;
+                            marker.bindPopup(popupContent);
+
+                            marker.on('popupopen', () => {
+                                if (fileproof) {
+                                    displayFileProof(fileproof, `fileProofContainer_${fileproof}`);
+                                }
+                            });
+                        } else {
+                            console.warn('Invalid report location:', report);
+                        }
+                    });
+                } else {
+                    console.error('Failed to fetch recent reports:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching recent reports:', error);
+            }
+        }
+
+        function displayFileProof(fileProofURL, containerId) {
+            const baseURL = '/community_report/';
+            const fullURL = baseURL + fileProofURL;
+
+            const fileProofContainer = document.getElementById(containerId);
+
+            if (!fileProofContainer) {
+                console.error(`Container with ID ${containerId} not found.`);
+                return;
+            }
+
+            if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
+                const video = document.createElement("video");
+                video.src = fullURL;
+                video.controls = true;
+                fileProofContainer.appendChild(video);
+            } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
+                const img = document.createElement("img");
+                img.src = fullURL;
+                fileProofContainer.appendChild(img);
+            } else {
+                fileProofContainer.innerHTML = "Unsupported file type";
+            }
+        }
+
+        function showRouteToRescuer(lat, lng) {
+            endCoords = [lng, lat];
+            updateRoute();
+        }
+
+        getRecentReports();
     </script>
 </body>
 
