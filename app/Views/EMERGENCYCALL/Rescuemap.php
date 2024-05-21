@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>BFP Geolocation</title>
+    <title>Rescue Map</title>
 
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
@@ -169,6 +169,79 @@
         @media (max-width: 768px) {
             #directions {
                 font-size: 14px;
+                width: 45%;
+                max-height: 45%;
+            }
+
+            .popup-content {
+                background-color: #fff;
+                /* White background */
+                border-radius: 5px;
+                padding: 5px;
+                font-family: 'Arial', sans-serif;
+                /* Use a font similar to Waze.com */
+                font-size: 14px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                /* Light shadow */
+                
+             }
+
+            #map-container {
+                width: 100%;
+                height: 70vh;
+            }
+
+            #map {
+                width: 100%;
+                height: 80%;
+            }
+
+            .hydrant-suggestion {
+                background-color: #fff;
+                padding: 7px;
+                margin-bottom: 7px;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .hydrant-suggestion h4 {
+                margin: 0;
+                color: #333;
+            }
+
+            .hydrant-suggestion p {
+                margin: 5px 0;
+                color: #666;
+            }
+
+            .navigate-btn {
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-family: 'Arial', sans-serif;
+                margin-top: 5px;
+            }
+
+            .navigate-btn:hover {
+                background-color: #0056b3;
+            }
+            .fileProofContainer {
+                width: 150px;
+                height: 100px;
+                
+                overflow: hidden;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .fileProofContainer img,
+            .fileProofContainer video {
+                width: 150px;
+                height: 100px;
+                object-fit:cover;
             }
         }
 
@@ -276,7 +349,7 @@
         }
 
         // Set interval to reload the site every 30 minutes (30 * 60 * 1000 milliseconds)
-        setInterval(reloadSite, 30 * 60 * 1000);
+        setInterval(reloadSite, 60 * 60 * 1000);
 
         // Function to update time display every second 
         function updateTime() {
@@ -286,7 +359,7 @@
 
         function getCurrentTimeInPhilippines() {
             const currentTime = new Date();
-            const utcOffset = 8; // GMT+8:00 for Philippines
+            const utcOffset = 0; // GMT+8:00 for Philippines
             const philippinesTime = new Date(currentTime.getTime() + (utcOffset * 3600000)); // Adding offset in milliseconds
 
             // Format date components
@@ -320,10 +393,165 @@
 
         // Fire hydrant marker
         const fireHydrants = [
-            { name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)", lat: 13.370076, lng: 121.167853, color: "lightgreen" },
-            { name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Near LGC)", lat: 13.400788, lng: 121.171269, color: "lightgreen" },
-            { name: "Ubas St., Barangay Lalud, Calapan City, Oriental Mindoro (near Barangay Hall)", lat: 13.399337, lng: 121.173764, color: "lightgreen" },
-            { name: "Barangay Camilmil, Calapan City, Oriental Mindoro (near elementary school)", lat: 13.404487, lng: 121.178001, color: "lightgreen" }
+            {
+                name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
+                lat: 13.370076,
+                lng: 121.167853,
+                color: "lightgreen"
+            },
+            {
+                name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Near LGC)",
+                lat: 13.400788,
+                lng: 121.171269,
+                color: "lightgreen"                
+            },
+            {
+                name: "Ubas St., Barangay Lalud, Calapan City, Oriental Mindoro (near Barangay Hall)",
+                lat: 13.399337,
+                lng: 121.173764,
+                color: "lightgreen"
+            },
+            {
+                name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( near elementary school)",
+                lat: 13.404487,
+                lng: 121.178001,
+                color: "lightgreen"
+            },
+            {
+                name: "JP Rizal St., Barangay Camilmil, Calapan City, Oriental Mindoro",
+                lat: 13.406119,
+                lng: 121.176005,
+                color: "lightgreen"
+            },
+            {
+                name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( in front of Oriental Mindoro National Highschool)",
+                lat: 13.409127,
+                lng: 121.178673,
+                color: "lightgreen"
+            },
+            {
+                name: "Roxas drive, Cor. Gumamela St. Barangay Lumangbayan, Calapan City, Oriental Mindoro",
+                lat: 13.401820739889,
+                lng: 121.182757083021,
+                color: "lightgreen"
+            },
+            {
+                name: "Guiho St. Barangay, Sto. Nino, Calapan City, oriental Mindoro",
+                lat: 13.404072878721,
+                lng: 121.184182160977,
+                color: "lightgreen"
+            },
+            {
+                name: "Corner Bonifacio St, Barangay Ilaya, Calapan City, Oriental Mindoro",
+                lat: 13.412771258480,
+                lng: 121.183841835900,
+                color: "lightgreen"
+            },
+            {
+                name: "Mabini St. Barangay Ilaya, Calapan City, Oriental Mindoro",
+                lat: 13.411691645848,
+                lng: 121.183589742959,
+                color: "lightgreen"
+            },
+            {
+                name: "Barangay Ibaba East, Calapan City, Oriental Mindoro ( near old city hall/city plaza )",
+                lat: 13.419379075623,
+                lng: 121.179612690830,
+                color: "lightgreen"
+            },
+            {
+                name: "Malvar St., Barangay Ibaba East, Calapan City, Oriental Mindoro",
+                lat: 13.414783206943,
+                lng: 121.176872350370,
+                color: "lightgreen"
+            },
+            {
+                name: "Barangay Ibaba West, Calapan City, Oriental Mindoro",
+                lat: 13.414783206943,
+                lng: 121.176872350370,
+                color: "lightgreen"
+            },
+            {
+                name: "Roxas Drive Corner Marasigan St., Barangay Libis, Calapan City, oriental Mindoro",
+                lat: 13.415158152476,
+                lng: 121.184801921272,
+                color: "lightgreen"
+            },
+            {
+                name: "Barangay Calero, Calapan City, Oriental Mindoro ( near atty. Manzo office)",
+                lat: 13.415597264627,
+                lng: 121.181560275534,
+                color: "lightgreen"
+            },
+            {
+                name: "Barangay San Rafael, Calapan City, Oriental Mindoro ( near children hospital)",
+                lat: 13.418591183674,
+                lng: 121.186988682784,
+                color: "lightgreen"
+            },
+            {
+                name: "Barangay San Antonio, Calapan City, Oriental Mindoro (calapan pier)",
+                lat: 13.429675064813,
+                lng: 121.195830847473,
+                color: "lightgreen"
+            },
+            {
+                name: "Barangay Tibag, Calapan City, Oriental Mindoro",
+                lat: 13.412136593584,
+                lng: 121.175821489887,
+                color: "lightgreen"
+            },
+            {
+                name: "Barangay Sta. Maria Village (Blk. 4), Calapan City, Oriental Mindoro",
+                lat: 13.408596881704,
+                lng: 121.175793602378,
+                color: "lightgreen"
+            },
+            {
+                name: "Infantado St., Barangay Sta. Vicente South, Calapan City, Oriental Mindoro ( near bagong pook)",
+                lat: 13.408596881704,
+                lng: 121.175793602378,
+                color: "lightgreen"
+            },
+            // {
+            //     name: "J.Luna St. Corner Aurora, Barangay San VicenteNorth, Calapan City, Oriental Mindoro",
+            //     lat: 13.410813537771,
+            //     lng: 121.179406846349,
+            //     color: "lightgreen"
+            // },
+            // {
+            //     name: "Ramirez St., Barangay San Vicente Central, Calapan City, Oriental Mindoro",
+            //     lat: 13.411144781257,
+            //     lng: 121.178600148414,
+            //     color: "lightgreen"
+            // },
+            {
+                name: "J.P Rizal St., Barangay San Vicente Central, Calapan City, Oriental Mindoro ( front Palawan Express)",
+                lat: 13.410975,
+                lng: 121.179344,
+                color: "lightgreen"
+            },
+            {
+                name: "Aboboto St. Barangay San Vicente East, Calapan City, Oriental Mindoro",
+                lat: 13.410624, 
+                lng: 121.179887,
+                color: "lightgreen"
+            },
+            {
+                name: "Del Pilar St., Barangay San Vicente East, Calapan City, Oriental Mindoro",
+                lat: 13.411200, 
+                lng: 121.180478,
+                color: "lightgreen"
+            },
+            // {
+            //     name: "Barangay Lalud, Calapan City, Oriental Mindoro (near phoenix gasoline station)",
+            //     lat: 13.402465071142,
+            //     lng: 121.172008932260,
+            //     color: "lightgreen"
+            // },
+            {name: "Barangay San Vicente North, Calapan City, Oriental Mindoro (new public market 1)",lat: 13.412717, lng: 121.179210, color: "lightgreen"},
+            {name: "Barangay San Vicente North, Calapan City, Oriental Mindoro (new public market 2)", lat: 13.412954, lng: 121.178348, color: "lightgreen"},
+            {name: "Brgy. Guinobatan (Infront of New City Hall)", lat: 13.379384, lng: 121.182383, color: "lightgreen"}
         ];
 
         const hydrantIcon = L.icon({
@@ -500,7 +728,7 @@
 
         async function getRecentReports() {
             try {
-                const response = await fetch('http://localhost:8080/reports-recent/');
+                const response = await fetch('https://bfpcalapancity.online/reports-recent/');
                 const data = await response.json();
 
                 if (response.ok && Array.isArray(data)) {
@@ -541,7 +769,7 @@
         }
 
         function displayFileProof(fileProofURL, containerId) {
-            const baseURL = '/community_report/';
+            const baseURL = '/bfpcalapancity/public/community_report/';
             const fullURL = baseURL + fileProofURL;
 
             const fileProofContainer = document.getElementById(containerId);
