@@ -5,40 +5,41 @@
     <title><?= lang('Errors.pageNotFound') ?></title>
 
     <style>
-        div.logo {
-            height: 200px;
-            width: 155px;
-            display: inline-block;
-            opacity: 0.08;
-            position: absolute;
-            top: 2rem;
-            left: 50%;
-            margin-left: -73px;
-        }
         body {
-            height: 100%;
-            background: #fafafa;
+            max-height: auto;
+            background-image: linear-gradient(to bottom right, black, red);
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             color: #777;
             font-weight: 300;
-        }
-        h1 {
-            font-weight: lighter;
-            letter-spacing: normal;
-            font-size: 3rem;
-            margin-top: 0;
-            margin-bottom: 0;
-            color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
         }
         .wrap {
-            max-width: 1024px;
+            max-width: auto;
+            max-height: auto;
             margin: 5rem auto;
             padding: 2rem;
             background: #fff;
             text-align: center;
             border: 1px solid #efefef;
             border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             position: relative;
+        }
+        h1 {
+            font-weight: lighter;
+            letter-spacing: normal;
+            font-size: 6rem;
+            margin-top: 0;
+            margin-bottom: 0;
+            color: #222;
+            animation: pulse 1.5s infinite;
+        }
+        p {
+            margin-top: 1.5rem;
+            font-size: 1.25rem;
         }
         pre {
             white-space: normal;
@@ -51,9 +52,6 @@
             border-radius: 5px;
             display: block;
         }
-        p {
-            margin-top: 1.5rem;
-        }
         .footer {
             margin-top: 2rem;
             border-top: 1px solid #efefef;
@@ -65,6 +63,18 @@
         a:link,
         a:visited {
             color: #dd4814;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
     </style>
 </head>
@@ -79,6 +89,10 @@
                 <?= lang('Errors.sorryCannotFind') ?>
             <?php endif; ?>
         </p>
+        <div class="footer">
+            <p>&copy; <?= date('Y') ?> BFP Calapan City. All rights reserved.</p>
+            <button onclick="history.go(-1);" >Back</button>
+        </div>
     </div>
 </body>
 </html>

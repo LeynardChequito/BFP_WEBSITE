@@ -81,7 +81,7 @@ $routes->get('graph', 'GraphController::graph');
 
 
 $routes->get('user-location', 'LocationController::showUserLocation');
-$routes->post('location/update', 'LocationController::updateLocation');
+// $routes->post('mapscr', 'LocationController::mapscript');
 $routes->get('rescuemap', 'LocationController::map');
 
 
