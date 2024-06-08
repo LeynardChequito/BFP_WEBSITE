@@ -4,9 +4,12 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\AccountModel;
+use App\Traits\EmailTrait;
+use DateTime;
 
 class LoginController extends BaseController
 {
+    use EmailTrait;
     protected $session;
 
     public function __construct()
@@ -14,23 +17,54 @@ class LoginController extends BaseController
         $this->session = \Config\Services::session();
     }
 
+    public function verify()
+    {
+        $token = $this->request->getGet('token');
+        if (!$token) {
+            $this->session->setFlashdata('error', 'Invalid token.');
+            return redirect()->to('login');
+        }
+
+        $db = \Config\Database::connect();
+        $builder = $db->table('account');
+        $builder->where('verification_token', $token);
+        $user = $builder->get()->getRow();
+
+        if (!$user) {
+            $this->session->setFlashdata('error', 'Invalid token.');
+            return redirect()->to('login');
+        }
+
+        $expiration = new DateTime($user->verification_expiration);
+        $now = new DateTime();
+
+        if ($now > $expiration) {
+            $this->session->setFlashdata('error', 'Token has expired.');
+            return redirect()->to('login');
+        }
+
+        // Update the user's verified status
+        $builder->where('user_id', $user->user_id);
+        $builder->update(['verified' => 1, 'verification_token' => null, 'verification_expiration' => null]);
+
+        $this->session->setFlashdata('success', 'Email successfully verified. You can now log in.');
+        return redirect()->to('login');
+    }
+
     public function login()
     {
         return view('LOGIN/login');
     }
-    public function loginpage()
-    {
-        return view('LOGIN/login');
-    }
+
     public function processLogin()
     {
         helper(['form', 'url', 'session']);
-    
+
         $rules = [
             'email' => 'required|valid_email|max_length[255]',
             'password' => 'required|min_length[8]|max_length[30]',
         ];
-    
+
         $messages = [
             'email' => [
                 'required' => 'Email is required.',
@@ -43,25 +77,31 @@ class LoginController extends BaseController
                 'max_length' => 'Password should not exceed 30 characters.',
             ],
         ];
-    
+
         if ($this->validate($rules, $messages)) {
             $accountModel = new AccountModel();
             $email = $this->request->getVar('email');
             $password = $this->request->getVar('password');
-    
+
             $data = $accountModel->where('email', $email)->first();
-    
+
             if ($data) {
+                // Check if the email is verified
+                if (!$data['verified']) {
+                    $this->session->setFlashdata('error', 'Your email is not verified. Please check your email for the verification link.');
+                    return redirect()->to('login');
+                }
+
                 $pass = $data['password'];
                 $authenticatePassword = password_verify($password, $pass);
-    
+
                 if ($authenticatePassword) {
                     $ses_data = [
                         'user_id' => $data['user_id'],
                         'email' => $data['email'],
                         'isLoggedln' => TRUE
                     ];
-    
+
                     $this->session->set($ses_data);
                     $this->session->setFlashdata('success', 'Login successful!');
                     return redirect()->to('home');
@@ -77,8 +117,7 @@ class LoginController extends BaseController
             $data['validation'] = $this->validator;
             return view('LOGIN/login', $data);
         }
-    }  
-
+    }
 
     public function dologin()
     {
@@ -86,32 +125,42 @@ class LoginController extends BaseController
         $email = $this->request->getVar('email');
         $password = $this->request->getVar('password');
         $token = $this->request->getVar('token');
-        
+
         $data = $accountModel->where('email', $email)->first();
 
-        if ($data && password_verify($password, $data['password'])) {
-            log_message('debug', 'User data: ' . print_r($data, true));
-            $accountModel->update($data['user_id'], array('token' => $token));
+        if ($data) {
+            // Check if the email is verified
+            if (!$data['verified']) {
+                $res['status'] = '0';
+                $res['message'] = 'Your email is not verified. Please check your email for the verification link.';
+                return $this->response->setJSON($res);
+            }
 
-            // Set session data
-            $ses_data = [
-                'user_id' => $data['user_id'],
-                'fullName' => $data['fullName'],
-                'email' => $data['email'],
-                'isLoggedln' => TRUE
-            ];
-            $this->session->set($ses_data);
+            if (password_verify($password, $data['password'])) {
+                log_message('debug', 'User data: ' . print_r($data, true));
+                $accountModel->update($data['user_id'], ['token' => $token]);
 
-            $res['status'] = '1';
-            $res['message'] = 'Login successful';
+                // Set session data
+                $ses_data = [
+                    'user_id' => $data['user_id'],
+                    'fullName' => $data['fullName'],
+                    'email' => $data['email'],
+                    'isLoggedln' => TRUE
+                ];
+                $this->session->set($ses_data);
+
+                $res['status'] = '1';
+                $res['message'] = 'Login successful';
+            } else {
+                $res['status'] = '0';
+                $res['message'] = 'Password is incorrect';
+            }
         } else {
             $res['status'] = '0';
-            $res['message'] = 'Login failed';
+            $res['message'] = 'Email does not exist';
         }
 
         log_message('debug', 'Login response: ' . json_encode($res));
-
-        return json_encode($res);
+        return $this->response->setJSON($res);
     }
-
 }

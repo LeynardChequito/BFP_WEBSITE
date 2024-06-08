@@ -1,6 +1,7 @@
 <?php
 
 use CodeIgniter\Router\RouteCollection;
+
 /**
  * @var RouteCollection $routes
  */
@@ -17,6 +18,7 @@ $routes->post('dologin', 'LoginController::dologin');
 // REGISTRATION
 $routes->get('registration', 'RegistrationController::register');
 $routes->post('registration/processForm', 'RegistrationController::processForm');
+$routes->get('verify', 'LoginController::verify');
 
 // NAVIGATION BAR
 $routes->get('home', 'HomeController::home');
@@ -66,7 +68,7 @@ $routes->get('newscreate', 'NewsController::newscreate');
 $routes->post('news/store', 'NewsController::store');
 $routes->post('news/edit', 'NewsController::edit');
 $routes->post('news/update', 'NewsController::update');
-$routes->get('delete/(:segment)', 'NewsController::delete/$1'); 
+$routes->get('delete/(:segment)', 'NewsController::delete/$1');
 
 // CAROUSEL IMAGES
 $routes->get('carouselhome', 'CarouselController::carouselhome');
@@ -74,7 +76,7 @@ $routes->get('carouselImages', 'CarouselController::addImages');
 $routes->post('carousel/store', 'CarouselController::store');
 $routes->post('carousel/edit', 'CarouselController::edit');
 $routes->post('carousel/update', 'CarouselController::update');
-$routes->get('delete/(:segment)', 'CarouselController::delete/$1'); 
+$routes->get('delete/(:segment)', 'CarouselController::delete/$1');
 
 //GRAPH
 $routes->get('graph', 'GraphController::graph');

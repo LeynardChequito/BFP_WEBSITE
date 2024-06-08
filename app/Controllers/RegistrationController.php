@@ -4,9 +4,12 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\AccountModel;
+use App\Traits\EmailTrait;
+use DateTime;
 
 class RegistrationController extends BaseController
 {
+    use EmailTrait;
     protected $session;
 
     public function __construct()
@@ -96,6 +99,10 @@ class RegistrationController extends BaseController
             $photoIdFile->move(ROOTPATH . 'public/uploads', $photoIdFileName);
             $profilePhotoFile->move(ROOTPATH . 'public/uploads', $profilePhotoFileName);
 
+            // Generate verification token and expiration
+            $verificationToken = bin2hex(random_bytes(16));
+            $expiration = (new DateTime())->modify('+1 day')->format('Y-m-d H:i:s');
+
             // Build data array
             $data = [
                 'fullName' => $this->request->getVar('fullName'),
@@ -108,13 +115,22 @@ class RegistrationController extends BaseController
                 'photoIdPath' => $photoIdFileName,
                 'profilePhotoPath' => $profilePhotoFileName,
                 'permission' => $this->request->getVar('permission'),
+                'verified' => 0, // Set initial verified status to 0 (not verified)
+                'verification_token' => $verificationToken,
+                'verification_expiration' => $expiration,
             ];
 
             // Insert data into the database
             $accountModel->insert($data);
 
+            // Send verification email
+            $verificationLink = base_url("verify?token=$verificationToken");
+            $subject = 'Email Verification';
+            $message = "Please click the following link to verify your email: <a href='$verificationLink'>$verificationLink</a><br><p>Verification will expire after 10 minutes.</p><br>BFP_Mailer";
+            $this->sendEmail($this->request->getVar('email'), $subject, $message);
+
             // Set success message
-            $this->session->setFlashdata('success', 'Registration successful!');
+            $this->session->setFlashdata('success', 'Registration successful! Please check your email to verify your account.');
 
             // Redirect to login page after successful registration
             return redirect()->to('login');

@@ -23,20 +23,16 @@ class ExecutableFinder
 
     /**
      * Replaces default suffixes of executable.
-     *
-     * @return void
      */
-    public function setSuffixes(array $suffixes)
+    public function setSuffixes(array $suffixes): void
     {
         $this->suffixes = $suffixes;
     }
 
     /**
      * Adds new possible suffix to check for executable.
-     *
-     * @return void
      */
-    public function addSuffix(string $suffix)
+    public function addSuffix(string $suffix): void
     {
         $this->suffixes[] = $suffix;
     }
@@ -72,7 +68,7 @@ class ExecutableFinder
             }
         }
 
-        $command = '\\' === \DIRECTORY_SEPARATOR ? 'where' : 'command -v';
+        $command = '\\' === \DIRECTORY_SEPARATOR ? 'where' : 'command -v --';
         if (\function_exists('exec') && ($executablePath = strtok(@exec($command.' '.escapeshellarg($name)), \PHP_EOL)) && @is_executable($executablePath)) {
             return $executablePath;
         }
