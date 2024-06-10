@@ -85,6 +85,7 @@ $routes->get('graph', 'GraphController::graph');
 $routes->get('user-location', 'LocationController::showUserLocation');
 // $routes->post('mapscr', 'LocationController::mapscript');
 $routes->get('rescuemap', 'LocationController::map');
+$routes->get('fetchCommunityReports', 'LocationController::fetchCommunityReports');
 
 
 //RESCUER REPORT

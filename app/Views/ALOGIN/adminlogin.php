@@ -10,8 +10,8 @@
             margin: 0;
             font-family: 'Arial', sans-serif;
             background-image: url('/images/bglog.jpg');
-            background-size: cover; 
-            background-position: center; 
+            background-size: cover;
+            background-position: center;
         }
 
         .login-card {
@@ -24,7 +24,7 @@
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             margin: 50px auto;
-            z-index: 1; 
+            z-index: 1;
         }
 
         .bfp-title {
@@ -109,7 +109,6 @@
             border-color: #ebccd1;
             color: #a94442;
         }
-
     </style>
 </head>
 
@@ -130,16 +129,16 @@
             <button id="btnLogin" type="submit" class="bfp-btn">Login</button>
         </form>
         <p class="bfp-link" onclick="goToForgotPassword()">Forgot Password?</p>
-        <a href="<?= site_url('/admin-registration') ?>" class="create-account-btn">Create an Account</a>
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
     <script>
         // Script to toggle password visibility
-        document.getElementById('showPassword').addEventListener('change', function () {
+        document.getElementById('showPassword').addEventListener('change', function() {
             var passwordInput = document.querySelector('input[name="password"]');
             passwordInput.type = this.checked ? 'text' : 'password';
         });
@@ -152,11 +151,10 @@
     </script>
 
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <script type="module">
-
         const firebaseConfig = {
             apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
             authDomain: "pushnotifbfp.firebaseapp.com",
@@ -167,63 +165,64 @@
             measurementId: "G-XMBH6JJ3M6"
         };
 
-firebase.initializeApp(firebaseConfig);
-const fcm = firebase.messaging()
-let mToken;
+        firebase.initializeApp(firebaseConfig);
+        const fcm = firebase.messaging()
+        let mToken;
 
-fcm.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc' 
-    }).then((currentToken) => {
-        console.log('Token retrieved:', currentToken);
-        mToken = currentToken;
-    });
-
-    fcm.onMessage((data) => {
-    console.log('onMessage: ', data)
-
- Notification.requestPermission((status) => {
-            console.log('requestPermission:', status);
-            if (status === 'granted') {
-                let title = data['data']['title'];
-                let body = data['data']['body'];
-                new Notification(title, {
-                    body: body
-                });
-            }
+        fcm.getToken({
+            vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+        }).then((currentToken) => {
+            console.log('Token retrieved:', currentToken);
+            mToken = currentToken;
         });
-    });
 
-    document.getElementById('btnLogin').addEventListener('click', function(event) {
+        fcm.onMessage((data) => {
+            console.log('onMessage: ', data)
+
+            Notification.requestPermission((status) => {
+                console.log('requestPermission:', status);
+                if (status === 'granted') {
+                    let title = data['data']['title'];
+                    let body = data['data']['body'];
+                    new Notification(title, {
+                        body: body
+                    });
+                }
+            });
+        });
+
+        document.getElementById('btnLogin').addEventListener('click', function(event) {
             event.preventDefault();
 
             let email = document.getElementById('email_address').value;
             let password = document.getElementById('password').value;
 
             fetch('adddologin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                    token: mToken
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        token: mToken
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                if (data.status === '1') {
-                    
-                    window.location.href = 'admin-home';
-                }
-            })
-            .catch(error => {
-                console.error('Login error:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.status === '1') {
+
+                        window.location.href = 'admin-home';
+                    }
+                })
+                .catch(error => {
+                    console.error('Login error:', error);
+                });
         });
 
         function goToForgotPassword() {
-            
+
             console.log('Redirect to forgot password page');
         }
     </script>
