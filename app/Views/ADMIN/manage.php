@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-          
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,7 +34,7 @@
         .sidebar a {
             color: #fff;
             text-decoration: none;
-            
+
             display: block;
         }
 
@@ -67,7 +67,8 @@
             margin-top: 20px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             text-align: left;
         }
@@ -110,6 +111,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <?= view('ACOMPONENTS/adminheader'); ?>
@@ -119,7 +121,17 @@
         <div class="row">
 
             <?= view('ACOMPONENTS/amanagesidebar'); ?>
+            <?php if (session()->has('success')) : ?>
+                <div class="alert">
+                    <?= session('success') ?>
+                </div>
+            <?php endif; ?>
 
+            <?php if (session()->has('error')) : ?>
+                <div class="alert alert-danger">
+                    <?= session('error') ?>
+                </div>
+            <?php endif; ?>
             <!------------- MAIN CONTENT ---------------------->
             <div class="col-md-9">
                 <div class="content">

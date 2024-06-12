@@ -66,7 +66,17 @@
 <body>
 
     <?= view('ACOMPONENTS/adminheader'); ?>
+    <?php if (session()->has('success')) : ?>
+        <div class="alert">
+            <?= session('success') ?>
+        </div>
+    <?php endif; ?>
 
+    <?php if (session()->has('error')) : ?>
+        <div class="alert alert-danger">
+            <?= session('error') ?>
+        </div>
+    <?php endif; ?>
     <!-- <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-11">
@@ -94,8 +104,14 @@
 
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import {
+            getMessaging,
+            getToken,
+            onMessage
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
         const firebaseConfig = {
             apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
             authDomain: "pushnotifbfp.firebaseapp.com",

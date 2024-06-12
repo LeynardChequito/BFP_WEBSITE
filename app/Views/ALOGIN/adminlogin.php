@@ -116,6 +116,17 @@
 
     <div class="login-card">
         <h2 class="bfp-title">Bureau of Fire Protection (ADMIN)</h2>
+        <?php if (session()->has('success')) : ?>
+            <div class="alert">
+                <?= session('success') ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (session()->has('error')) : ?>
+            <div class="alert alert-danger">
+                <?= session('error') ?>
+            </div>
+        <?php endif; ?>
         <form>
             <label for="email_address">Email:</label>
             <input id="email_address" type="text" name="email_address" class="v-text-field" required>
@@ -212,8 +223,11 @@
                 .then(data => {
                     console.log(data);
                     if (data.status === '1') {
-
                         window.location.href = 'admin-home';
+                    } else {
+                        alert(data.message);
+                        // Optionally, you can reload the page to show flash data set in the session
+                        window.location.reload();
                     }
                 })
                 .catch(error => {

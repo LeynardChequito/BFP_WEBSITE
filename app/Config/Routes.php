@@ -19,6 +19,7 @@ $routes->post('dologin', 'LoginController::dologin');
 $routes->get('registration', 'RegistrationController::register');
 $routes->post('registration/processForm', 'RegistrationController::processForm');
 $routes->get('verify', 'LoginController::verify');
+$routes->get('admin/verify', 'ARegistrationController::verify');
 
 // NAVIGATION BAR
 $routes->get('home', 'HomeController::home');

@@ -4,15 +4,52 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\AdminModel;
+use App\Traits\EmailTrait;
+use DateTime;
 
 class ARegistrationController extends BaseController
 {
+    use EmailTrait;
     protected $session;
 
     public function __construct()
     {
         $this->session = \Config\Services::session();
     }
+    public function verify()
+    {
+        $token = $this->request->getGet('token');
+        if (!$token) {
+            $this->session->setFlashdata('error', 'Invalid token.');
+            return redirect()->to('admin-login');
+        }
+
+        $db = \Config\Database::connect();
+        $builder = $db->table('admins');
+        $builder->where('verification_token', $token);
+        $user = $builder->get()->getRow();
+
+        if (!$user) {
+            $this->session->setFlashdata('error', 'Invalid token.');
+            return redirect()->to('admin-login');
+        }
+
+        $expiration = new DateTime($user->verification_expiration);
+        $now = new DateTime();
+
+        if ($now > $expiration) {
+            $this->session->setFlashdata('error', 'Token has expired.');
+            return redirect()->to('admin-login');
+        }
+
+        // Update the user's verified status
+        $builder->where('admin_id', $user->admin_id);
+        $builder->update(['verified' => 1, 'verification_token' => null, 'verification_expiration' => null]);
+
+        $this->session->setFlashdata('success', 'Email successfully verified. You can now log in.');
+        return redirect()->to('admin-login');
+    }
+
 
     public function adminregister()
     {
@@ -108,12 +145,16 @@ class ARegistrationController extends BaseController
                 'gender' => $this->request->getVar('gender'),
             ];
 
-            
-            $adminModel->insert($data);
+            $adminId = $adminModel->insert($data);
 
-            $this->session->setFlashdata('success', 'Admin registration successful!');
+            // Generate and send verification token
+            $token = $adminModel->generateVerificationToken($adminId);
+            $verificationLink = base_url("admin/verify?token={$token}");
+            $this->sendEmail($data['email_address'], 'Email Verification', "Please click the link to verify your email: <a href=\"{$verificationLink}\">Verify Email</a>");
 
-            return redirect()->to('admin-login');
+            $this->session->setFlashdata('success', 'Admin registration successful! They need to check their email for the verification link.');
+
+            return redirect()->to('admin-home');
         } else {
             $data['validation'] = $this->validator;
             return view('AREGISTER/aregister', $data);

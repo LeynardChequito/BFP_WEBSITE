@@ -12,7 +12,7 @@ class AdminModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['first_name', 'middle_name', 'last_name', 'email_address', 'contact_number', 'organization_name', 'position_role', 'username', 'password', 'address', 'date_of_birth', 'gender', 'token'];
+    protected $allowedFields    = ['first_name', 'middle_name', 'last_name', 'email_address', 'contact_number', 'organization_name', 'position_role', 'username', 'password', 'address', 'date_of_birth', 'gender', 'token', 'verified', 'verification_token', 'verification_expiration'];
 
     // Dates
     protected $useTimestamps = false;
@@ -37,4 +37,16 @@ class AdminModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+    public function generateVerificationToken($adminId)
+    {
+        $token = bin2hex(random_bytes(16)); // Generate a random token
+        $expiration = date('Y-m-d H:i:s', strtotime('+1 hour')); // Set expiration time (1 hour from now)
+
+        $this->update($adminId, [
+            'verification_token' => $token,
+            'verification_expiration' => $expiration
+        ]);
+
+        return $token;
+    }
 }
