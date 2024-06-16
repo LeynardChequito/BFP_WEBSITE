@@ -13,13 +13,17 @@ class RescuerReportModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'fire_type',
-        'barangay', 
-        'fire_size', 
-        'road_type', 
-        'additional_info', 
-        'photo_upload',
-        'user_id',
+        'user_name',
+        'report_date',
+        'start_time',
+        'end_time',
+        'address',
+        'cause_of_fire',
+        'fire_undetermined',
+        'property_damage_cost',
+        'number_of_injuries',
+        'additional_information',
+        'photo'
     ];
 
     // Dates

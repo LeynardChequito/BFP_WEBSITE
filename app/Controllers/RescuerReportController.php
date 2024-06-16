@@ -4,88 +4,43 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\RescuerReportModel;
-use App\Models\AccountModel;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Messaging\CloudMessage;
 
 class RescuerReportController extends BaseController
 {
-    private $emergencyCall;
-
-    public function __construct()
+    public function firereportform()
     {
-        $this->emergencyCall = new RescuerReportModel();
+        return view('RESCUERREPORT/fire_report_form');
     }
 
-    public function submitEmergencyCall()
+    public function store()
     {
-        try {
-            // Retrieve form data including latitude and longitude
-            $latitude = $this->request->getPost('latitude');
-            $longitude = $this->request->getPost('longitude');
-            $fireType = $this->request->getPost('fire_type');
-            $barangay = $this->request->getPost('barangay');
-            $fireSize = $this->request->getPost('fire_size');
-            $roadType = $this->request->getPost('road_type');
-            $photoUpload = $this->request->getFile('photo_upload');
-            $additionalInfo = $this->request->getPost('additional_info');
+        $fireReportModel = new RescuerReportModel();
 
-            // Retrieve user's full name based on user_id
-            $userId = session()->get('user_id');
-            $accountModel = new AccountModel();
-            $user = $accountModel->find($userId);
-            $fullName = $user['fullName'];
-
-            // Prepare emergency call data including user's full name
-            $emergencyCallData = [
-                'user_id' => $userId,
-                'full_name' => $fullName,
-                'fire_type' => $fireType,
-                'barangay' => $barangay,
-                'fire_size' => $fireSize,
-                'road_type' => $roadType,
-                'additional_info' => $additionalInfo,
-                'latitude' => $latitude,
-                'longitude' => $longitude,
-                'photo_upload' => $photoUpload->getName()
-            ];
-
-            // Save emergency call data to database
-            $this->emergencyCall->insert($emergencyCallData);
-            // Handle file upload
-            if ($photoUpload && $photoUpload->isValid()) {
-                // Move the uploaded file to the public/accident_report directory
-                $photoUpload->move(ROOTPATH . 'public/accident_report', $photoUpload->getName());
-            }
-
-            // Initialize Firebase Admin SDK
-            $factory = (new Factory)->withServiceAccount(ROOTPATH . 'C:\laragon\www\BFP_WEBSITE\pushnotifbfp-c11343df49d3.json ');
-            $messaging = $factory->createMessaging();
-
-            // Construct the notification message
-            $message = CloudMessage::fromArray([
-                'notification' => [
-                    'title' => 'Emergency Call',
-                    'body' => 'A new emergency call has been submitted.',
-                    'data' => [
-                        'fireType' => $fireType,
-                        'barangay' => $barangay,
-                        'fireSize' => $fireSize,
-                        'roadType' => $roadType,
-                        'additionalInfo' => $additionalInfo,
-                        'photo_upload' => $photoUpload->getName()
-                    ],
-                ],
-                'topic' => 'admin_notifications'
-            ]);
-
-            // Send the message
-            $messaging->send($message);
-
-            return redirect()->to('rescuemap')->with('success', 'Emergency call submitted successfully.');
-        } catch (\Throwable $th) {
-            // Handle any errors
-            return redirect()->back()->withInput()->with('error', $th->getMessage());
+        $file = $this->request->getFile('photo');
+        if ($file->isValid() && !$file->hasMoved()) {
+            $newName = $file->getRandomName();
+            $file->move(WRITEPATH . 'uploads', $newName);
+            $photoPath = WRITEPATH . 'public/rescuer_report' . $newName;
+        } else {
+            $photoPath = null;
         }
+
+        $data = [
+            'user_name' => $this->request->getPost('user_name'),
+            'report_date' => $this->request->getPost('report_date'),
+            'start_time' => $this->request->getPost('start_time'),
+            'end_time' => $this->request->getPost('end_time'),
+            'address' => $this->request->getPost('address'),
+            'cause_of_fire' => $this->request->getPost('cause_of_fire'),
+            'fire_undetermined' => $this->request->getPost('fire_undetermined'),
+            'property_damage_cost' => $this->request->getPost('property_damage_cost'),
+            'number_of_injuries' => $this->request->getPost('number_of_injuries'),
+            'additional_information' => $this->request->getPost('additional_information'),
+            'photo' => $photoPath
+        ];
+
+        $fireReportModel->save($data);
+
+        return redirect()->to('rescuemap');
     }
 }

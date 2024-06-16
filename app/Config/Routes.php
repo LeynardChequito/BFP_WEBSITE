@@ -100,3 +100,7 @@ $routes->get('submitcall', 'CommunityReportController::submitcall');
 $routes->post('communityreport/submit', 'CommunityReportController::submitCommunityReport');
 $routes->post('getEmergencyCallCoordinates', 'CommunityReportController::getEmergencyCallCoordinates');
 $routes->get('reports-recent', 'CommunityReportController::getRecentReports');
+
+//RESCUER REPORT
+$routes->get('fire-report/create', 'RescuerReportController::firereportform');
+$routes->post('fire-report/store', 'RescuerReportController::store');

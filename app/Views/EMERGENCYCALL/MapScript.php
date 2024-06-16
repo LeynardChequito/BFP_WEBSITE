@@ -326,7 +326,7 @@
 
     async function getRecentReports() {
         try {
-            const response = await fetch('http://localhost:8080/reports-recent/');
+            const response = await fetch('https://bfpcalapancity.online/reports-recent/');
             const data = await response.json();
 
             if (response.ok && Array.isArray(data)) {
