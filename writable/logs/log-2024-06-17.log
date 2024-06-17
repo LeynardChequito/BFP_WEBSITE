@@ -1,0 +1,379 @@
+CRITICAL - 2024-06-17 15:02:51 --> ErrorException: Undefined property: Config\App::$baseURL
+in SYSTEMPATH\HTTP\SiteURI.php on line 195.
+ 1 SYSTEMPATH\HTTP\SiteURI.php(195): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined property: Config\\App::$baseURL', 'C:\\laragon\\www\\BFP_WEBSITE\\system\\HTTP\\SiteURI.php', 195)
+ 2 SYSTEMPATH\HTTP\SiteURI.php(145): CodeIgniter\HTTP\SiteURI->normalizeBaseURL(Object(Config\App))
+ 3 SYSTEMPATH\HTTP\SiteURI.php(100): CodeIgniter\HTTP\SiteURI->determineBaseURL(Object(Config\App), null, null)
+ 4 SYSTEMPATH\HTTP\CLIRequest.php(78): CodeIgniter\HTTP\SiteURI->__construct(Object(Config\App), 'serve')
+ 5 SYSTEMPATH\Config\Services.php(144): CodeIgniter\HTTP\CLIRequest->__construct(Object(Config\App))
+ 6 SYSTEMPATH\Config\BaseService.php(258): CodeIgniter\Config\Services::clirequest(Object(Config\App), false)
+ 7 SYSTEMPATH\Config\BaseService.php(199): CodeIgniter\Config\BaseService::__callStatic('clirequest', [...])
+ 8 SYSTEMPATH\Config\Services.php(139): CodeIgniter\Config\BaseService::getSharedInstance('clirequest', Object(Config\App))
+ 9 SYSTEMPATH\Config\BaseService.php(258): CodeIgniter\Config\Services::clirequest(Object(Config\App))
+10 SYSTEMPATH\Config\Services.php(537): CodeIgniter\Config\BaseService::__callStatic('clirequest', [...])
+11 SYSTEMPATH\Config\BaseService.php(258): CodeIgniter\Config\Services::createRequest(Object(Config\App), true)
+12 SYSTEMPATH\CLI\Console.php(37): CodeIgniter\Config\BaseService::__callStatic('createRequest', [...])
+13 ROOTPATH\spark(102): CodeIgniter\CLI\Console->run()
+CRITICAL - 2024-06-17 15:02:51 --> ErrorException: Uncaught ErrorException: Undefined property: Config\App::$baseURL in C:\laragon\www\BFP_WEBSITE\system\HTTP\SiteURI.php:195
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\HTTP\SiteURI.php(195): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined prope...', 'C:\\laragon\\www\\...', 195)
+#1 C:\laragon\www\BFP_WEBSITE\system\HTTP\SiteURI.php(145): CodeIgniter\HTTP\SiteURI->normalizeBaseURL(Object(Config\App))
+#2 C:\laragon\www\BFP_WEBSITE\system\HTTP\SiteURI.php(100): CodeIgniter\HTTP\SiteURI->determineBaseURL(Object(Config\App), NULL, NULL)
+#3 C:\laragon\www\BFP_WEBSITE\system\HTTP\SiteURIFactory.php(224): CodeIgniter\HTTP\SiteURI->__construct(Object(Config\App), '/', NULL)
+#4 C:\laragon\www\BFP_WEBSITE\system\HTTP\SiteURIFactory.php(45): CodeIgniter\HTTP\SiteURIFactory->createURIFromRoutePath('/')
+#5 C:\laragon\www\BFP_WEBSITE\system\Config\Services.php(799): CodeIgniter\HTTP\SiteURIFactory->createFromGlobals()
+#6 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(258): CodeIgniter\Config\Services::uri(NULL, false)
+#7 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(199): CodeIgniter\Config\BaseService::__callStatic('uri', Array)
+#8 C:\laragon\www\BFP_WEBSITE\system\Config\Services.php(792): CodeIgniter\Config\BaseService::getSharedInstance('uri', NULL)
+#9 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(258): CodeIgniter\Config\Services::uri()
+#10 C:\laragon\www\BFP_WEBSITE\system\Config\Services.php(566): CodeIgniter\Config\BaseService::__callStatic('uri', Array)
+#11 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(258): CodeIgniter\Config\Services::incomingrequest(Object(Config\App), false)
+#12 C:\laragon\www\BFP_WEBSITE\system\Config\Services.php(524): CodeIgniter\Config\BaseService::__callStatic('incomingrequest', Array)
+#13 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(258): CodeIgniter\Config\Services::request(NULL, false)
+#14 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(199): CodeIgniter\Config\BaseService::__callStatic('request', Array)
+#15 C:\laragon\www\BFP_WEBSITE\system\Config\Services.php(520): CodeIgniter\Config\BaseService::getSharedInstance('request', NULL)
+#16 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(258): CodeIgniter\Config\Services::request()
+#17 C:\laragon\www\BFP_WEBSITE\system\Debug\Exceptions.php(150): CodeIgniter\Config\BaseService::__callStatic('request', Array)
+#18 [internal function]: CodeIgniter\Debug\Exceptions->exceptionHandler(Object(ErrorException))
+#19 {main}
+  thrown
+【Previous Exception】
+ErrorException
+Undefined property: Config\App::$baseURL
+#0 C:\laragon\www\BFP_WEBSITE\system\HTTP\SiteURI.php(195): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined prope...', 'C:\\laragon\\www\\...', 195)
+#1 C:\laragon\www\BFP_WEBSITE\system\HTTP\SiteURI.php(145): CodeIgniter\HTTP\SiteURI->normalizeBaseURL(Object(Config\App))
+#2 C:\laragon\www\BFP_WEBSITE\system\HTTP\SiteURI.php(100): CodeIgniter\HTTP\SiteURI->determineBaseURL(Object(Config\App), NULL, NULL)
+#3 C:\laragon\www\BFP_WEBSITE\system\HTTP\CLIRequest.php(78): CodeIgniter\HTTP\SiteURI->__construct(Object(Config\App), 'serve')
+#4 C:\laragon\www\BFP_WEBSITE\system\Config\Services.php(144): CodeIgniter\HTTP\CLIRequest->__construct(Object(Config\App))
+#5 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(258): CodeIgniter\Config\Services::clirequest(Object(Config\App), false)
+#6 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(199): CodeIgniter\Config\BaseService::__callStatic('clirequest', Array)
+#7 C:\laragon\www\BFP_WEBSITE\system\Config\Services.php(139): CodeIgniter\Config\BaseService::getSharedInstance('clirequest', Object(Config\App))
+#8 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(258): CodeIgniter\Config\Services::clirequest(Object(Config\App))
+#9 C:\laragon\www\BFP_WEBSITE\system\Config\Services.php(537): CodeIgniter\Config\BaseService::__callStatic('clirequest', Array)
+#10 C:\laragon\www\BFP_WEBSITE\system\Config\BaseService.php(258): CodeIgniter\Config\Services::createRequest(Object(Config\App), true)
+#11 C:\laragon\www\BFP_WEBSITE\system\CLI\Console.php(37): CodeIgniter\Config\BaseService::__callStatic('createRequest', Array)
+#12 C:\laragon\www\BFP_WEBSITE\spark(102): CodeIgniter\CLI\Console->run()
+#13 {main}
+in SYSTEMPATH\HTTP\SiteURI.php on line 195.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+ERROR - 2024-06-17 15:03:49 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u262559041_bfpcalapancity'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:184
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(184): mysqli->real_connect('localhost', 'u262559041_bfpc...', Object(SensitiveParameterValue), 'u262559041_bfp', 3306, '', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#6 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#11 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#12 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:229
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#3 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#4 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#5 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#6 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#10 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#11 {main}
+CRITICAL - 2024-06-17 15:03:49 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'localhost' (using password: YES)
+in SYSTEMPATH\Database\BaseConnection.php on line 428.
+ 1 SYSTEMPATH\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admins`
+WHERE `email_address` = :email_address:
+ LIMIT 1', [...], false)
+ 3 SYSTEMPATH\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH\BaseModel.php(676): CodeIgniter\Model->doFirst()
+ 5 APPPATH\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+ 6 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+ 7 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+ 8 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+ERROR - 2024-06-17 15:03:54 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u262559041_bfpcalapancity'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:184
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(184): mysqli->real_connect('localhost', 'u262559041_bfpc...', Object(SensitiveParameterValue), 'u262559041_bfp', 3306, '', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#6 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#11 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#12 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:229
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#3 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#4 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#5 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#6 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#10 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#11 {main}
+CRITICAL - 2024-06-17 15:03:54 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'localhost' (using password: YES)
+in SYSTEMPATH\Database\BaseConnection.php on line 428.
+ 1 SYSTEMPATH\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admins`
+WHERE `email_address` = :email_address:
+ LIMIT 1', [...], false)
+ 3 SYSTEMPATH\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH\BaseModel.php(676): CodeIgniter\Model->doFirst()
+ 5 APPPATH\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+ 6 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+ 7 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+ 8 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+ERROR - 2024-06-17 15:04:29 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u262559041_bfpcalapancity'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:184
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(184): mysqli->real_connect('localhost', 'u262559041_bfpc...', Object(SensitiveParameterValue), 'u262559041_bfp', 3306, '', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#6 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#11 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#12 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:229
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#3 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#4 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#5 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#6 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#10 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#11 {main}
+CRITICAL - 2024-06-17 15:04:29 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'localhost' (using password: YES)
+in SYSTEMPATH\Database\BaseConnection.php on line 428.
+ 1 SYSTEMPATH\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admins`
+WHERE `email_address` = :email_address:
+ LIMIT 1', [...], false)
+ 3 SYSTEMPATH\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH\BaseModel.php(676): CodeIgniter\Model->doFirst()
+ 5 APPPATH\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+ 6 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+ 7 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+ 8 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+ERROR - 2024-06-17 15:04:33 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u262559041_bfpcalapancity'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:184
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(184): mysqli->real_connect('localhost', 'u262559041_bfpc...', Object(SensitiveParameterValue), 'u262559041_bfp', 3306, '', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#6 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#11 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#12 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:229
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#3 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#4 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#5 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#6 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#10 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#11 {main}
+CRITICAL - 2024-06-17 15:04:33 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'localhost' (using password: YES)
+in SYSTEMPATH\Database\BaseConnection.php on line 428.
+ 1 SYSTEMPATH\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admins`
+WHERE `email_address` = :email_address:
+ LIMIT 1', [...], false)
+ 3 SYSTEMPATH\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH\BaseModel.php(676): CodeIgniter\Model->doFirst()
+ 5 APPPATH\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+ 6 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+ 7 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+ 8 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+ERROR - 2024-06-17 15:05:12 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u262559041_bfpcalapancity'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:184
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(184): mysqli->real_connect('localhost', 'u262559041_bfpc...', Object(SensitiveParameterValue), 'u262559041_bfp', 3306, '', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#6 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#11 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#12 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:229
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#3 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#4 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#5 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#6 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#10 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#11 {main}
+CRITICAL - 2024-06-17 15:05:12 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'localhost' (using password: YES)
+in SYSTEMPATH\Database\BaseConnection.php on line 428.
+ 1 SYSTEMPATH\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admins`
+WHERE `email_address` = :email_address:
+ LIMIT 1', [...], false)
+ 3 SYSTEMPATH\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH\BaseModel.php(676): CodeIgniter\Model->doFirst()
+ 5 APPPATH\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+ 6 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+ 7 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+ 8 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+ERROR - 2024-06-17 15:05:25 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u262559041_bfpcalapancity'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:184
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(184): mysqli->real_connect('localhost', 'u262559041_bfpc...', Object(SensitiveParameterValue), 'u262559041_bfp', 3306, '', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#6 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#11 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#12 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:229
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#3 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#4 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#5 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#6 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#10 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#11 {main}
+CRITICAL - 2024-06-17 15:05:25 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'localhost' (using password: YES)
+in SYSTEMPATH\Database\BaseConnection.php on line 428.
+ 1 SYSTEMPATH\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admins`
+WHERE `email_address` = :email_address:
+ LIMIT 1', [...], false)
+ 3 SYSTEMPATH\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH\BaseModel.php(676): CodeIgniter\Model->doFirst()
+ 5 APPPATH\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+ 6 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+ 7 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+ 8 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')
+ERROR - 2024-06-17 15:05:32 --> Error connecting to the database: mysqli_sql_exception: Access denied for user 'u262559041_bfpcalapancity'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:184
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php(184): mysqli->real_connect('localhost', 'u262559041_bfpc...', Object(SensitiveParameterValue), 'u262559041_bfp', 3306, '', 0)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#6 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#9 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#11 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#12 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Access denied for user '****'@'localhost' (using password: YES) in C:\laragon\www\BFP_WEBSITE\system\Database\MySQLi\Connection.php:229
+Stack trace:
+#0 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\laragon\www\BFP_WEBSITE\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\laragon\www\BFP_WEBSITE\system\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#3 C:\laragon\www\BFP_WEBSITE\system\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+#4 C:\laragon\www\BFP_WEBSITE\system\BaseModel.php(676): CodeIgniter\Model->doFirst()
+#5 C:\laragon\www\BFP_WEBSITE\app\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+#6 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+#7 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+#8 C:\laragon\www\BFP_WEBSITE\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\laragon\www\BFP_WEBSITE\public\index.php(79): CodeIgniter\CodeIgniter->run()
+#10 C:\laragon\www\BFP_WEBSITE\system\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\...')
+#11 {main}
+CRITICAL - 2024-06-17 15:05:32 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Access denied for user '****'@'localhost' (using password: YES)
+in SYSTEMPATH\Database\BaseConnection.php on line 428.
+ 1 SYSTEMPATH\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1613): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admins`
+WHERE `email_address` = :email_address:
+ LIMIT 1', [...], false)
+ 3 SYSTEMPATH\Model.php(270): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH\BaseModel.php(676): CodeIgniter\Model->doFirst()
+ 5 APPPATH\Controllers\ALoginController.php(91): CodeIgniter\BaseModel->first()
+ 6 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\ALoginController->adddologin()
+ 7 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ALoginController))
+ 8 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Commands\Server\rewrite.php(47): require_once('C:\\laragon\\www\\BFP_WEBSITE\\public\\index.php')

@@ -44,10 +44,10 @@ class HomeController extends BaseController
     }
     public function logout()
     {
-       $this->session->setFlashdata('logout_success', 'Logout successful!');
+        session()->destroy();
+        $this->session->setFlashdata('logout_success', 'Logout successful!');
 
-            return view('LOGIN/login');
-        
+        return view('LOGIN/login');
     }
     public function album()
     {

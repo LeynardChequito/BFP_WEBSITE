@@ -27,6 +27,7 @@ class ANavigationController extends BaseController
 
     public function adminLogout()
     {
+        session()->destroy();
         $this->session->setFlashdata('logout_success', 'Admin Logout successful!');
         return view('ALOGIN/adminlogin');
     }

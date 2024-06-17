@@ -101,15 +101,14 @@ class ALoginController extends BaseController
             if (password_verify($password, $data['password'])) {
                 log_message('debug', 'User data: ' . print_r($data, true));
                 // Update the token in the database
-                $adminModel->update($data['admin_id'], array('token' => $token));
+                $adminModel->update($data['admin_id'], ['token' => $token]);
 
                 // Set session data
                 $ses_data = [
-                    'admin_id' => $data['admin_id'],
-                    'email_address' => $data['email_address'],
-                    'isLoggedln' => TRUE
+
+                    'isAdminLoggedIn' => TRUE // Corrected session key
                 ];
-                $this->session->set($ses_data);
+                session()->set($ses_data);
 
                 $res['status'] = '1';
                 $res['message'] = 'Login successful';

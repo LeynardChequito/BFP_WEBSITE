@@ -88,7 +88,7 @@ class LoginController extends BaseController
             if ($data) {
                 // Check if the email is verified
                 if (!$data['verified']) {
-                    $this->session->setFlashdata('error', 'Your email is not verified. Please check your email for the verification link.');
+                    session()->setFlashdata('error', 'Your email is not verified. Please check your email for the verification link.');
                     return redirect()->to('login');
                 }
 
@@ -99,18 +99,18 @@ class LoginController extends BaseController
                     $ses_data = [
                         'user_id' => $data['user_id'],
                         'email' => $data['email'],
-                        'isLoggedln' => TRUE
+                        'isLoggedIn' => TRUE // Corrected session key
                     ];
 
-                    $this->session->set($ses_data);
-                    $this->session->setFlashdata('success', 'Login successful!');
+                    session()->set($ses_data);
+                    session()->setFlashdata('success', 'Login successful!');
                     return redirect()->to('home');
                 } else {
-                    $this->session->setFlashdata('error', 'Password is incorrect.');
+                    session()->setFlashdata('error', 'Password is incorrect.');
                     return redirect()->to('login');
                 }
             } else {
-                $this->session->setFlashdata('error', 'Email does not exist.');
+                session()->setFlashdata('error', 'Email does not exist.');
                 return redirect()->to('login');
             }
         } else {
@@ -118,6 +118,7 @@ class LoginController extends BaseController
             return view('LOGIN/login', $data);
         }
     }
+
 
     public function dologin()
     {
@@ -145,9 +146,9 @@ class LoginController extends BaseController
                     'user_id' => $data['user_id'],
                     'fullName' => $data['fullName'],
                     'email' => $data['email'],
-                    'isLoggedln' => TRUE
+                    'isLoggedIn' => TRUE // Corrected session key
                 ];
-                $this->session->set($ses_data);
+                session()->set($ses_data);
 
                 $res['status'] = '1';
                 $res['message'] = 'Login successful';
