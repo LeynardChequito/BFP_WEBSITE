@@ -56,7 +56,7 @@ $routes->get('admin-notif', 'AHomeController::adminNotif', ['filter' => 'admin']
 // NEWS
 $routes->get('news', 'NewsController::news', ['filter' => 'user']);
 $routes->get('news/(:segment)', 'NewsController::show/$1', ['filter' => 'user']);
-$routes->get('newscreate', 'NewsController::newscreate', ['filter' => 'user']);
+$routes->get('newscreate', 'NewsController::newscreate', ['filter' => 'admin']);
 $routes->post('news/store', 'NewsController::store', ['filter' => 'user']);
 $routes->post('news/edit', 'NewsController::edit', ['filter' => 'user']);
 $routes->post('news/update', 'NewsController::update', ['filter' => 'user']);
