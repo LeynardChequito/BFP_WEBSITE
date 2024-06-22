@@ -37,6 +37,7 @@
 
         .form-group {
             margin-bottom: 20px;
+            margin-left: 20px;
         }
 
         .form-control {
@@ -44,6 +45,7 @@
             padding: 12px;
             border: 1px solid #d9534f;
             border-radius: 5px;
+            height: 45px;
         }
 
         .btn-primary {
@@ -54,6 +56,7 @@
             padding: 12px 20px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            margin-bottom: 20px;
         }
 
         .btn-primary:hover {
@@ -170,25 +173,25 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="photoIdPath" class="font-weight-bold">Upload Any Valid ID:</label>
-                                <input type="file" name="photoIdPath" accept="image/*" class="form-control-file" required>
-                                <?php if (isset($validation) && $validation->getError('photoIdPath')) { ?>
-                                    <div class="text-danger"><?= esc($validation->getError('photoIdPath')) ?></div>
+                               <label for="photoIdPath" class="font-weight-bold">Upload Any Valid ID:</label>
+                               <input type="file" name="photoIdPath" accept="image/*" class="form-control-file" required>
+                               <?php if (isset($validation) && $validation->getError('photoIdPath')) { ?>
+                                   <div class="text-danger"><?= esc($validation->getError('photoIdPath')) ?></div>
                                 <?php } ?>
                             </div>
 
                             <div class="form-group">
-                                <label for="profilePhotoPath" class="font-weight-bold">Upload Your Formal Photo:</label>
-                                <input type="file" id="profilePhotoPath" name="profilePhotoPath" accept="image/*" class="form-control-file" required>
-                                <?php if (isset($validation) && $validation->getError('profilePhotoPath')) { ?>
-                                    <div class="text-danger"><?= esc($validation->getError('profilePhotoPath')) ?></div>
-                                <?php } ?>
+                               <label for="profilePhotoPath" class="font-weight-bold">Upload Your Formal Photo:</label>
+                               <input type="file" id="profilePhotoPath" name="profilePhotoPath" accept="image/*" class="form-control-file" required>
+                               <?php if (isset($validation) && $validation->getError('profilePhotoPath')) { ?>
+                                   <div class="text-danger"><?= esc($validation->getError('profilePhotoPath')) ?></div>
+                               <?php } ?>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-check-label">
                                     <input type="checkbox" name="permission" class="form-check-input" required>
-                                    I hereby grant permission for real-time location tracking and facial recognition via my smartphone during emergencies, acknowledging its use as a witness to a fire incident.
+                                    I hereby grant permission for real-time location tracking and giving real image/video via my smartphone during emergencies, acknowledging its use as a witness to a fire incident.
                                 </label>
                                 <?php if (isset($validation) && $validation->getError('permission')) { ?>
                                     <div class="text-danger"><?= esc($validation->getError('permission')) ?></div>

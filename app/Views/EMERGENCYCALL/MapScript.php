@@ -286,7 +286,7 @@
             suggestionDiv.classList.add("hydrant-suggestion");
 
             suggestionDiv.innerHTML = `
-                    <h4>${hydrant.name}</h4>
+                    <h6>${hydrant.name}</h6>
                     <p>Distance: ${getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng).toFixed(2)} meters</p>
                     <p>Estimated Time: (Unavailable)</p>
                     <button class="navigate-btn" onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
@@ -325,73 +325,81 @@
     });
 
     async function getRecentReports() {
-        try {
-            const response = await fetch('https://bfpcalapancity.online/reports-recent/');
-            const data = await response.json();
+    try {
+        const response = await fetch('https://bfpcalapancity.online/reports-recent/');
+        const data = await response.json();
 
-            if (response.ok && Array.isArray(data)) {
-                const newReportsList = document.getElementById('newReportsList');
-                newReportsList.innerHTML = '';
+        if (response.ok && Array.isArray(data)) {
+            const newReportsList = document.getElementById('newReportsList');
+            newReportsList.innerHTML = '';
 
-                data.forEach(report => {
-                    if (report.latitude && report.longitude) {
-                        const {
-                            latitude,
-                            longitude,
-                            fullName,
-                            fileproof,
-                            timestamp
-                        } = report;
+            data.forEach(report => {
+                if (report.latitude && report.longitude) {
+                    const {
+                        latitude,
+                        longitude,
+                        fullName,
+                        fileproof,
+                        timestamp
+                    } = report;
 
-                        const listItem = document.createElement('li');
-                        listItem.classList.add('list-group-item');
-                        listItem.innerHTML = `
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('list-group-item');
+
+                    // Create the file proof content based on file type
+                    let fileProofContent = '';
+                    const fullURL = `bfpcalapancity/public/community_report/${fileproof}`;
+                    if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
+                        fileProofContent = `
+                            <video src="${fullURL}" controls class="file-proof-video"></video>
+                        `;
+                    } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
+                        fileProofContent = `
+                            <img src="${fullURL}" alt="File Proof" class="file-proof-image">
+                        `;
+                    } else {
+                        fileProofContent = "Unsupported file type";
+                    }
+
+                    listItem.innerHTML = `
+                        <h4>User in Need: ${fullName}</h4>
+                        <p><strong>Timestamp:</strong> ${timestamp}</p>
+                        <p><strong>File Proof:</strong></p>
+                        <div class="fileProofContainer">${fileProofContent}</div>
+                        <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
+                    `;
+                    newReportsList.appendChild(listItem);
+
+                    const marker = L.marker([latitude, longitude], {
+                        icon: userMarker
+                    }).addTo(map);
+                    const popupContent = `
+                        <div class="popup-content">
                             <h4>User in Need: ${fullName}</h4>
                             <p><strong>Timestamp:</strong> ${timestamp}</p>
                             <p><strong>File Proof:</strong></p>
-                            <div id="fileProofContainer_${fileproof}" class="fileProofContainer">
-                                <img src="/community_report/${fileproof}" alt="File Proof">
-                            </div>
+                            <div class="fileProofContainer">${fileProofContent}</div>
                             <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
-                        `;
-                        newReportsList.appendChild(listItem);
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
+                } else {
+                    console.warn('Invalid report location:', report);
+                }
+            });
 
-                        const marker = L.marker([latitude, longitude], {
-                            icon: userMarker
-                        }).addTo(map);
-                        const popupContent = `
-                                <div class="popup-content">
-                                    <h4>User in Need: ${fullName}</h4>
-                                    <p><strong>Timestamp:</strong> ${timestamp}</p>
-                                    <p><strong>File Proof:</strong></p>
-                                    <div id="fileProofContainer_${fileproof}" class="fileProofContainer">
-                                        <img src="/community_report/${fileproof}" alt="File Proof">
-                                    </div>
-                                    <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
-                                </div>
-                            `;
-                        marker.bindPopup(popupContent);
-
-                        marker.on('popupopen', () => {
-                            displayFileProof(fileproof, `fileProofContainer_${fileproof}`);
-                        });
-                    } else {
-                        console.warn('Invalid report location:', report);
-                    }
-                });
-
-                const newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
-                newReportModal.show();
-            } else {
-                console.error('Failed to fetch recent reports:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error fetching recent reports:', error);
+            const newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
+            newReportModal.show();
+        } else {
+            console.error('Failed to fetch recent reports:', response.statusText);
         }
+    } catch (error) {
+        console.error('Error fetching recent reports:', error);
     }
+}
 
     function displayFileProof(fileProofURL, containerId) {
-        const baseURL = '/community_report/';
+        const baseURL = 'bfpcalapancity/public/community_report/';
         const fullURL = baseURL + fileProofURL;
 
         const fileProofContainer = document.getElementById(containerId);
@@ -415,6 +423,11 @@
             fileProofContainer.innerHTML = "Unsupported file type";
         }
     }
+    
+     function showRouteToRescuer(lat, lng) {
+            endCoords = [lng, lat];
+            updateRoute();
+        }
 
     document.addEventListener('DOMContentLoaded', function() {
         getRecentReports(); // Fetch new reports on mount

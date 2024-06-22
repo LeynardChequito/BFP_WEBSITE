@@ -147,7 +147,7 @@
             text-align: center;
             font-size: 14px;
             font-weight: bold;
-            color: #007bff;
+            color: black;
             padding: 20px 0;
             background-color: #f8f9fa;
             margin: 0;
@@ -312,6 +312,30 @@
             }
 
         }
+
+        .push-notif-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .push-notif-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .push-notif-btn:focus {
+            outline: none;
+        }
     </style>
 </head>
 
@@ -326,12 +350,11 @@
             <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
             <button id="directions" onclick="toggleDirections()">Show Steps</button>
         </div>
-        <div class="bfp-header">
-            <label for="user-suggestions">Suggested Nearby Users in Need: </label>
-            <div id="user-suggestions" name="user-suggestions" class="user-suggestions"></div>
-            <div id="directions" style="display:none;"></div>
-            <button id="show-steps" onclick="toggleDirections()">Show Steps</button>
-        </div>
+
+        <!-- Push notification button for new reports -->
+        <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal">
+            &#128276;
+        </button>
 
         <!-- Modal for new reports -->
         <div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">

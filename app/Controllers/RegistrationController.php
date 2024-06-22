@@ -126,7 +126,71 @@ class RegistrationController extends BaseController
             // Send verification email
             $verificationLink = base_url("verify?token=$verificationToken");
             $subject = 'Email Verification';
-            $message = "Please click the following link to verify your email: <a href='$verificationLink'>$verificationLink</a><br><p>Verification will expire after 10 minutes.</p><br>BFP_Mailer";
+            $message = "<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        p {
+            color: #333;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class='email-container'>
+        <h1>Email Verification</h1>
+        <p>Hello,</p>
+        <p>Thank you for registering with us. To complete your registration, please verify your email address by clicking the verification button below:</p>
+        <a href='$verificationLink'>Verify Email</a>
+        <p>(Note: Once you click the verification button, you will be directed to the login page where you can log in with your email and password to continue.)</p>
+        <p>The verification link will expire after 10 minutes.</p>
+        <p>Best regards,<br>BFP_Mailer</p>
+        <div class='footer'>
+            <p>If you need assistance, please message us on <a href='https://www.facebook.com/calapancityfirestation.orientalmindoro?mibextid=ZbWKwL' target='_blank'>Facebook</a>.</p>
+            <p>BFP Calapan City Fire Station, New City Hall Complex, Brgy. Guinobatan, Calapan City, Oriental Mindoro</p>
+        </div>
+    </div>
+</body>
+</html>";
+
             $this->sendEmail($this->request->getVar('email'), $subject, $message);
 
             // Set success message
