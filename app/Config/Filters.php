@@ -69,15 +69,15 @@ class Filters extends BaseConfig
      */
     public $filters = [
         'user' => ['before' => [
-            'home', 'contact-us', 'banner', 'logout', 'achievements', 'contacts', 'activities',
-            'site', 'album', 'intern', 'pfv', 'fdas', 'inspection', 'news', 'news/*', 'carouselhome',
-            'carouselImages', 'carousel/*', 'graph', 'user-location', 'rescuemap', 'fetchCommunityReports',
-            'emergency-call', 'emergency-call/*', 'emergency', 'sitecall', 'submitcall', 'communityreport/*',
-            'reports-recent', 'fire-report/create', 'fire-report/store'
+             'contact-us', 'banner', 'logout', 'achievements', 'contacts', 'activities',
+            '/site', 'album', 'intern', 'pfv', 'fdas', 'inspection', 'news', 'news/(:segment)',
+            'carouselhome', 'user-location', 'submitcall', 'communityreport/*',
+              
         ]],
         'admin' => ['before' => [
-            'admin-home', 'admin-logout', 'admin-dashboard', 'admin-notif', 'admin/processlogin',
-            'admin-registration', 'admin-registration/*'
+            'admin-home', 'admin-logout', 'admin-dashboard', 'admin-notif', 'admin/processlogin','graph',
+            'admin-registration', 'admin-registration/*','news/*', 'delete/*', 'carouselImages', 'carousel/*', 
+             'fetchCommunityReports', 'getEmergencyCallCoordinates', 'reports-recent','fire-report/create', 'fire-report/store', 
         ]],
     ];
 }

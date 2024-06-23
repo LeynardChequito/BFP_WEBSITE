@@ -20,7 +20,7 @@ $routes->get('verify', 'LoginController::verify');
 $routes->get('admin/verify', 'ARegistrationController::verify');
 
 // NAVIGATION BAR
-$routes->get('home', 'HomeController::home', ['filter' => 'user']);
+$routes->get('home', 'HomeController::home');
 $routes->get('contact-us', 'HomeController::contactUs', ['filter' => 'user']);
 $routes->get('banner', 'HomeController::banner', ['filter' => 'user']);
 $routes->get('logout', 'HomeController::logout', ['filter' => 'user']);
@@ -57,38 +57,34 @@ $routes->get('admin-notif', 'AHomeController::adminNotif', ['filter' => 'admin']
 $routes->get('news', 'NewsController::news', ['filter' => 'user']);
 $routes->get('news/(:segment)', 'NewsController::show/$1', ['filter' => 'user']);
 $routes->get('newscreate', 'NewsController::newscreate', ['filter' => 'admin']);
-$routes->post('news/store', 'NewsController::store', ['filter' => 'user']);
-$routes->post('news/edit', 'NewsController::edit', ['filter' => 'user']);
-$routes->post('news/update', 'NewsController::update', ['filter' => 'user']);
-$routes->get('delete/(:segment)', 'NewsController::delete/$1', ['filter' => 'user']);
+$routes->post('news/store', 'NewsController::store', ['filter' => 'admin']);
+$routes->post('news/edit', 'NewsController::edit', ['filter' => 'admin']);
+$routes->post('news/update', 'NewsController::update', ['filter' => 'admin']);
+$routes->get('delete/(:segment)', 'NewsController::delete/$1', ['filter' => 'admin']);
 
 // CAROUSEL IMAGES
 $routes->get('carouselhome', 'CarouselController::carouselhome', ['filter' => 'user']);
 $routes->get('carouselImages', 'CarouselController::addImages', ['filter' => 'user']);
-$routes->post('carousel/store', 'CarouselController::store', ['filter' => 'user']);
-$routes->post('carousel/edit', 'CarouselController::edit', ['filter' => 'user']);
-$routes->post('carousel/update', 'CarouselController::update', ['filter' => 'user']);
-$routes->get('delete/(:segment)', 'CarouselController::delete/$1', ['filter' => 'user']);
+$routes->post('carousel/store', 'CarouselController::store', ['filter' => 'admin']);
+$routes->post('carousel/edit', 'CarouselController::edit', ['filter' => 'admin']);
+$routes->post('carousel/update', 'CarouselController::update', ['filter' => 'admin']);
+$routes->get('delete/(:segment)', 'CarouselController::delete/$1', ['filter' => 'admin']);
 
 // GRAPH
-$routes->get('graph', 'GraphController::graph', ['filter' => 'user']);
+$routes->get('graph', 'GraphController::graph', ['filter' => 'admin']);
 
+//MAPPING
 $routes->get('user-location', 'LocationController::showUserLocation', ['filter' => 'user']);
-$routes->get('rescuemap', 'LocationController::map', ['filter' => 'user']);
-$routes->get('fetchCommunityReports', 'LocationController::fetchCommunityReports', ['filter' => 'user']);
+$routes->get('rescuemap', 'LocationController::map', );
+$routes->get('fetchCommunityReports', 'LocationController::fetchCommunityReports', ['filter' => 'admin']);
 
-// RESCUER REPORT
-$routes->get('emergency-call', 'RescuerReportController::emergencycall', ['filter' => 'user']);
-$routes->post('emergency-call/submit', 'RescuerReportController::submitEmergencyCall', ['filter' => 'user']);
-$routes->get('emergency', 'RescuerReportController::emergency', ['filter' => 'user']);
-$routes->get('sitecall', 'RescuerReportController::sitecall', ['filter' => 'user']);
 
 // COMMUNITY REPORT
 $routes->get('submitcall', 'CommunityReportController::submitcall', ['filter' => 'user']);
 $routes->post('communityreport/submit', 'CommunityReportController::submitCommunityReport', ['filter' => 'user']);
-$routes->post('getEmergencyCallCoordinates', 'CommunityReportController::getEmergencyCallCoordinates', ['filter' => 'user']);
-$routes->get('reports-recent', 'CommunityReportController::getRecentReports', ['filter' => 'user']);
+$routes->post('getEmergencyCallCoordinates', 'CommunityReportController::getEmergencyCallCoordinates', ['filter' => 'admin']);
+$routes->get('reports-recent', 'CommunityReportController::getRecentReports', ['filter' => 'admin']);
 
 // RESCUER REPORT
-$routes->get('fire-report/create', 'RescuerReportController::firereportform', ['filter' => 'user']);
-$routes->post('fire-report/store', 'RescuerReportController::store', ['filter' => 'user']);
+$routes->get('fire-report/create', 'RescuerReportController::firereportform', ['filter' => 'admin']);
+$routes->post('fire-report/store', 'RescuerReportController::store', ['filter' => 'admin']);

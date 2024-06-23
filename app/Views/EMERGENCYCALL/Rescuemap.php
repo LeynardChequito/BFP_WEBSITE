@@ -351,7 +351,7 @@
             <button id="directions" onclick="toggleDirections()">Show Steps</button>
         </div>
 
-        <!-- Push notification button for new reports -->
+        
         <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal">
             &#128276;
         </button>
