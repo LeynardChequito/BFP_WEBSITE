@@ -1,0 +1,3 @@
+CRITICAL - 2024-06-22 04:53:38 --> ErrorException: Cannot use empty array elements in arrays
+in APPPATH\Config\Filters.php on line 73.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
