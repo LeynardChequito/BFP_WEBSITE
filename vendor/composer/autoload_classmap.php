@@ -4633,7 +4633,6 @@ return array(
     'Symfony\\Component\\Process\\Exception\\LogicException' => $vendorDir . '/symfony/process/Exception/LogicException.php',
     'Symfony\\Component\\Process\\Exception\\ProcessFailedException' => $vendorDir . '/symfony/process/Exception/ProcessFailedException.php',
     'Symfony\\Component\\Process\\Exception\\ProcessSignaledException' => $vendorDir . '/symfony/process/Exception/ProcessSignaledException.php',
-    'Symfony\\Component\\Process\\Exception\\ProcessStartFailedException' => $vendorDir . '/symfony/process/Exception/ProcessStartFailedException.php',
     'Symfony\\Component\\Process\\Exception\\ProcessTimedOutException' => $vendorDir . '/symfony/process/Exception/ProcessTimedOutException.php',
     'Symfony\\Component\\Process\\Exception\\RunProcessFailedException' => $vendorDir . '/symfony/process/Exception/RunProcessFailedException.php',
     'Symfony\\Component\\Process\\Exception\\RuntimeException' => $vendorDir . '/symfony/process/Exception/RuntimeException.php',
