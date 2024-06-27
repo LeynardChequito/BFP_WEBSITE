@@ -31,10 +31,10 @@
     </style>
 </head>
 <body>
-<nav class="footer">
+
   <footer class="footer">
       <div class="footer-content">
-      <img src="/public/icons/phseal.png" alt="Government Seal">
+      <!-- <img src="/public/icons/phseal.png" alt="Government Seal"> -->
       </div>
       <div class="footer-content">
           <strong>REPUBLIC OF THE PHILIPPINES</strong>
@@ -50,6 +50,5 @@
           <span><strong>BFP CALAPAN CITY  </br> OFFICIAL WEBSITE &copy; 2024</strong></span>
       </div>
   </footer>
-</nav>
 </body>
 </html>
