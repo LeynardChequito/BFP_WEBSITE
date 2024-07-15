@@ -57,9 +57,9 @@ $routes->get('admin-notif', 'AHomeController::adminNotif', ['filter' => 'admin']
 $routes->get('news', 'NewsController::news', ['filter' => 'user']);
 $routes->get('news/(:segment)', 'NewsController::show/$1', ['filter' => 'user']);
 $routes->get('newscreate', 'NewsController::newscreate', ['filter' => 'admin']);
-$routes->post('news/store', 'NewsController::store', ['filter' => 'admin']);
-$routes->post('news/edit', 'NewsController::edit', ['filter' => 'admin']);
-$routes->post('news/update', 'NewsController::update', ['filter' => 'admin']);
+$routes->post('news-store', 'NewsController::store', ['filter' => 'admin']);
+$routes->post('news-edit', 'NewsController::edit', ['filter' => 'admin']);
+$routes->post('news-update', 'NewsController::update', ['filter' => 'admin']);
 $routes->get('delete/(:segment)', 'NewsController::delete/$1', ['filter' => 'admin']);
 
 // CAROUSEL IMAGES
@@ -71,7 +71,9 @@ $routes->post('carousel/update', 'CarouselController::update', ['filter' => 'adm
 $routes->get('delete/(:segment)', 'CarouselController::delete/$1', ['filter' => 'admin']);
 
 // GRAPH
-$routes->get('graph', 'GraphController::graph', ['filter' => 'admin']);
+$routes->get('graph', 'GraphController::graph', );
+$routes->get('graph/getReports', 'GraphController::getReports', );
+
 
 //MAPPING
 $routes->get('user-location', 'LocationController::showUserLocation', ['filter' => 'user']);
@@ -86,5 +88,5 @@ $routes->post('getEmergencyCallCoordinates', 'CommunityReportController::getEmer
 $routes->get('reports-recent', 'CommunityReportController::getRecentReports', ['filter' => 'admin']);
 
 // RESCUER REPORT
-$routes->get('fire-report/create', 'RescuerReportController::firereportform', ['filter' => 'admin']);
-$routes->post('fire-report/store', 'RescuerReportController::store', ['filter' => 'admin']);
+$routes->get('fire-report/create', 'RescuerReportController::firereportform', );
+$routes->post('fire-report/store', 'RescuerReportController::store', );

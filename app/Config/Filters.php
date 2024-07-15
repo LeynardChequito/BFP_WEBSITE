@@ -75,7 +75,7 @@ class Filters extends BaseConfig
               
         ]],
         'admin' => ['before' => [
-            'admin-home', 'admin-logout', 'admin-dashboard', 'admin-notif', 'admin/processlogin','graph',
+            'admin-home', 'admin-logout', 'admin-dashboard', 'admin-notif', 'admin/processlogin',
             'admin-registration', 'admin-registration/*','news/*', 'delete/*', 'carouselImages', 'carousel/*', 
              'fetchCommunityReports', 'getEmergencyCallCoordinates', 'reports-recent','fire-report/create', 'fire-report/store', 
         ]],
