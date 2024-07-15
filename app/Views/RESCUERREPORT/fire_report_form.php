@@ -96,6 +96,21 @@
             background-color: #0056b3;
         }
 
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
         /* Responsive design */
         @media (max-width: 600px) {
             .form-container, .modal-content {
@@ -120,6 +135,7 @@
     <h1>Fire Report Form</h1>
     <form id="fireReportForm" action="<?=site_url('fire-report/store')?>" method="post" enctype="multipart/form-data">
         <?= csrf_field() ?>
+
         <label for="user_name">Name of Rescuer:</label>
         <input type="text" name="user_name" id="user_name" required><br>
 
@@ -184,6 +200,7 @@
 
 <div id="successModal" class="modal">
     <div class="modal-content">
+        <span class="close">&times;</span>
         <div class="success-message">Fire Report Submitted Successfully!</div>
         <a href="<?= site_url('fire-report/create') ?>" class="success-link">Submit another report</a>
         <a href="<?= site_url('rescuemap') ?>" class="success-submit">Return to Rescuemap</a>
@@ -222,21 +239,6 @@
             xhr.send(formData);
         });
 
-        var closeModalButton = document.querySelector('.modal .close');
-        if (!closeModalButton) {
-            console.error("Close modal button not found.");
-            return;
-        }
-
-        closeModalButton.addEventListener('click', function() {
-            modal.style.display = "none";
-        });
-
-        window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
     });
 </script>
 

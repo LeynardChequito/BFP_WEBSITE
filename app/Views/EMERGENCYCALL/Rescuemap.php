@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>Rescue Map</title>
 
@@ -376,8 +376,8 @@
             </div>
         </div>
     </div>
-
     <?= view('EMERGENCYCALL/MapScript'); ?>
+    
 </body>
 
 </html>

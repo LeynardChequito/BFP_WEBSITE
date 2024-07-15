@@ -4,8 +4,8 @@
         location.reload();
     }
 
-    // Set interval to reload the site every 30 minutes (30 * 60 * 1000 milliseconds)
-    setInterval(reloadSite, 60 * 60 * 1000);
+    // Set interval to reload the site every 30 minutes (30minutes * 60 * 1000 milliseconds)
+    setInterval(reloadSite, 30 * 60 * 1000);
 
     // Function to update time display every second 
     function updateTime() {
@@ -37,45 +37,45 @@
 
     // Fire hydrant marker
     const fireHydrants = [{
-            name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro (beside Calapan Waterworks Corp. Compound)",
+            name: "Barangay Bayanan 1, Calapan City, Oriental Mindoro",
             lat: 13.370076,
             lng: 121.167853,
             color: "lightgreen"
         },
         {
-            name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Near LGC)",
+            name: "Cor. JP Rizal, Barangay Lalud, Calapan City, Oriental Mindoro (Beside Kuyang Laundry Shop)",
             lat: 13.400788,
             lng: 121.171269,
             color: "lightgreen"
         },
         {
-            name: "Ubas St., Barangay Lalud, Calapan City, Oriental Mindoro (near Barangay Hall)",
+            name: "Ubas St., Barangay Lalud, Calapan City, Oriental Mindoro (near Barangay Hall, fornt of Sour Pluz Wingz Resto)",
             lat: 13.399337,
             lng: 121.173764,
             color: "lightgreen"
         },
         {
-            name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( near elementary school)",
+            name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( near elementary school, front of rotary club building)",
             lat: 13.404487,
             lng: 121.178001,
             color: "lightgreen"
         },
         {
-            name: "JP Rizal St., Barangay Camilmil, Calapan City, Oriental Mindoro",
+            name: "JP Rizal St., Barangay Camilmil, Calapan City, Oriental Mindoro (near the intersection, Autogear Marketing)",
             lat: 13.406119,
             lng: 121.176005,
             color: "lightgreen"
         },
         {
-            name: "Barangay Camilmil, Calapan City, Oriental Mindoro ( in front of Oriental Mindoro National Highschool)",
+            name: "Barangay Camilmil, Calapan City, Oriental Mindoro (in front of Oriental Mindoro National Highschool)",
             lat: 13.409127,
             lng: 121.178673,
             color: "lightgreen"
         },
         {
             name: "Roxas drive, Cor. Gumamela St. Barangay Lumangbayan, Calapan City, Oriental Mindoro",
-            lat: 13.401820739889,
-            lng: 121.182757083021,
+            lat: 13.4020172,
+            lng: 121.1825127,
             color: "lightgreen"
         },
         {
@@ -86,74 +86,115 @@
         },
         {
             name: "Corner Bonifacio St, Barangay Ilaya, Calapan City, Oriental Mindoro",
-            lat: 13.412771258480,
-            lng: 121.183841835900,
+            lat: 13.4128942,
+            lng: 121.1839927,
             color: "lightgreen"
         },
         {
             name: "Mabini St. Barangay Ilaya, Calapan City, Oriental Mindoro",
-            lat: 13.411691645848,
-            lng: 121.183589742959,
+            lat: 13.4141455,
+            lng: 121.1845213,
             color: "lightgreen"
         },
         {
             name: "Barangay Ibaba East, Calapan City, Oriental Mindoro ( near old city hall/city plaza )",
-            lat: 13.419379075623,
-            lng: 121.179612690830,
+            lat: 13.414796,
+            lng: 121.1770664,
+            color: "lightgreen"
+        },
+        // {
+        //     name: "Malvar St., Barangay Ibaba East, Calapan City, Oriental Mindoro",
+        //     lat: 13.414783206943,
+        //     lng: 121.176872350370,
+        //     color: "lightgreen"
+        // },
+        // {
+        //     name: "Barangay Ibaba West, Calapan City, Oriental Mindoro",
+        //     lat: 13.414783206943,
+        //     lng: 121.176872350370,
+        //     color: "lightgreen"
+        // },
+        // {
+        //     name: "Roxas Drive Corner Marasigan St., Barangay Libis, Calapan City, oriental Mindoro",
+        //     lat: 13.415158152476,
+        //     lng: 121.184801921272,
+        //     color: "lightgreen"
+        // },
+        {
+            name: "Barangay Calero, Calapan City, Oriental Mindoro (near funenaria naujan)",
+            lat: 13.4177283,
+            lng: 121.1854651,
             color: "lightgreen"
         },
         {
-            name: "Malvar St., Barangay Ibaba East, Calapan City, Oriental Mindoro",
-            lat: 13.414783206943,
-            lng: 121.176872350370,
+            name: "Barangay Salong, Calapan City, Oriental Mindoro ( near children hospital)",
+            lat: 13.4192085,
+            lng: 121.1876884,
             color: "lightgreen"
         },
         {
-            name: "Barangay Ibaba West, Calapan City, Oriental Mindoro",
-            lat: 13.414783206943,
-            lng: 121.176872350370,
+            name: "Barangay San Antonio, Calapan City, Oriental Mindoro ( intersection going to calapan pier)",
+            lat: 13.4232514,
+            lng: 121.1937544,
+            color: "lightgreen"
+        },
+        // {
+        //     name: "Barangay San Antonio, Calapan City, Oriental Mindoro (calapan pier)",
+        //     lat: 13.429675064813,
+        //     lng: 121.195830847473,
+        //     color: "lightgreen"
+        // },
+        // {
+        //     name: "Barangay Tibag, Calapan City, Oriental Mindoro",
+        //     lat: 13.412136593584,
+        //     lng: 121.175821489887,
+        //     color: "lightgreen"
+        // },
+        // {
+        //     name: "Barangay Sta. Maria Village (Blk. 4), Calapan City, Oriental Mindoro",
+        //     lat: 13.408596881704,
+        //     lng: 121.175793602378,
+        //     color: "lightgreen"
+        // },
+        // {
+        //     name: "Infantado St., Barangay Sta. Vicente South, Calapan City, Oriental Mindoro ( near bagong pook)",
+        //     lat: 13.408596881704,
+        //     lng: 121.175793602378,
+        //     color: "lightgreen"
+        // }
+        {
+            name: "J.Luna St., Barangay San Vicente West, Calapan City, Oriental Mindoro",
+            lat: 13.4129687,
+            lng: 121.1782896,
             color: "lightgreen"
         },
         {
-            name: "Roxas Drive Corner Marasigan St., Barangay Libis, Calapan City, oriental Mindoro",
-            lat: 13.415158152476,
-            lng: 121.184801921272,
+            name: "J.P Rizal St., Barangay San Vicente Central, Calapan City, Oriental Mindoro (front Palawan Express)",
+            lat: 13.4091777,
+            lng: 121.1786927
+        },
+        {
+            name: "Del Pilar St., Barangay San Vicente East, Calapan City, Oriental Mindoro",
+            lat: 13.4111748,
+            lng: 121.1804908
+        },
+
+        {
+            name: "Barangay San Vicente North, Calapan City, Oriental Mindoro (new public market 1)",
+            lat: 13.412717,
+            lng: 121.179210,
             color: "lightgreen"
         },
         {
-            name: "Barangay Calero, Calapan City, Oriental Mindoro ( near atty. Manzo office)",
-            lat: 13.415597264627,
-            lng: 121.181560275534,
+            name: "Barangay San Vicente North, Calapan City, Oriental Mindoro (new public market 2)",
+            lat: 13.412954,
+            lng: 121.178348,
             color: "lightgreen"
         },
         {
-            name: "Barangay San Rafael, Calapan City, Oriental Mindoro ( near children hospital)",
-            lat: 13.418591183674,
-            lng: 121.186988682784,
-            color: "lightgreen"
-        },
-        {
-            name: "Barangay San Antonio, Calapan City, Oriental Mindoro (calapan pier)",
-            lat: 13.429675064813,
-            lng: 121.195830847473,
-            color: "lightgreen"
-        },
-        {
-            name: "Barangay Tibag, Calapan City, Oriental Mindoro",
-            lat: 13.412136593584,
-            lng: 121.175821489887,
-            color: "lightgreen"
-        },
-        {
-            name: "Barangay Sta. Maria Village (Blk. 4), Calapan City, Oriental Mindoro",
-            lat: 13.408596881704,
-            lng: 121.175793602378,
-            color: "lightgreen"
-        },
-        {
-            name: "Infantado St., Barangay Sta. Vicente South, Calapan City, Oriental Mindoro ( near bagong pook)",
-            lat: 13.408596881704,
-            lng: 121.175793602378,
+            name: "Brgy. Guinobatan (Infront of New City Hall)",
+            lat: 13.379384,
+            lng: 121.182383,
             color: "lightgreen"
         }
     ];
@@ -325,78 +366,88 @@
     });
 
     async function getRecentReports() {
-    try {
-        const response = await fetch('https://bfpcalapancity.online/reports-recent/');
-        const data = await response.json();
+        try {
+            const response = await fetch('https://bfpcalapancity.online/reports-recent');
+            const data = await response.json();
 
-        if (response.ok && Array.isArray(data)) {
-            const newReportsList = document.getElementById('newReportsList');
-            newReportsList.innerHTML = '';
+            if (response.ok && Array.isArray(data)) {
+                const newReportsList = document.getElementById('newReportsList');
+                newReportsList.innerHTML = '';
 
-            data.forEach(report => {
-                if (report.latitude && report.longitude) {
-                    const {
-                        latitude,
-                        longitude,
-                        fullName,
-                        fileproof,
-                        timestamp
-                    } = report;
+                data.forEach(report => {
+                    if (report.latitude && report.longitude) {
+                        const {
+                            latitude,
+                            longitude,
+                            fullName,
+                            fileproof,
+                            timestamp
+                        } = report;
 
-                    const listItem = document.createElement('li');
-                    listItem.classList.add('list-group-item');
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('list-group-item');
 
-                    // Create the file proof content based on file type
-                    let fileProofContent = '';
-                    const fullURL = `bfpcalapancity/public/community_report/${fileproof}`;
-                    if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
-                        fileProofContent = `
+                        // Create the file proof content based on file type
+                        let fileProofContent = '';
+                        const fullURL = `bfpcalapancity/public/community_report/${fileproof}`;
+                        if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
+                            fileProofContent = `
                             <video src="${fullURL}" controls class="file-proof-video"></video>
                         `;
-                    } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
-                        fileProofContent = `
+                        } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
+                            fileProofContent = `
                             <img src="${fullURL}" alt="File Proof" class="file-proof-image">
                         `;
-                    } else {
-                        fileProofContent = "Unsupported file type";
-                    }
+                        } else {
+                            fileProofContent = "Unsupported file type";
+                        }
 
-                    listItem.innerHTML = `
+                        listItem.innerHTML = `
                         <h4>User in Need: ${fullName}</h4>
                         <p><strong>Timestamp:</strong> ${timestamp}</p>
                         <p><strong>File Proof:</strong></p>
                         <div class="fileProofContainer">${fileProofContent}</div>
                         <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
+                        <button onclick="accessFireReportForm()">File Report</button>
+                        <button onclick="toggleDirections()">Show Steps</button>
+                        <div id="directions" style="display: none;"></div>
                     `;
-                    newReportsList.appendChild(listItem);
+                        newReportsList.appendChild(listItem);
 
-                    const marker = L.marker([latitude, longitude], {
-                        icon: userMarker
-                    }).addTo(map);
-                    const popupContent = `
+                        const marker = L.marker([latitude, longitude], {
+                            icon: userMarker
+                        }).addTo(map);
+                        const popupContent = `
                         <div class="popup-content">
                             <h4>User in Need: ${fullName}</h4>
                             <p><strong>Timestamp:</strong> ${timestamp}</p>
                             <p><strong>File Proof:</strong></p>
                             <div class="fileProofContainer">${fileProofContent}</div>
                             <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
+                            <button onclick="accessFireReportForm()">File Report</button>
+                            <button onclick="toggleDirections()">Show Steps</button>
+                            <div id="directions" style="display: none;"></div>
                         </div>
                     `;
-                    marker.bindPopup(popupContent);
-                } else {
-                    console.warn('Invalid report location:', report);
-                }
-            });
+                        marker.bindPopup(popupContent);
+                    } else {
+                        console.warn('Invalid report location:', report);
+                    }
+                });
 
-            const newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
-            newReportModal.show();
-        } else {
-            console.error('Failed to fetch recent reports:', response.statusText);
+                const newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
+                newReportModal.show();
+            } else {
+                console.error('Failed to fetch recent reports:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching recent reports:', error);
         }
-    } catch (error) {
-        console.error('Error fetching recent reports:', error);
     }
-}
+
+    function accessFireReportForm() {
+        window.location.href = 'fire-report/create';
+    }
 
     function displayFileProof(fileProofURL, containerId) {
         const baseURL = 'bfpcalapancity/public/community_report/';
@@ -423,11 +474,11 @@
             fileProofContainer.innerHTML = "Unsupported file type";
         }
     }
-    
-     function showRouteToRescuer(lat, lng) {
-            endCoords = [lng, lat];
-            updateRoute();
-        }
+
+    function showRouteToRescuer(lat, lng) {
+        endCoords = [lng, lat];
+        updateRoute();
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         getRecentReports(); // Fetch new reports on mount
