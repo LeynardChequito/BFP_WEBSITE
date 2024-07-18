@@ -71,13 +71,13 @@ $routes->post('carousel/update', 'CarouselController::update', ['filter' => 'adm
 $routes->get('delete/(:segment)', 'CarouselController::delete/$1', ['filter' => 'admin']);
 
 // GRAPH
-$routes->get('graph', 'GraphController::graph', );
-$routes->get('graph/getReports', 'GraphController::getReports', );
+$routes->get('graph', 'GraphController::graph',);
+$routes->get('graph/getReports', 'GraphController::getReports',);
 
 
 //MAPPING
 $routes->get('user-location', 'LocationController::showUserLocation', ['filter' => 'user']);
-$routes->get('rescuemap', 'LocationController::map', );
+$routes->get('rescuemap', 'LocationController::map',);
 $routes->get('fetchCommunityReports', 'LocationController::fetchCommunityReports', ['filter' => 'admin']);
 
 
@@ -88,5 +88,8 @@ $routes->post('getEmergencyCallCoordinates', 'CommunityReportController::getEmer
 $routes->get('reports-recent', 'CommunityReportController::getRecentReports', ['filter' => 'admin']);
 
 // RESCUER REPORT
-$routes->get('fire-report/create', 'RescuerReportController::firereportform', );
-$routes->post('fire-report/store', 'RescuerReportController::store', );
+$routes->get('fire-report/create', 'RescuerReportController::firereportform',);
+$routes->post('fire-report/store', 'RescuerReportController::store',);
+
+
+$routes->get('testemail', 'TestEmailController::index',);
