@@ -80,8 +80,8 @@
         },
         {
             name: "Guiho St. Barangay, Sto. Nino, Calapan City, oriental Mindoro",
-            lat: 13.404072878721,
-            lng: 121.184182160977,
+            lat: 13.4081789,
+            lng: 121.1839165,
             color: "lightgreen"
         },
         {
@@ -313,30 +313,36 @@
 
     getRescuerLocation();
 
-    function suggestNearestHydrants(location) {
-        const nearestHydrants = fireHydrants.filter(hydrant => {
-            const distance = getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng);
-            return distance <= 2000; // 2000 meters (2 kilometers)
-        });
+   function suggestNearestHydrants(location) {
+    const nearestHydrants = fireHydrants.filter(hydrant => {
+        const distance = getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng);
+        return distance <= 2000; // 2000 meters (2 kilometers)
+    });
 
-        const suggestionsContainer = document.getElementById("hydrant-suggestions");
-        suggestionsContainer.innerHTML = ""; // Clear previous suggestions
+    const suggestionsContainer = document.getElementById("hydrant-suggestions");
+    suggestionsContainer.innerHTML = ""; // Clear previous suggestions
 
-        nearestHydrants.forEach(hydrant => {
-            const suggestionDiv = document.createElement("div");
-            suggestionDiv.classList.add("hydrant-suggestion");
+    nearestHydrants.forEach(hydrant => {
+        const distance = getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng);
+        const averageSpeedMetersPerSecond = 11.11; // Approximate average speed in meters per second (40 km/h)
+        const timeInSeconds = distance / averageSpeedMetersPerSecond;
+        const timeInMinutes = timeInSeconds / 60; // Convert time from seconds to minutes
 
-            suggestionDiv.innerHTML = `
-                    <h6>${hydrant.name}</h6>
-                    <p>Distance: ${getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng).toFixed(2)} meters</p>
-                    <p>Estimated Time: (Unavailable)</p>
-                    <button class="navigate-btn" onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
-                    <button class="show-steps" onclick="toggleDirections()">Show Steps</button>
-                `;
+        const suggestionDiv = document.createElement("div");
+        suggestionDiv.classList.add("hydrant-suggestion");
 
-            suggestionsContainer.appendChild(suggestionDiv);
-        });
-    }
+        suggestionDiv.innerHTML = `
+            <h6>${hydrant.name}</h6>
+            <p>Distance: ${distance.toFixed(2)} meters</p>
+            <p>Estimated Time: ${timeInMinutes.toFixed(2)} minutes</p>
+            <button class="navigate-btn" onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
+            <button class="show-steps" onclick="toggleDirections()">Show Steps</button>
+        `;
+
+        suggestionsContainer.appendChild(suggestionDiv);
+    });
+}
+
 
     function getDistance(lat1, lon1, lat2, lon2) {
         const R = 6371e3; // Earth's radius in meters
@@ -403,15 +409,18 @@
                         }
 
                         listItem.innerHTML = `
-                        <h4>User in Need: ${fullName}</h4>
-                        <p><strong>Timestamp:</strong> ${timestamp}</p>
-                        <p><strong>File Proof:</strong></p>
-                        <div class="fileProofContainer">${fileProofContent}</div>
-                        <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
-                        <button onclick="accessFireReportForm()">File Report</button>
-                        <button onclick="toggleDirections()">Show Steps</button>
-                        <div id="directions" style="display: none;"></div>
-                    `;
+                            <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                                <h4 style="margin-bottom: 5px;">User in Need: ${fullName}</h4>
+                                <p style="margin-bottom: 5px;"><strong>Timestamp:</strong> ${timestamp}</p>
+                                <p style="margin-bottom: 5px;"><strong>File Proof:</strong></p>
+                                <div class="fileProofContainer" style="margin-bottom: 10px;">${fileProofContent}</div>
+                                <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin-right: 10px;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
+                                <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="accessFireReportForm()">File Report</button>
+                                <!-- <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin-left: 10px;" onclick="toggleDirections()">Show Steps</button> -->
+                                <div id="directions" style="display: none;"></div>
+                            </div>
+                        `;
+
                         newReportsList.appendChild(listItem);
 
                         const marker = L.marker([latitude, longitude], {
@@ -476,9 +485,46 @@
     }
 
     function showRouteToRescuer(lat, lng) {
-        endCoords = [lng, lat];
-        updateRoute();
+    endCoords = [lng, lat];
+    updateRouteAndDisplayInfo();
+}
+
+async function updateRouteAndDisplayInfo() {
+    if (!startCoords || !endCoords) {
+        alert("Please reload the page.");
+        return;
     }
+
+    const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
+
+    try {
+        const response = await arcgisRest.solveRoute({
+            stops: [startCoords, endCoords],
+            endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
+            authentication
+        });
+
+        routeLines.clearLayers();
+        L.geoJSON(response.routes.geoJson).addTo(routeLines);
+
+        const directionsHTML = response.directions[0].features.map((f) => {
+            const { text, length, time } = f.attributes;
+            return `<p>${text} (${length.toFixed(2)} meters, ${time.toFixed(2)} minutes)</p>`;
+        }).join("");
+
+        // Display route directions and info
+        const directionsDiv = document.getElementById("directions");
+        directionsDiv.style.display = "block";
+        directionsDiv.innerHTML = directionsHTML;
+
+        startCoords = null;
+        endCoords = null;
+    } catch (error) {
+        console.error("Error calculating route:", error);
+        alert("There was a problem calculating the route. Please try again.");
+    }
+}
+
 
     document.addEventListener('DOMContentLoaded', function() {
         getRecentReports(); // Fetch new reports on mount
