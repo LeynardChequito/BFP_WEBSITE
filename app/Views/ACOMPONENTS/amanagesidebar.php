@@ -13,7 +13,7 @@
                 </a>
             </li>
             <li>
-                <a href="<?= site_url('carouselImages') ?>">
+                <a href="<?= site_url('carousel') ?>">
                     <i class="fas fa-images mr-2"></i>Carousel
                 </a>
             </li>

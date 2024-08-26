@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\NewsModel;
-
+use CodeIgniter\Pager\Pager;
 class NewsController extends BaseController
 {
 
@@ -45,7 +45,14 @@ class NewsController extends BaseController
     
     public function newscreate()
     {
-        $newsModel = new NewsModel();
+        $newsModel = new NewsModel(); // Assuming you have a NewsModel
+        $perPage = 5; // Number of news items per page
+
+        $data = [
+            'news' => $newsModel->paginate($perPage, 'default'),
+            'pager' => $newsModel->pager,
+        ];
+
         $data['news'] = $newsModel->findAll();
     
         $data['selected_news_id'] = $this->request->getPost('selected_news_id'); 

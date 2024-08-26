@@ -161,39 +161,10 @@
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                    <!-- Pagination -->
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination">
-                            <!-- Previous button -->
-                            <?php $currentPage = isset($_GET['table-page']) ? $_GET['table-page'] : 1; ?>
-                            <?php $totalPages = ceil(count($news) / 5); ?>
-                            <?php if ($currentPage > 1) : ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="<?= site_url('newscreate?table-page=' . ($currentPage - 1)); ?>" aria-label="Previous">
-                                        <span aria-hidden="true">Previous</span>
-                                    </a>
-                                </li>
-                            <?php else : ?>
-                                <li class="page-item disabled">
-                                    <span class="page-link">Previous</span>
-                                </li>
-                            <?php endif; ?>
-
-                            <!-- Next button -->
-                            <?php if ($currentPage < $totalPages) : ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="<?= site_url('newscreate?table-page=' . ($currentPage + 1)); ?>" aria-label="Next">
-                                        <span aria-hidden="true">Next</span>
-                                    </a>
-                                </li>
-                            <?php else : ?>
-                                <li class="page-item disabled">
-                                    <span class="page-link">Next</span>
-                                </li>
-                            <?php endif; ?>
-                        </ul>
-                    </nav>
-
+                    <!-- Pagination Links -->
+                    <div class="mt-3">
+    <?= $pager->links('default', 'bootstrap_pagination') ?>
+</div>
 
                 </div>
             </div>

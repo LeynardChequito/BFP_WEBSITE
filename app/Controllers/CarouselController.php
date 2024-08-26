@@ -2,173 +2,109 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
 use App\Models\CarouselModel;
+use App\Controllers\BaseController;
+use CodeIgniter\Pager\Pager;
 
 class CarouselController extends BaseController
 {
-
-    protected $session;
+    protected $carouselModel;
 
     public function __construct()
     {
-        $this->session = \Config\Services::session();
+        helper(['url', 'form']);
+        $this->carouselModel = new CarouselModel();
     }
 
-    public function carouselhome()
+    // Show the form for managing images
+    public function image()
     {
-        $carouselModel = new CarouselModel();
-        $image_path = $carouselModel->findAll();
-        $data['image'] = $image_path;
+        $perPage = 5; // Number of items per page
+        $imageSources = $this->carouselModel->paginate($perPage); // Get paginated data
+        $pager = $this->carouselModel->pager; // Get the pagination object
     
-        return view('WEBSITE/home', $data);
+        return view('ACOMPONENTS/CAROUSEL/managecarousel', [
+            'imageSources' => $imageSources,
+            'pager' => $pager
+        ]);
     }
     
 
-    public function addImages()
-{
-    $carouselModel = new CarouselModel();
-
-    $data['carousel_images'] = $carouselModel->findAll();
-
-    if ($this->request->getFiles()) {
-        foreach ($this->request->getFiles()['image_path'] as $image) {
-            if ($image->isValid() && !$image->hasMoved()) {
-                $newName = $image->getRandomName();
-
-                $image->move(ROOTPATH . 'public/carousel_images', $newName);
-
-                $carouselModel->insert(['image_path' => 'carousel_images/' . $newName]);
-            }
-        }
-    }
-
-    return view ('ACOMPONENTS/CAROUSEL/carouselmaincontent');
-}
-
-
+    // Store a new image
     public function store()
-{
-    helper(['form', 'url', 'session']);
-    
-    $rules = [
-        'image_path' => 'uploaded[image_path]|max_size[image_path,10000]|mime_in[image_path,image/jpeg,image/png,image/heic,image/jpg]|ext_in[image_path,png,jpg,jpeg,heic]',
-    ];
-    
-    $messages = [
-        'image_path' => [
-            'uploaded' => 'Carousel Image is required.',
-            'max_size' => 'Carousel Image size should not exceed 10MB.',
-            'mime_in' => 'Invalid file type for Carousel Image. Please upload a valid image file.',
-        ],
-    ];
-    
-    if ($this->validate($rules, $messages)) {
-        $carouselModel = new CarouselModel();
-        
-        $imageFile = $this->request->getFile('image_path');
-        
-        $imageFileName = $imageFile->getRandomName();
-        
-        $imageFile->move(ROOTPATH . 'public/carousel_images', $imageFileName);
-        
-        $carouselModel->insert(['image_path' => 'carousel_images/' . $imageFileName]);
-        
-        $this->session->setFlashdata('success', 'Carousel Image uploaded successfully!');
-        
-        return redirect()->to('carouselhome');
-    } else {
-        $data['validation'] = $this->validator;
-        return view('ACOMPONENTS/CAROUSEL/carouselmaincontent', $data);
-    }
-}
-
-
-    public function edit($carousel_id)
     {
-        $carouselModel = new CarouselModel();
-
-        $carousel_images = $carouselModel->find($carousel_id);
-
-        if (empty($carousel_images)) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Cannot find the carousel image with ID: ' . $carousel_id);
-        }
-
-        $data = [
-            'image' => $carousel_images,
-            'selected_carousel_id' => $carousel_id,
-        ];
-
-        return view('ACOMPONENTS/CAROUSEL/crsladdImages', $data);
-    }
-
-    public function update()
-    {
-        helper(['form', 'url', 'session']);
-
-        $carousel_id = $this->request->getPost('carousel_id');
-
-        $carouselModel = new CarouselModel();
-
-        $carousel_images = $carouselModel->find($carousel_id);
-
-        if (empty($carousel_images)) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Cannot find the carousel image with ID: ' . $carousel_id);
-        }
-
-        $rules = [
-            'image_path' => 'max_size[image_path,5000]|mime_in[image_path,image/jpeg,image/png,image/heic,image/jpg]|ext_in[image_path,png,jpg,jpeg,heic]',
-        ];
-
-        $messages = [
-            'image_path' => [
-                'max_size' => 'Image size should not exceed 5MB.',
-                'mime_in' => 'Invalid file type for image. Please upload a valid image file.',
-            ],
-        ];
-
-        if ($this->validate($rules, $messages)) {
-            $newImage = $this->request->getFile('image_path');
-
-            if ($newImage->isValid()) {
-                $newName = $newImage->getRandomName();
-
-                $newImage->move(ROOTPATH . 'public/carousel_images', $newName);
-
-                $carouselModel->update($carousel_id, ['image_path' => 'carousel_images/' . $newName]);
-
-                if (file_exists(ROOTPATH . 'public/carousel_images' . $carousel_images['image_path'])) {
-                    unlink(ROOTPATH . 'public/carousel_images' . $carousel_images['image_path']);
+        $files = $this->request->getFiles(); // Get all uploaded files
+    
+        if ($files) {
+            foreach ($files['image_source'] as $file) {
+                // Check if the file is valid and has been uploaded
+                if ($file->isValid() && !$file->hasMoved()) {
+                    // Define the path to the public/images directory
+                    $filePath = 'public/images/' . $file->getName();
+        
+                    // Move the file to the public/images directory
+                    $file->move('public/images');
+        
+                    // Save the image URL in the database
+                    $this->carouselModel->save(['image_url' => $filePath]);
                 }
             }
-
-            $this->session->setFlashdata('success', 'Carousel image updated successfully!');
-
-            return redirect()->to('crsladdImages');
-        } else {
-            $data['validation'] = $this->validator;
-            return view('ACOMPONENTS/CAROUSEL/crsladdImages', $data);
+            return redirect()->to('/carousel')->with('status', 'Images added successfully!');
         }
+    
+        return redirect()->to('/carousel')->with('status', 'Failed to add images.');
+    }
+    
+    // Show the edit form
+    public function edit($id)
+    {
+        $imageSource = $this->carouselModel->find($id);
+        return view('ACOMPONENTS/CAROUSEL/editcarousel', ['imageSource' => $imageSource, 'id' => $id]);
     }
 
-    public function delete($carousel_id)
+    // Update an existing image
+    public function update($id)
     {
-        $carouselModel = new CarouselModel();
+        $file = $this->request->getFile('image_source');
 
-        $image_path = $carouselModel->find($carousel_id);
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            // Get the current image path to delete the old file
+            $currentImage = $this->carouselModel->find($id);
 
-        if (empty($image_path)) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Cannot find the carousel image with ID: ' . $carousel_id);
+            // Delete the old image from the public/images directory
+            if (file_exists($currentImage['image_url'])) {
+                unlink($currentImage['image_url']);
+            }
+
+            // Define the new file path
+            $newFilePath = 'public/images/' . $file->getName();
+
+            // Move the new file to the public/images directory
+            $file->move('public/images');
+
+            // Update the image URL in the database
+            $this->carouselModel->update($id, ['image_url' => $newFilePath]);
+
+            return redirect()->to('/carousel')->with('status', 'Image updated successfully!');
         }
 
-        $carouselModel->delete($carousel_id);
+        return redirect()->to('/carousel')->with('status', 'Failed to update image.');
+    }
 
-        if (file_exists(ROOTPATH . 'public/carousel_images' . $image_path['image_path'])) {
-            unlink(ROOTPATH . 'public/carousel_images' . $image_path['image_path']);
+    // Delete an image
+    public function delete($id)
+    {
+        $imageSource = $this->carouselModel->find($id);
+
+        if ($this->carouselModel->delete($id)) {
+            // Delete the image from the public/images directory
+            if (file_exists($imageSource['image_url'])) {
+                unlink($imageSource['image_url']);
+            }
+
+            return redirect()->to('/carousel')->with('status', 'Image deleted successfully!');
         }
 
-        $this->session->setFlashdata('success', 'Carousel image deleted successfully!');
-
-        return redirect()->to('crsladdImages');
+        return redirect()->to('/carousel')->with('status', 'Failed to delete image.');
     }
 }

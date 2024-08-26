@@ -4,8 +4,8 @@
         location.reload();
     }
 
-    // Set interval to reload the site every 30 minutes (30minutes * 60 * 1000 milliseconds)
-    setInterval(reloadSite, 30 * 60 * 1000);
+    // Set interval to reload the site every 10 minutes (10minutes * 60 * 1000 milliseconds)
+    setInterval(reloadSite, 10 * 60 * 1000);
 
     // Function to update time display every second 
     function updateTime() {
@@ -13,7 +13,8 @@
         setTimeout(updateTime, 1000); // Update time every second
     }
 
-    const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs";
+    // const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs"; //old api-key
+    const apiKey = "AAPKac6c1269609841b2a00dd16b90f0ccb8iFjQh8pTb7aadJWaETJip3ISvXcpq_5cB296OQurtGW79gpbXuMKZPe9kx-6mGWl";
     const basemapEnum = "arcgis/navigation";
     const map = L.map("map", {
         zoom: 14

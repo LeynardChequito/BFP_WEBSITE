@@ -1,13 +1,10 @@
 <?php
-    $imageSources = [
-        'images/BABALA-400-×-1500px.png',
-        'images/fire-safety-advocacy-banner-2023-01.jpg',
-        'images/images2.jpg',
-        'images/bfp-modernization.jpg',
-        'images/bfp-banner.jpg',
-    ];
-?>
+use App\Models\CarouselModel;
 
+// Initialize the CarouselModel
+$carouselModel = new CarouselModel();
+$imageSources = $carouselModel->findAll();
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +51,7 @@
             margin-top: 20px;
             text-align: center;
             position: relative;
-            margin-bottom: 10px; /* Adjust margin as needed */
+            margin-bottom: 10px;
             display: grid;
             grid-template-columns: auto auto auto auto;
             font-size: 12px;
@@ -64,8 +61,8 @@
 
         .buttons-container {
             position: relative;
-            margin-top: 10px; /* Adjust margin as needed */
-            margin-bottom: 10px; /* Adjust margin as needed */
+            margin-top: 10px;
+            margin-bottom: 10px;
             display: grid;
             grid-template-columns: auto auto auto auto;
             font-size: 12px;
@@ -73,13 +70,15 @@
             justify-content: space-evenly;
             gap: 10px; 
         }
+
         footer {
             margin-bottom: 0;
         }
+
         .navigation-container {
             position: relative;
-            margin-top: 10px; /* Adjust margin as needed */
-            margin-bottom: 10px; /* Adjust margin as needed */
+            margin-top: 10px;
+            margin-bottom: 10px;
             display: grid;
             grid-template-columns: auto auto auto auto;
             font-size: 12px;
@@ -99,11 +98,17 @@
             <div class="col-md-16">
                 <div id="carouselExample" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner">
-                        <?php foreach ($imageSources as $index => $imageSource) : ?>
-                            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                                <img class="d-block w-100" src="<?= base_url($imageSource) ?>" alt="Image <?= $index + 1 ?>">
+                        <?php if (!empty($imageSources)): ?>
+                            <?php foreach ($imageSources as $index => $imageSource): ?>
+                                <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                                    <img class="d-block w-100" src="<?= base_url($imageSource['image_url']) ?>" alt="Image <?= $index + 1 ?>">
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="carousel-item active">
+                                <img class="d-block w-100" src="<?= base_url('/path/to/default/image.jpg') ?>" alt="Default Image">
                             </div>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -191,7 +196,6 @@
         // Handle incoming messages
         onMessage((payload) => {
             console.log('Message received: ', payload);
-            // Display the received message as a notification
             const notificationContainer = document.getElementById('notificationContainer');
             const notification = document.createElement('div');
             notification.classList.add('notification');

@@ -12,7 +12,7 @@ class CarouselModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['image_path'];
+    protected $allowedFields    = ['image_url'];
 
     // Dates
     protected $useTimestamps = false;
