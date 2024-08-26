@@ -188,7 +188,7 @@
     <!-- Header section -->
     <div class="header desktop-header">
         <!-- Logo -->
-        <img src="<?= base_url(); ?>images/Banner03_18Aug2018.png" alt="Logo" class="logo">
+        <img src="<?= base_url(); ?>/bfpcalapancity/public/images/Banner03_18Aug2018.png" alt="Logo" class="logo">
 
         <!-- Notification dropdown -->
         <div class="notification-dropdown position-relative">

@@ -169,7 +169,7 @@
     <!-- First Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-image: linear-gradient(150deg, black, red);">
         <a class="navbar-brand" href="#">
-            <img src="<?= base_url(); ?>images/logo.png" alt="Logo">
+            <img src="<?= base_url(); ?>/bfpcalapancity/public/images/logo.png" alt="Logo">
             <p class="d-inline-block text-white ml-2">Bureau of Fire Protection</p>
         </a>
         <div class="ml-auto row align-items-center">
