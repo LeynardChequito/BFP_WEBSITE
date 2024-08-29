@@ -108,7 +108,6 @@
 <body>
 
 <?= view('WEBSITE/site'); ?>
-
     <div class="container mt-4">
         <a href="javascript:history.go(-1);" class="btn btn-danger btn-back">Back</a>
         <div class="row">
@@ -117,7 +116,7 @@
                     <div class="card-body dynamic-columns">
                         <h2 class="card-title"><?= esc($news['title']) ?></h2>
                         <?php
-                            $photoPath = base_url('newsphoto/' . esc($news['image']));
+                            $photoPath = base_url('bfpcalapancity/public/newsphoto/' . esc($news['image']));
                             $newsBody = esc($news['content']);
                         ?>
                         <img src="<?= $photoPath ?>" alt="News Photo" class="news-image">

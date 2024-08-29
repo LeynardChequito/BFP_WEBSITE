@@ -65,31 +65,29 @@
             margin-top: 10px;
         }
 
-        /* Overlay for darkening the background */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-            z-index: 1040; /* Just below the edit form */
-            display: none; /* Initially hidden */
+            background: rgba(0, 0, 0, 0.5); 
+            z-index: 1040; 
+            display: none; 
         }
 
-        /* Edit container */
         .edit-container {
             position: fixed;
             top: 10%;
             left: 50%;
             transform: translateX(-50%);
-            width: 80%;
+            width: 30%;
             z-index: 1050;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            display: none; /* Initially hidden */
+            display: none;
         }
 
         .edit-container .close-btn {
@@ -112,7 +110,6 @@
             border-color: #495057;
         }
 
-        /* Style for image display */
         .carousel-image {
             max-width: 100px;
             height: auto;
@@ -133,9 +130,9 @@
         <form id="editForm" action="" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="image_source">Select New Image</label>
-                <input type="file" name="image_source" class="form-control">
+                <input type="file" name="image_source" class="form-control" multiple>
             </div>
-            <img id="currentImage" src="" alt="Current Image" class="img-fluid mb-3">
+            <img id="currentImage" src="" alt="Current Image" class="img-thumbnail">
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>

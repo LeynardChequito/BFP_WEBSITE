@@ -108,13 +108,9 @@
             <?php endforeach; ?>
         </div>
 
-
-
-        <!-- Pagination Links -->
-        <div class="navigation">
-            <button class="btn" id="previous">Previous</button>
-            <button class="btn" id="next">Next</button>
-        </div>
+        <div class="mt-3">
+    <?= $pager->links('default', 'bootstrap_pagination') ?>
+</div>
     </div>
 
     <?= view('hf/footer'); ?>

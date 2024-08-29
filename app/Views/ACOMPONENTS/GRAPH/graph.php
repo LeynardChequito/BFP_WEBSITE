@@ -25,11 +25,29 @@
             padding: 20px;
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        h2 {
-            font-weight: 600;
-            margin-bottom: 20px;
+        .chart-container.standard-size {
+            height: 300px; /* Standard size for other charts */
+        }
+
+        .chart-container.large-size {
+            height: 400px; /* Increased size for the pie chart */
+        }
+
+        .chart-container canvas {
+            max-height: 100%;
+            max-width: 100%; /* Ensure the canvas fits within the container */
+        }
+
+        .chart-header {
+            font-size: 2rem; /* Increase font size */
+            font-weight: bold; /* Make the text bold */
+            text-align: center; /* Center the text */
+            margin-bottom: 40px; /* Add space below the header */
         }
     </style>
 </head>
@@ -44,25 +62,28 @@
             <?= view('ACOMPONENTS/amanagesidebar'); ?>
 
             <div class="col-md-9">
-                <h2>Fire Reports Data Visualization</h2>
+                <div class="chart-header">Fire Reports Data Visualization</div>
                 <div class="row">
                     <div class="col-lg-6">
-                        <div class="chart-container">
+                        <div class="chart-container standard-size">
                             <p>NUMBER OF FIRE INCIDENTS</p>
                             <canvas id="monthlyBarChart"></canvas>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="chart-container">
+                        <div class="chart-container standard-size">
+                            <p>DAMAGE COSTS</p>
                             <canvas id="damageLineChart"></canvas>
                         </div>
-                        <div class="chart-container mt-4">
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-container large-size">
+                            <p>CAUSE OF FIRE INCIDENTS</p>
                             <canvas id="causePieChart"></canvas>
                         </div>
                     </div>
-                    <!-- Added section for injuries chart -->
                     <div class="col-lg-6">
-                        <div class="chart-container">
+                        <div class="chart-container standard-size">
                             <p>NUMBER OF INJURIES</p>
                             <canvas id="monthlyInjuriesChart"></canvas>
                         </div>
@@ -113,33 +134,32 @@
             }
             return causePercentages;
         }
-// Function to calculate monthly injuries count
-function calculateMonthlyInjuries(reports) {
-    
-    const monthlyInjuries = Array.from({ length: 12 }, () => 0);
-    
-    reports.forEach(report => {
-        const monthIndex = new Date(report.report_date).getMonth();
 
-        if (report.number_of_injuries !== null && report.number_of_injuries !== undefined) {
-            if (typeof report.number_of_injuries === 'number') {
-                monthlyInjuries[monthIndex] += report.number_of_injuries;
-            } else if (Array.isArray(report.number_of_injuries)) {
-                if (report.number_of_injuries.every(item => typeof item === 'number')) {
-                    const totalInjuriesInReport = report.number_of_injuries.reduce((acc, val) => acc + val, 0);
-                    monthlyInjuries[monthIndex] += totalInjuriesInReport;
-                } else {
-                    console.warn(`Unexpected array format for number_of_injuries: ${report.number_of_injuries}`);
+        // Function to calculate monthly injuries count
+        function calculateMonthlyInjuries(reports) {
+            const monthlyInjuries = Array.from({ length: 12 }, () => 0);
+
+            reports.forEach(report => {
+                const monthIndex = new Date(report.report_date).getMonth();
+
+                if (report.number_of_injuries !== null && report.number_of_injuries !== undefined) {
+                    if (typeof report.number_of_injuries === 'number') {
+                        monthlyInjuries[monthIndex] += report.number_of_injuries;
+                    } else if (Array.isArray(report.number_of_injuries)) {
+                        if (report.number_of_injuries.every(item => typeof item === 'number')) {
+                            const totalInjuriesInReport = report.number_of_injuries.reduce((acc, val) => acc + val, 0);
+                            monthlyInjuries[monthIndex] += totalInjuriesInReport;
+                        } else {
+                            console.warn(`Unexpected array format for number_of_injuries: ${report.number_of_injuries}`);
+                        }
+                    } else {
+                        console.warn(`Unexpected format for number_of_injuries: ${report.number_of_injuries}`);
+                    }
                 }
-            } else {
-                console.warn(`Unexpected format for number_of_injuries: ${report.number_of_injuries}`);
-            }
+            });
+
+            return monthlyInjuries;
         }
-    });
-
-    return monthlyInjuries;
-}
-
 
         // Fetch data and render charts on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
@@ -279,7 +299,7 @@ function calculateMonthlyInjuries(reports) {
                             'rgba(153, 102, 255, 0.5)',
                             'rgba(255, 159, 64, 0.5)'
                         ],
-                        borderWidth: 1
+                        borderWidth: 2
                     }]
                 },
                 options: {

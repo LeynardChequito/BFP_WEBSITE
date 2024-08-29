@@ -371,7 +371,6 @@
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
     });
-
     async function getRecentReports() {
         try {
             const response = await fetch('https://bfpcalapancity.online/reports-recent');
@@ -379,17 +378,16 @@
 
             if (response.ok && Array.isArray(data)) {
                 const newReportsList = document.getElementById('newReportsList');
+                const sirenSound = document.getElementById('sirenSound');
+                let newReportsReceived = false;
+
                 newReportsList.innerHTML = '';
 
                 data.forEach(report => {
                     if (report.latitude && report.longitude) {
-                        const {
-                            latitude,
-                            longitude,
-                            fullName,
-                            fileproof,
-                            timestamp
-                        } = report;
+                        newReportsReceived = true;
+
+                        const { latitude, longitude, fullName, fileproof, timestamp } = report;
 
                         const listItem = document.createElement('li');
                         listItem.classList.add('list-group-item');
@@ -398,13 +396,9 @@
                         let fileProofContent = '';
                         const fullURL = `bfpcalapancity/public/community_report/${fileproof}`;
                         if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
-                            fileProofContent = `
-                            <video src="${fullURL}" controls class="file-proof-video"></video>
-                        `;
+                            fileProofContent = `<video src="${fullURL}" controls class="file-proof-video"></video>`;
                         } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
-                            fileProofContent = `
-                            <img src="${fullURL}" alt="File Proof" class="file-proof-image">
-                        `;
+                            fileProofContent = `<img src="${fullURL}" alt="File Proof" class="file-proof-image">`;
                         } else {
                             fileProofContent = "Unsupported file type";
                         }
@@ -417,7 +411,6 @@
                                 <div class="fileProofContainer" style="margin-bottom: 10px;">${fileProofContent}</div>
                                 <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin-right: 10px;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
                                 <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="accessFireReportForm()">File Report</button>
-                                <!-- <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin-left: 10px;" onclick="toggleDirections()">Show Steps</button> -->
                                 <div id="directions" style="display: none;"></div>
                             </div>
                         `;
@@ -428,22 +421,27 @@
                             icon: userMarker
                         }).addTo(map);
                         const popupContent = `
-                        <div class="popup-content">
-                            <h4>User in Need: ${fullName}</h4>
-                            <p><strong>Timestamp:</strong> ${timestamp}</p>
-                            <p><strong>File Proof:</strong></p>
-                            <div class="fileProofContainer">${fileProofContent}</div>
-                            <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
-                            <button onclick="accessFireReportForm()">File Report</button>
-                            <button onclick="toggleDirections()">Show Steps</button>
-                            <div id="directions" style="display: none;"></div>
-                        </div>
-                    `;
+                            <div class="popup-content">
+                                <h4>User in Need: ${fullName}</h4>
+                                <p><strong>Timestamp:</strong> ${timestamp}</p>
+                                <p><strong>File Proof:</strong></p>
+                                <div class="fileProofContainer">${fileProofContent}</div>
+                                <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
+                                <button onclick="accessFireReportForm()">File Report</button>
+                                <button onclick="toggleDirections()">Show Steps</button>
+                                <div id="directions" style="display: none;"></div>
+                            </div>
+                        `;
                         marker.bindPopup(popupContent);
                     } else {
                         console.warn('Invalid report location:', report);
                     }
                 });
+
+                // Play siren sound if new reports are received
+                if (newReportsReceived) {
+                    sirenSound.play();
+                }
 
                 const newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
                 newReportModal.show();

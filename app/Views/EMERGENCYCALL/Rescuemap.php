@@ -123,7 +123,7 @@
         }
 
         .btn-back {
-            position: absolute;
+            position: fixed;
             top: 20px;
             left: 20px;
             background-color: #007bff;
@@ -136,23 +136,13 @@
             transition: background-color 0.3s ease;
             font-family: 'Arial', sans-serif;
             /* Use a font similar to Waze.com */
+            z-index: 1100;
         }
 
         .btn-back:hover {
             background-color: #0056b3;
             /* Darker shade for hover effect */
         }
-
-        .bfp-header {
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: black;
-            padding: 20px 0;
-            background-color: #f8f9fa;
-            margin: 0;
-        }
-
 
         .show-steps {
             background-color: #007bff;
@@ -340,6 +330,9 @@
 </head>
 
 <body>
+    
+    <button class="btn-back" onclick="window.location.href='/admin-home';">Back</button>
+        
     <div class="map-card">
         <div id="map-container">
             <div id="map"></div>
@@ -351,7 +344,6 @@
             <button id="directions" onclick="toggleDirections()">Show Steps</button>
         </div>
 
-        
         <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal">
             &#128276;
         </button>
@@ -369,13 +361,13 @@
                             <!-- New reports will be listed here -->
                         </ul>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <audio id="sirenSound" src="path/to/siren-sound.mp3" preload="auto"></audio>
+    
     <?= view('EMERGENCYCALL/MapScript'); ?>
     
 </body>
