@@ -14,7 +14,7 @@
             </li>
             <li>
                 <a href="<?= site_url('carousel') ?>">
-                    <i class="fas fa-images mr-2"></i>Carousel
+                    <i class="fas fa-images mr-2"></i>Manage Carousel
                 </a>
             </li>
             <li>

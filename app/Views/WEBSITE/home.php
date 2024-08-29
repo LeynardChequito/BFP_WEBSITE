@@ -1,7 +1,5 @@
 <?php
 use App\Models\CarouselModel;
-
-// Initialize the CarouselModel
 $carouselModel = new CarouselModel();
 $imageSources = $carouselModel->findAll();
 ?>

@@ -199,7 +199,7 @@
                         </div>
                         <div class="form-group">
                             <label for="editNewsImage">Image</label>
-                            <input type="file" class="form-control" id="editNewsImage" name="image">
+                            <input type="file" class="form-control" id="editNewsImage" name="image" multiple>
                             <img src="" alt="News Image" class="img-thumbnail" id="editNewsImagePreview" style="max-width: 100%; height: auto;">
                         </div>
                     </form>
