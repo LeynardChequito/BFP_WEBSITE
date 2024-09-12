@@ -262,7 +262,7 @@
                     <button type="button" class="close" onclick="closeModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
+                <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
                         <div class="form-group">
                             <label for="fullName">Your Name:</label>
                             <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
