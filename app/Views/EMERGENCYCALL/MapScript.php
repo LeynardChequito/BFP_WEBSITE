@@ -244,27 +244,26 @@
         shadowSize: [41, 41]
     });
     // Function to show rescuer's geolocation
-    function showRescuerLocation(position) {
-        const rescuerLatitude = position.coords.latitude;
-        const rescuerLongitude = position.coords.longitude;
+function showRescuerLocation(position) {
+    const rescuerLatitude = position.coords.latitude;
+    const rescuerLongitude = position.coords.longitude;
 
-        map.setView([rescuerLatitude, rescuerLongitude], 16); // Set map view to rescuer's location
+    map.setView([rescuerLatitude, rescuerLongitude], 16); // Set map view to rescuer's location
 
-        const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], {
-            icon: rescuerIcon
-        }).addTo(map);
-        rescuerMarker.bindPopup("'You are here.' -Rescuer").openPopup();
+    const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], {
+        icon: rescuerIcon
+    }).addTo(map);
+    rescuerMarker.bindPopup("'You are here.' -Rescuer").openPopup();
 
-        // Set rescuer's geolocation as starting point
-        startCoords = [rescuerLongitude, rescuerLatitude];
+    // Set rescuer's geolocation as starting point
+    startCoords = [rescuerLongitude, rescuerLatitude]; // Ensure startCoords is set here
 
-        // Suggest nearest fire hydrants
-        suggestNearestHydrants({
-            lat: rescuerLatitude,
-            lng: rescuerLongitude
-        });
-    }
-
+    // Suggest nearest fire hydrants
+    suggestNearestHydrants({
+        lat: rescuerLatitude,
+        lng: rescuerLongitude
+    });
+}
     function toggleDirections() {
         const directionsDiv = document.getElementById("directions");
         const showStepsBtn = document.getElementById("show-steps");
@@ -380,6 +379,7 @@
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
     });
+    document.addEventListener('DOMContentLoaded', function () {
     async function getRecentReports() {
         try {
             const response = await fetch('https://bfpcalapancity.online/reports-recent');
@@ -431,14 +431,13 @@
                                 <p><strong>File Proof:</strong></p>
                                 <div class="fileProofContainer">${fileProofContent}</div>
                                 <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
-                                <button onclick="accessFireReportForm()">File Report</button>
                             </div>
                         `;
                         marker.bindPopup(popupContent);
                     }
                 });
 
-                if (newReportsReceived && isUserInteracted) {
+                if (newReportsReceived) {
                     sirenSound.play().catch(error => {
                         console.error('Error playing sound:', error);
                     });
@@ -456,6 +455,7 @@
 
     getRecentReports(); // Fetch new reports on mount
 });
+
 
     function accessFireReportForm() {
         window.location.href = 'fire-report/create';
@@ -487,14 +487,20 @@
         }
     }
 
-    function showRouteToRescuer(lat, lng) {
+   // Function to show route to rescuer
+function showRouteToRescuer(lat, lng) {
+    if (!startCoords) {
+        alert("Rescuer location not available. Please reload the page or enable geolocation.");
+        return;
+    }
     endCoords = [lng, lat];
     updateRouteAndDisplayInfo();
 }
 
+// Update route and display info
 async function updateRouteAndDisplayInfo() {
     if (!startCoords || !endCoords) {
-        alert("Please reload the page.");
+        alert("Start or end coordinates are missing. Please reload the page.");
         return;
     }
 
@@ -515,7 +521,6 @@ async function updateRouteAndDisplayInfo() {
             return `<p>${text} (${length.toFixed(2)} meters, ${time.toFixed(2)} minutes)</p>`;
         }).join("");
 
-        // Display route directions and info
         const directionsDiv = document.getElementById("directions");
         directionsDiv.style.display = "block";
         directionsDiv.innerHTML = directionsHTML;
@@ -527,7 +532,6 @@ async function updateRouteAndDisplayInfo() {
         alert("There was a problem calculating the route. Please try again.");
     }
 }
-
 
     document.addEventListener('DOMContentLoaded', function() {
         getRecentReports(); // Fetch new reports on mount
