@@ -387,6 +387,7 @@
 
             if (response.ok && Array.isArray(data)) {
                 const newReportsList = document.getElementById('newReportsList');
+                const sirenSound = document.getElementById('sirenSound');
                 let newReportsReceived = false;
 
                 newReportsList.innerHTML = '';
@@ -400,6 +401,7 @@
                         const listItem = document.createElement('li');
                         listItem.classList.add('list-group-item');
 
+                        // Create the file proof content based on file type
                         let fileProofContent = '';
                         const fullURL = `bfpcalapancity/public/community_report/${fileproof}`;
                         if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
@@ -418,12 +420,15 @@
                                 <div class="fileProofContainer" style="margin-bottom: 10px;">${fileProofContent}</div>
                                 <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin-right: 10px;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
                                 <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="accessFireReportForm()">File Report</button>
+                                <div id="directions" style="display: none;"></div>
                             </div>
                         `;
 
                         newReportsList.appendChild(listItem);
 
-                        const marker = L.marker([latitude, longitude], { icon: userMarker }).addTo(map);
+                        const marker = L.marker([latitude, longitude], {
+                            icon: userMarker
+                        }).addTo(map);
                         const popupContent = `
                             <div class="popup-content">
                                 <h4>User in Need: ${fullName}</h4>
@@ -432,16 +437,19 @@
                                 <div class="fileProofContainer">${fileProofContent}</div>
                                 <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
                                 <button onclick="accessFireReportForm()">File Report</button>
+                                <button onclick="toggleDirections()">Show Steps</button>
+                                <div id="directions" style="display: none;"></div>
                             </div>
                         `;
                         marker.bindPopup(popupContent);
+                    } else {
+                        console.warn('Invalid report location:', report);
                     }
                 });
 
-                if (newReportsReceived && isUserInteracted) {
-                    sirenSound.play().catch(error => {
-                        console.error('Error playing sound:', error);
-                    });
+                // Play siren sound if new reports are received
+                if (newReportsReceived) {
+                    sirenSound.play();
                 }
 
                 const newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
@@ -453,9 +461,6 @@
             console.error('Error fetching recent reports:', error);
         }
     }
-
-    getRecentReports(); // Fetch new reports on mount
-});
 
     function accessFireReportForm() {
         window.location.href = 'fire-report/create';
