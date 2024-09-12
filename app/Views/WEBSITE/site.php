@@ -12,44 +12,59 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
-            authDomain: "pushnotifbfp.firebaseapp.com",
-            projectId: "pushnotifbfp",
-            storageBucket: "pushnotifbfp.appspot.com",
-            messagingSenderId: "214092622073",
-            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
-            measurementId: "G-XMBH6JJ3M6"
-        };
+        document.addEventListener('DOMContentLoaded', function() {
+    var emergencyForm = document.getElementById('emergencyForm');
+    if (emergencyForm) {
+        emergencyForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
+            var formData = new FormData(this);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
 
-        // Request permission and get token for FCM
-        async function requestPermission() {
-            try {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    const token = await getToken(messaging);
-                    console.log('Token:', token);
-                } else {
-                    console.error('Notification permission not granted.');
+            xhr.onload = function() {
+                // Log the raw response for debugging
+                console.log(xhr.responseText);
+
+                try {
+                    // Check if the content-type is JSON
+                    var contentType = xhr.getResponseHeader('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        // Parse the JSON response
+                        var response = JSON.parse(xhr.responseText);
+
+                        // Handle the response
+                        if (response.success) {
+                            alert("Form submitted successfully!");
+
+                            // Post message to update the map
+                            window.parent.postMessage({
+                                action: 'updateMap',
+                                data: {
+                                    latitude: formData.get('latitude'),
+                                    longitude: formData.get('longitude'),
+                                    fullName: formData.get('fullName')
+                                }
+                            }, '*');
+                            closeModal();
+                        } else {
+                            alert("Form submission failed: " + response.message);
+                        }
+                    } else {
+                        alert("Unexpected response format: " + xhr.responseText);
+                    }
+                } catch (e) {
+                    alert("Failed to parse JSON response: " + e.message);
                 }
-            } catch (error) {
-                console.error('Error getting permission for notifications:', error);
-            }
-        }
+            };
 
-        requestPermission();
-
-        // Handle incoming messages
-        onMessage(messaging, (payload) => {
-            console.log('Message received: ', payload);
-            alert(`New Notification: ${payload.notification.title}`);
+            xhr.send(formData);
         });
-    </script>
+    } else {
+        console.error("Element with id 'emergencyForm' not found.");
+    }
+});
+
 
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
