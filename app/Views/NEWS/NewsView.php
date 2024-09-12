@@ -101,7 +101,7 @@
                             <h3 class="article-title"><?= esc(substr($item['title'], 0, 40)) ?>...</h3>
                             <p class="article-slug">Slug: <?= esc(substr($item['slug'], 0, 30)) ?>...</p>
                             <p class="article-content"><?= esc(substr($item['content'], 0, 200)) ?>...</p>
-                            <a href="<?= site_url('new/' . esc($item['slug'])) ?>" class="btn btn-danger">Read Full Article</a>
+                            <a href="<?= site_url('news/' . esc($item['slug'])) ?>" class="btn btn-danger">Read Full Article</a>
                         </div>
                     </div>
                 </div>
