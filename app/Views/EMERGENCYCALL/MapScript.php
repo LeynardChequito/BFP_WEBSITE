@@ -19,7 +19,11 @@
     const map = L.map("map", {
         zoom: 14
     });
-
+// Use OpenStreetMap tiles (no CORS issues)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
     map.setView([13.3839, 121.1860], 14); // Calapan City location
 
     L.esri.Vector.vectorBasemapLayer(basemapEnum, {
