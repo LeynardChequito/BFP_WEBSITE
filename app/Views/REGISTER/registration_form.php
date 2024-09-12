@@ -139,7 +139,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="email" class="font-weight-bold">Email Address:</label>
+                                <label for="email" class="font-weight-bold">Email Address (Active):</label>
                                 <input type="email" name="email" class="form-control" value="<?= set_value('email') ?>" required>
                                 <?php if (isset($validation) && $validation->getError('email')) { ?>
                                     <div class="text-danger"><?= esc($validation->getError('email')) ?></div>

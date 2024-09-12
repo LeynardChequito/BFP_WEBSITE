@@ -2,6 +2,7 @@
     <div class="sidebar">
         <h2 class="text-center mb-4">BFP Admin</h2>
         <ul class="list-unstyled components">
+            <hr>
             <li>
                 <a href="<?= site_url('/admin-home') ?>">
                     <i class="fas fa-home mr-2"></i>Home
@@ -17,9 +18,17 @@
                     <i class="fas fa-images mr-2"></i>Manage Carousel
                 </a>
             </li>
+            <hr>
+            
+            <li>
+                <a href="<?= site_url('rescuer-report/form') ?>">
+                   <i class="fas fa-file-alt mr-2"></i> Add Fire Report
+                </a>
+            </li>
+            <hr>
             <li>
                 <a href="<?= site_url('graph') ?>">
-                    <i class="fas fa-images mr-2"></i>Dashboard
+                    <i class="fas fa-chart-pie mr-2"></i>Dashboard
                 </a>
             </li>
         </ul>

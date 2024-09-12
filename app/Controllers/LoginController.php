@@ -16,7 +16,10 @@ class LoginController extends BaseController
     {
         $this->session = \Config\Services::session();
     }
-
+public function loginpage()
+{
+    return view ('LOGIN/login');
+}
     public function verify()
     {
         $token = $this->request->getGet('token');

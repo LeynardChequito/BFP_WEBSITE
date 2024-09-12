@@ -68,7 +68,6 @@
             width: 80%;
             max-width: 600px;
             border-radius: 10px;
-
         }
 
         .modal-header {
@@ -184,7 +183,6 @@
         </div>
     </nav>
 
-
     <!-- Second Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -217,7 +215,7 @@
                     <button type="button" class="close" onclick="closeModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
+                    <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
                         <div class="form-group">
                             <label for="fullName">Your Name:</label>
                             <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
@@ -232,7 +230,7 @@
                         </div>
                         <div class="form-group">
                             <label for="fileproof">Upload File Proof (Image/Video)</label>
-                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*;capture=camera,video/*;capture=camcorder" required>
+                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*;capture=camera,video/*;capture=camcorder" multiple required>
                         </div>
                         <button type="submit" class="btn btn-primary">Send</button>
                     </form>
@@ -240,93 +238,150 @@
             </div>
         </div>
     </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add event listener when DOM is fully loaded
-        var emergencyForm = document.getElementById('emergencyForm');
-        if (emergencyForm) {
-            emergencyForm.addEventListener('submit', function(event) {
-                event.preventDefault();
 
-                var formData = new FormData(this);
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
+    <!-- Firebase Messaging Scripts -->
+    <script type="module">
+        // Import the necessary functions from the Firebase Messaging module
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            alert("Form submitted successfully!");
-
-                            window.parent.postMessage({
-                                action: 'updateMap',
-                                data: {
-                                    latitude: formData.get('latitude'),
-                                    longitude: formData.get('longitude'),
-                                    fullName: formData.get('fullName')
-                                }
-                            }, '*');
-                            closeModal();
-                        } else {
-                            alert("Form submission failed: " + response.message);
-                        }
-                    }
-                };
-
-                xhr.send(formData);
-            });
-        } else {
-            console.error("Element with id 'emergencyForm' not found.");
-        }
-    });
-
-    // Function to get the user's current location
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-    }
-
-    // Function to display user's current position on the modal form
-    function showPosition(position) {
-        var lat = position.coords.latitude;
-        var lng = position.coords.longitude;
-
-        // Update the input fields in the modal form with the user's coordinates
-        document.getElementById('latitude').value = lat;
-        document.getElementById('longitude').value = lng;
-    }
-
-    // Function to open the modal and get the user's location
-    function openModal() {
-        document.getElementById("myModal").style.display = "block";
-        getLocation(); // Get the user's current location
-    }
-
-    // Function to close the modal
-    function closeModal() {
-        document.getElementById("myModal").style.display = "none";
-    }
-
-    // Function to update Philippine time
-    function updatePhilippineTime() {
-        const options = {
-            timeZone: 'Asia/Manila',
-            hour12: true,
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
+        const firebaseConfig = {
+            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+            authDomain: "pushnotifbfp.firebaseapp.com",
+            projectId: "pushnotifbfp",
+            storageBucket: "pushnotifbfp.appspot.com",
+            messagingSenderId: "214092622073",
+            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+            measurementId: "G-XMBH6JJ3M6"
         };
-        const philippineTime = new Date().toLocaleString('en-US', options);
-        document.getElementById('philippineTime').innerText = philippineTime;
-    }
 
-    // Update time initially and set interval to update every second
-    updatePhilippineTime();
-    setInterval(updatePhilippineTime, 1000);
-</script>
+        // Initialize Firebase app and messaging
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        // Request permission to receive notifications
+        messaging.requestPermission().then(function() {
+            console.log('Notification permission granted.');
+            return getToken(messaging);
+        }).then(function(token) {
+            console.log('FCM Token:', token);
+        }).catch(function(error) {
+            console.error('Error getting FCM token:', error);
+        });
+
+        // Handle incoming messages
+        onMessage(messaging, (payload) => {
+            console.log('Message received. ', payload);
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var emergencyForm = document.getElementById('emergencyForm');
+            if (emergencyForm) {
+                emergencyForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    var formData = new FormData(this);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
+
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                alert("Form submitted successfully!");
+                                // Call the function to send the notification
+                                submitEmergencyCall(formData);
+
+                                window.parent.postMessage({
+                                    action: 'updateMap',
+                                    data: {
+                                        latitude: formData.get('latitude'),
+                                        longitude: formData.get('longitude'),
+                                        fullName: formData.get('fullName')
+                                    }
+                                }, '*');
+                                closeModal();
+                            } else {
+                                alert("Form submission failed: " + response.message);
+                            }
+                        }
+                    };
+
+                    xhr.send(formData);
+                });
+            }
+        });
+
+        // Function to send notification payload
+        function submitEmergencyCall(formData) {
+            var fireType = formData.get('fireType');  // Adjust according to the actual form field name
+            var notificationPayload = {
+                notification: {
+                    title: 'Emergency Call',
+                    body: 'A new emergency call has been submitted.',
+                    data: {
+                        fireType: fireType,
+                        latitude: formData.get('latitude'),
+                        longitude: formData.get('longitude')
+                    }
+                },
+                topic: 'admin_notifications'
+            };
+
+            if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage(notificationPayload);
+            } else {
+                console.error('Service worker not available.');
+            }
+        }
+
+        // Function to get the user's current location
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Function to display user's current position on the modal form
+        function showPosition(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+        }
+
+        // Function to open the modal and get the user's location
+        function openModal() {
+            document.getElementById("myModal").style.display = "block";
+            getLocation();
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        // Function to update Philippine time
+        function updatePhilippineTime() {
+            const options = {
+                timeZone: 'Asia/Manila',
+                hour12: true,
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric'
+            };
+            const philippineTime = new Date().toLocaleString('en-US', options);
+            document.getElementById('philippineTime').innerText = philippineTime;
+        }
+
+        updatePhilippineTime();
+        setInterval(updatePhilippineTime, 1000);
+    </script>
 
     <!-- Your other scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

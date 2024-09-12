@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BFP WEBSITE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <style>
         body {
             margin: 0;
@@ -49,7 +50,7 @@
             color: #fff;
             font-size: 14px;
             margin-left: auto;
-            margin-right: 20px; /* Adjusted margin for alignment */
+            margin-right: 20px;
         }
 
         .notification-dropdown {
@@ -172,14 +173,84 @@
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s, color 0.3s;
-            margin-right: 10px; /* Adjusted margin for alignment */
-            margin-left: 580px; /* Added margin for distance from bell icon */
+            margin-right: 10px;
+            margin-left: 580px;
         }
 
         .view-map-btn:hover {
             background-color: lightblue;
             color: black;
         }
+
+        .push-notif-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .push-notif-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .push-notif-btn:focus {
+            outline: none;
+        }
+
+        hr {
+            border: 0.5px solid #ddd;
+            margin: 10px 0;
+        }
+        .fileProofContainer img,
+            .fileProofContainer video {
+                width: 150px;
+                height: 100px;
+                object-fit: cover;
+            }
+            
+        .modal-body {
+        max-height: 400px; /* Set the max height for the modal body */
+        overflow-y: auto;  /* Enable vertical scrolling */
+    }
+
+    /* Adjust the size of images in the modal */
+    .modal-body img {
+        max-width: 100%; /* Make sure the image does not exceed the modal's width */
+        height: auto;    /* Maintain the aspect ratio of the image */
+        display: block;
+        margin: 0 auto 10px; /* Center the image with some margin at the bottom */
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-body {
+        padding: 10px;
+    }
+
+    .modal-content {
+        max-width: 600px; /* Max width of the modal content */
+    }
     </style>
 </head>
 
@@ -189,22 +260,38 @@
     <div class="header desktop-header">
         <!-- Logo -->
         <img src="<?= base_url(); ?>/bfpcalapancity/public/images/Banner03_18Aug2018.png" alt="Logo" class="logo">
+<!-- Notification dropdown -->
+<div class="notification-dropdown position-relative" onclick="getRecentReports()">
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill">
+        <i class="fas fa-bell notification-icon"></i>
+        <span id="notification-counter" class="badge badge-danger badge-counter">0</span>
+    </span>
 
-        <!-- Notification dropdown -->
-        <div class="notification-dropdown position-relative">
-            <!-- Notification icon and counter -->
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill">
-                <i class="fas fa-bell notification-icon"></i>
-                <span id="notification-counter" class="badge badge-danger badge-counter">0</span>
-            </span>
-            <!-- Dropdown content to display notifications -->
-            <div class="dropdown-content">
-                <h6 class="dropdown-header">Community Emergency Message</h6>
-                <div class="dropdown-separator"></div>
-                <div id="notification-container"></div>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Show all notifications</a>
+    <!-- Dropdown content to display notifications -->
+    <div class="dropdown-content">
+        <h6 class="dropdown-header">Community Emergency Message</h6>
+        <div id="notification-container"></div>
+        <a class="dropdown-item text-center small text-gray-500" href="#">Show all notifications</a>
+    </div>
+</div>
+
+<!-- Modal for new reports -->
+<div class="modal" id="newReportModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Community Reports</h5>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <ul id="newReportsList" class="list-group">
+                    <!-- New reports will be listed here -->
+                </ul>
             </div>
         </div>
+    </div>
+</div>
+
 
         <!-- View Map button -->
         <a class="view-map-btn" href="<?= site_url('rescuemap') ?>">View Map</a>
@@ -213,15 +300,9 @@
         <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
-    <!-- Modal for notifications -->
-    <div id="notificationModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Notifications</h2>
-            <div id="notificationContent"></div>
-        </div>
-    </div>
-
+    <audio id="sirenSound" src="bfpcalapancity/public/alarm.mp3" preload="auto"></audio>
+<?= view('EMERGENCYCALL/MapScript'); ?>
+    
     <!-- External scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -230,8 +311,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <!-- JavaScript code for handling notifications and updating time -->
-    <script type="module">
-        const firebaseConfig = {
+  <script type="module">
+    const firebaseConfig = {
         apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
         authDomain: "pushnotifbfp.firebaseapp.com",
         projectId: "pushnotifbfp",
@@ -239,90 +320,102 @@
         messagingSenderId: "214092622073",
         appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
         measurementId: "G-XMBH6JJ3M6"
-        };
+    };
 
-        // Function to get current time
-        function getCurrentTime() {
-            return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
-        }
+    firebase.initializeApp(firebaseConfig);
+    const fcm = firebase.messaging();
+    let mToken;
 
-        // Function to update time every second
-        function updateTime() {
-            document.getElementById("current-time").textContent = getCurrentTime();
-            setTimeout(updateTime, 1000);
-        }
+    // Fetch the current token
+    fcm.getToken({
+        vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+    }).then((currentToken) => {
+        console.log('Token retrieved:', currentToken);
+        mToken = currentToken;
+    }).catch((error) => {
+        console.error('Error retrieving token:', error);
+    });
 
-        // Initialize Firebase and update time
-        firebase.initializeApp(firebaseConfig);
-        const fcm = firebase.messaging();
-        let mToken;
-
-        // Get Firebase token
-        fcm.getToken({
-            vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
-        }).then((currentToken) => {
-            console.log('Token retrieved:', currentToken);
-            mToken = currentToken;
-        }).catch((error) => {
-            console.error('Error retrieving token:', error);
+    // Handle incoming messages
+    fcm.onMessage((payload) => {
+        console.log('onMessage: ', payload);
+        let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+        notifications.push({
+            title: payload.notification.title,
+            time: new Date().toLocaleTimeString()
         });
+        localStorage.setItem('notifications', JSON.stringify(notifications));
 
-        // Handle incoming messages
-        fcm.onMessage((data) => {
-            console.log('onMessage: ', data);
-            let count = localStorage.getItem("notification-count");
-            if (count) {
-                localStorage.setItem('notification-count', parseInt(count) + 1);
-            } else {
-                localStorage.setItem('notification-count', 1);
-            }
+        // Update the notification counter and dropdown
+        updateNotificationCounter();
+        updateNotificationDropdown();
+    });
 
-            $('#notification-counter').text(localStorage.getItem("notification-count"));
-            $('#notification-container').append(
-                `<div class="dropdown-separator"></div>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="mr-3 notification-item">
-                        <div class="icon-circle bg-primary">
-                            <i class="fas fa-file-alt text-white"></i> 
-                        </div>
+    // Function to update the notification counter
+    function updateNotificationCounter() {
+        const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+        const counterElement = document.getElementById('notification-counter');
+        counterElement.textContent = notifications.length;
+    }
+
+  // Function to update the notification dropdown content
+function updateNotificationDropdown() {
+    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    const notificationContainer = document.getElementById('notification-container');
+    notificationContainer.innerHTML = '';
+
+    notifications.forEach(notification => {
+        notificationContainer.innerHTML += `
+            <a class="dropdown-item d-flex align-items-center" href="#" onclick="openReportModal(${notification.reportId})">
+                <div class="mr-3 notification-item">
+                    <div class="icon-circle bg-primary">
+                        <i class="fas fa-file-alt text-white"></i>
                     </div>
-                    <div class="notification-details">
-                        <div class="small text-gray-500 notification-time">${getCurrentTime()}</div>
-                        <span class="font-weight-bold notification-title">${data.notification.title}</span>
-                    </div>
-                </a>`
-            );
+                </div>
+                <div class="notification-details">
+                    <div class="small text-gray-500 notification-time">${notification.time}</div>
+                    <span class="font-weight-bold notification-title">${notification.title}</span>
+                </div>
+            </a>
+            <hr />
+        `;
+    });
+}
 
-            $('#notificationContent').append(
-                `<div class="notification">
-                    <div class="notification-time">${getCurrentTime()}</div>
-                    <div class="notification-title">${data.notification.title}</div>
-                    <div class="notification-body">${data.notification.body}</div>
-                </div>`
-            );
-        });
 
-        // Open modal on notification click
-        $(".notification-dropdown").on("click", function() {
-            modal.style.display = "block";
-        });
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        updateNotificationCounter(); // Show notification count on load
+        updateNotificationDropdown(); // Show notification dropdown content on load
+    });
 
-        // Close modal when close button clicked
-        const span = document.getElementsByClassName("close")[0];
-        span.onclick = function() {
+    // Modal controls
+    const modal = document.getElementById("newReportModal");
+    const span = document.getElementsByClassName("close")[0];
+
+    $(".notification-dropdown").on("click", function() {
+        modal.style.display = "block";
+    });
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
             modal.style.display = "none";
-        };
+        }
+    };
 
-        // Close modal when clicked outside the modal
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        };
+    // Time display
+    function updateTime() {
+        document.getElementById("current-time").textContent = new Date().toLocaleTimeString();
+        setTimeout(updateTime, 1000);
+    }
 
-        // Start updating time
-        updateTime();
-    </script>
+    // Initialize time update
+    updateTime();
+</script>
 </body>
 
 </html>

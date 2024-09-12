@@ -55,7 +55,7 @@ $routes->get('admin-notif', 'AHomeController::adminNotif', ['filter' => 'admin']
 // OTHER FUNCTIONS
 // NEWS
 $routes->get('news', 'NewsController::news', ['filter' => 'user']);
-$routes->get('news/(:segment)', 'NewsController::show/$1', ['filter' => 'user']);
+$routes->get('new/(:segment)', 'NewsController::show/$1', ['filter' => 'user']);
 $routes->get('newscreate', 'NewsController::newscreate', ['filter' => 'admin']);
 $routes->post('news-store', 'NewsController::store', ['filter' => 'admin']);
 $routes->post('news-edit', 'NewsController::edit', ['filter' => 'admin']);
@@ -63,12 +63,11 @@ $routes->post('news-update', 'NewsController::update', ['filter' => 'admin']);
 $routes->get('delete/(:segment)', 'NewsController::delete/$1', ['filter' => 'admin']);
 
 // CAROUSEL IMAGES
-$routes->get('carouselhome', 'CarouselController::carouselhome', ['filter' => 'user']);
-$routes->get('carouselImages', 'CarouselController::addImages', ['filter' => 'user']);
+$routes->get('carousel', 'CarouselController::image', ['filter' => 'admin']);
 $routes->post('carousel/store', 'CarouselController::store', ['filter' => 'admin']);
-$routes->post('carousel/edit', 'CarouselController::edit', ['filter' => 'admin']);
-$routes->post('carousel/update', 'CarouselController::update', ['filter' => 'admin']);
-$routes->get('delete/(:segment)', 'CarouselController::delete/$1', ['filter' => 'admin']);
+$routes->get('carousel/edit/(:num)', 'CarouselController::edit/$1', ['filter' => 'admin']);
+$routes->post('carousel/update/(:num)', 'CarouselController::update/$1', ['filter' => 'admin']);
+$routes->post('carousel/delete/(:num)', 'CarouselController::delete/$1', ['filter' => 'admin']);
 
 // GRAPH
 $routes->get('graph', 'GraphController::graph',);
@@ -90,6 +89,12 @@ $routes->get('reports-recent', 'CommunityReportController::getRecentReports', ['
 // RESCUER REPORT
 $routes->get('fire-report/create', 'RescuerReportController::firereportform',);
 $routes->post('fire-report/store', 'RescuerReportController::store',);
+$routes->get('rescuer-report/form', 'RescuerReportController::reportform');
+$routes->post('rescuer-report/save', 'RescuerReportController::save');
+$routes->get('rescuer-report/success', function () {
+    return view('RESCUERREPORT/success');
+});
+
 
 
 $routes->get('testemail', 'TestEmailController::index',);

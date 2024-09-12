@@ -42,8 +42,8 @@ class Filters extends BaseConfig
         ],
         'after' => [
             'toolbar',
-            // 'honeypot',
-            // 'secureheaders',
+            'honeypot',
+             'secureheaders',
         ],
     ];
 
@@ -70,7 +70,7 @@ class Filters extends BaseConfig
     public $filters = [
         'user' => ['before' => [
              'contact-us', 'banner', 'logout', 'achievements', 'contacts', 'activities',
-            '/site', 'album', 'intern', 'pfv', 'fdas', 'inspection', 'news', 'news/(:segment)',
+            '/site', 'album', 'intern', 'pfv', 'fdas', 'inspection', 'news', 'new/(:segment)',
             'carouselhome', 'user-location', 'submitcall', 'communityreport/*',
               
         ]],

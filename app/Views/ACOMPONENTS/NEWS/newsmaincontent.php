@@ -109,10 +109,20 @@
             background-color: #495057;
             border-color: #495057;
         }
+        
+        .img-thumbnail {
+    width: 100%;
+    height: auto;
+    max-width: 150px; /* Adjust as needed */
+    max-height: 150px; /* Adjust as needed */
+    object-fit: cover;
+}
+
     </style>
 </head>
 
 <body>
+    <?= view('ACOMPONENTS/NEWS/adminnewsheader'); ?>
     <?= view('ACOMPONENTS/adminheader'); ?>
 
     <div class="container-fluid">
@@ -138,35 +148,45 @@
                                 <th class="col-md-2">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php $count = 0; ?>
-                            <?php foreach ($news as $item) : ?>
-                                <?php if ($count < 5) : ?>
-                                    <tr class="table-row">
-                                        <td><?= $item['news_id']; ?></td>
-                                        <td><?= substr($item['title'], 0, 50); ?> ...</td>
-                                        <td><?= substr($item['content'], 0, 100); ?> ...</td>
-                                        <td><?= $item['image']; ?></td>
-                                        <td>
-                                            <button type="button" class="btn btn-warning edit-news-btn" data-newsid="<?= $item['news_id'] ?>" data-title="<?= $item['title'] ?>" data-content="<?= $item['content'] ?>" data-image="<?= $item['image'] ?>">
-                                                Edit
-                                            </button>
-                                            <button type="button" class="btn btn-danger delete-news-btn" data-newsid="<?= $item['news_id'] ?>">
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                <?php endif; ?>
-                                <?php $count++; ?>
-                            <?php endforeach; ?>
-                        </tbody>
+<tbody>
+    <?php if (!empty($news)) : ?>
+        <?php $count = 0; ?>
+        <?php foreach ($news as $item) : ?>
+            <?php if ($count < 5) : ?>
+                <tr class="table-row">
+                    <td><?= $item['news_id']; ?></td>
+                    <td><?= substr($item['title'], 0, 50); ?> ...</td>
+                    <td><?= substr($item['content'], 0, 100); ?> ...</td>
+                    <td>
+                        <?php $imagePaths = explode(',', $item['image']); ?>
+<?php foreach ($imagePaths as $image): ?>
+    <img src="<?= base_url('bfpcalapancity/public/newsphoto/' . trim($image)); ?>" alt="<?= $item['title']; ?>" class="img-thumbnail" style="max-width: 75px; max-height: 75px;">
+<?php endforeach; ?>
+
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-warning edit-news-btn" data-newsid="<?= $item['news_id'] ?>" data-title="<?= $item['title'] ?>" data-content="<?= $item['content'] ?>" data-image="<?= $item['image'] ?>">
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-danger delete-news-btn" data-newsid="<?= $item['news_id'] ?>">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php $count++; ?>
+        <?php endforeach; ?>
+    <?php else : ?>
+        <tr>
+            <td colspan="5">No news items found.</td>
+        </tr>
+    <?php endif; ?>
+</tbody>
                     </table>
-                    <!-- Pagination Links -->
-                    <div class="mt-3">
+<div class="mt-3">
     <?= $pager->links('default', 'bootstrap_pagination') ?>
 </div>
-
-                </div>
+          </div>
             </div>
         </div>
 
@@ -187,51 +207,58 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="editNewsForm" action="<?= base_url('news/update') ?>" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="news_id" id="editNewsId" value="">
-                        <div class="form-group">
-                            <label for="editNewsTitle">Title</label>
-                            <input type="text" class="form-control" id="editNewsTitle" name="title" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editNewsContent">Content</label>
-                            <textarea class="form-control" id="editNewsContent" name="content" rows="4" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="editNewsImage">Image</label>
-                            <input type="file" class="form-control" id="editNewsImage" name="image" multiple>
-                            <img src="" alt="News Image" class="img-thumbnail" id="editNewsImagePreview" style="max-width: 100%; height: auto;">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="submitEditForm()">Save changes</button>
-                </div>
+    <form id="editNewsForm" action="<?= base_url('news-update') ?>" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="news_id" id="editNewsId" value="">
+        <div class="form-group">
+            <label for="editNewsTitle">Title</label>
+            <input type="text" class="form-control" id="editNewsTitle" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="editNewsContent">Content</label>
+            <textarea class="form-control" id="editNewsContent" name="content" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="editNewsImage">Image</label>
+            <input type="file" class="form-control" id="editNewsImage" name="image[]" accept="image/*" multiple>
+            <div id="editNewsImagePreview" class="row mt-2"></div> <!-- Add a container for the preview -->
+        </div>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+    </form>
+</div>
             </div>
         </div>
     </div>
 
     <script>
         // Function to set up the edit modal with data
-        function setEditModal(newsId, title, content, image) {
-            $('#editNewsId').val(newsId);
-            $('#editNewsTitle').val(title);
-            $('#editNewsContent').val(content);
-            $('#editNewsImagePreview').attr('src', '<?= base_url('public/newsphoto/') ?>' + image);
-            $('#editNewsModal').modal('show');
-        }
+function setEditModal(newsId, title, content, image) {
+    $('#editNewsId').val(newsId);
+    $('#editNewsTitle').val(title);
+    $('#editNewsContent').val(content);
 
-        // Event listener for the edit button click
-        $(document).on('click', '.edit-news-btn', function() {
-            var newsId = $(this).data('newsid');
-            var title = $(this).data('title');
-            var content = $(this).data('content');
-            var image = $(this).data('image');
+    let images = image.split(','); // Split the comma-separated image string
+    let previewHTML = '';
 
-            // Call the function to set up the edit modal with data
-            setEditModal(newsId, title, content, image);
-        });
+    images.forEach(img => {
+        previewHTML += `<img src="<?= base_url('bfpcalapancity/public/newsphoto/') ?>${img.trim()}" class="img-thumbnail" style="max-width: 100%; height: auto;">`;
+    });
+
+    $('#editNewsImagePreview').html(previewHTML); // Insert the images into the modal preview
+
+    $('#editNewsModal').modal('show');
+}
+
+
+// Event listener for the edit button click
+$(document).on('click', '.edit-news-btn', function() {
+    var newsId = $(this).data('newsid');
+    var title = $(this).data('title');
+    var content = $(this).data('content');
+    var image = $(this).data('image');
+
+    // Call the function to set up the edit modal with data
+    setEditModal(newsId, title, content, image);
+});
 
         // Function to submit the edit form
         function submitEditForm() {
@@ -256,6 +283,26 @@
         <?php if (session()->has('success')) : ?>
             window.location.href = '<?= base_url('newscreate') ?>';
         <?php endif; ?>
+        
+        // Function to preview multiple images
+    function previewImages(input, previewContainer) {
+        if (input.files) {
+            $(previewContainer).html(''); // Clear the preview container
+            const files = input.files;
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $(previewContainer).append(`<div class="col-md-3 mb-2"><img src="${e.target.result}" class="img-thumbnail"></div>`);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    // Set up preview for the edit form
+    $('#editNewsImage').on('change', function() {
+        previewImages(this, '#editNewsImagePreview');
+    });
     </script>
 </body>
 
