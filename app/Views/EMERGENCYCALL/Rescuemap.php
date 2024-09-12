@@ -366,7 +366,7 @@
         </div>
     </div>
     
-    <audio id="sirenSound" src="path/to/siren-sound.mp3" preload="auto"></audio>
+    <audio id="sirenSound" src="bfpcalapancity/public/alarm.mp3" preload="auto"></audio>
     
     <?= view('EMERGENCYCALL/MapScript'); ?>
     
