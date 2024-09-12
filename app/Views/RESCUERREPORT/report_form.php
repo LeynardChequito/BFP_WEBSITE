@@ -73,7 +73,7 @@
             <!-- Sidebar -->
             <?= view('ACOMPONENTS/amanagesidebar'); ?>
 
-            <div class="col-md-9"><h2 class="form-header">ADD FIRE REPORT</h2>
+            <div class="col-md-9"><h2 class="form-header">ADD FIRE REPORTs</h2>
                 <div class="form-container card">
                     
                     <div class="card-body">
