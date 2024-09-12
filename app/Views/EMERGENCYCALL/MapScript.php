@@ -384,77 +384,86 @@ function isReportSubmitted(reportId) {
 }
 
 // Function to get recent reports and exclude already submitted ones
-async function getRecentReports() {
-    try {
-        const newReportsList = document.getElementById('newReportsList');
-        const sirenSound = document.getElementById('sirenSound');
+async function getRecentReports() { 
+    try { 
+        const newReportsList = document.getElementById('newReportsList'); 
+        const sirenSound = document.getElementById('sirenSound'); 
 
-        const response = await fetch('https://bfpcalapancity.online/reports-recent');
-        const data = await response.json();
+        const response = await fetch('https://bfpcalapancity.online/reports-recent'); 
+        const data = await response.json(); 
 
-        if (response.ok && Array.isArray(data)) {
-            let newReportsReceived = false;
+        if (response.ok && Array.isArray(data)) { 
+            let newReportsReceived = false; 
 
-            // Clear previous content
-            newReportsList.innerHTML = '';
+            // Clear previous content 
+            newReportsList.innerHTML = ''; 
 
-            data.forEach(report => {
-                const reportId = report.id; // Ensure each report has a unique 'id'
-                if (!isReportSubmitted(reportId)) { // Only show reports that have not been submitted
-                    newReportsReceived = true;
-                    const { latitude, longitude, fullName, fileproof, timestamp } = report;
+            data.forEach(report => { 
+                const reportId = report.id; 
+                if (!isReportSubmitted(reportId)) { 
+                    newReportsReceived = true; 
+                    const { latitude, longitude, fullName, fileproof, timestamp } = report; 
 
-                    let fileProofContent = '';
-                    const fullURL = `bfpcalapancity/public/community_report/${fileproof}`;
-                    if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
-                        fileProofContent = `<video src="${fullURL}" controls class="file-proof-video"></video>`;
-                    } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
-                        fileProofContent = `<img src="${fullURL}" alt="File Proof" class="file-proof-image">`;
-                    } else {
-                        fileProofContent = "Unsupported file type";
-                    }
+                    let fileProofContent = ''; 
+                    const fullURL = `bfpcalapancity/public/community_report/${fileproof}`; 
+                    if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) { 
+                        fileProofContent = `<video src="${fullURL}" controls class="file-proof-video"></video>`; 
+                    } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) { 
+                        fileProofContent = `<img src="${fullURL}" alt="File Proof" class="file-proof-image">`; 
+                    } else { 
+                        fileProofContent = "Unsupported file type"; 
+                    } 
 
-                    const listItem = document.createElement('li');
-                    listItem.classList.add('list-group-item');
-                    listItem.id = `report-${reportId}`; // Assign an ID to the list item
+                    const listItem = document.createElement('li'); 
+                    listItem.classList.add('list-group-item'); 
+                    listItem.id = `report-${reportId}`; 
 
-                    listItem.innerHTML = `
-                        <div style="padding: 10px; border-radius: 5px;">
-                            <h4>User in Need: ${fullName}</h4>
-                            <p><strong>Timestamp:</strong> ${timestamp}</p>
-                            <p style="margin-bottom: 5px;"><strong>File Proof:</strong></p>
-                            <div class="fileProofContainer" style="margin-bottom: 10px;">${fileProofContent}</div>
-                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
-                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button>
-                        </div>
-                    `;
-                    newReportsList.appendChild(listItem);
+                    listItem.innerHTML = ` 
+                        <div style="padding: 10px; border-radius: 5px;"> 
+                            <h4>User in Need: ${fullName}</h4> 
+                            <p><strong>Timestamp:</strong> ${timestamp}</p> 
+                            <p style="margin-bottom: 5px;"><strong>File Proof:</strong></p> 
+                            <div class="fileProofContainer" style="margin-bottom: 10px;">${fileProofContent}</div> 
+                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
+                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
+                        </div> 
+                    `; 
+                    newReportsList.appendChild(listItem); 
 
-                    const marker = L.marker([latitude, longitude], {
-                        icon: userMarker
-                    }).addTo(map);
-                    const popupContent = `
-                        <div class="popup-content">
-                            <h4>User in Need: ${fullName}</h4>
-                            <p><strong>Timestamp:</strong> ${timestamp}</p>
-                        </div>
-                    `;
-                    marker.bindPopup(popupContent);
-                }
-            });
+                    const marker = L.marker([latitude, longitude], { 
+                        icon: userMarker 
+                    }).addTo(map); 
+                    const popupContent = ` 
+                        <div class="popup-content"> 
+                            <h4>User in Need: ${fullName}</h4> 
+                            <p><strong>Timestamp:</strong> ${timestamp}</p> 
+                        </div> 
+                    `; 
+                    marker.bindPopup(popupContent); 
+                } 
+            }); 
 
-            if (newReportsReceived) {
-                sirenSound.play();
-            } else {
-                console.log("No new reports found or all submitted reports are hidden.");
-            }
-        } else {
-            console.error('Failed to fetch recent reports:', response.statusText);
-        }
-    } catch (error) {
-        console.error('Error fetching recent reports:', error);
-    }
+            if (newReportsReceived) { 
+                // Play sound only after a user interaction (e.g., button click)
+                const playSound = () => {
+                    sirenSound.play().catch(error => {
+                        console.error('Siren sound failed to play:', error);
+                    });
+                };
+                
+                // Ensure sound only plays when user clicks or interacts
+                document.addEventListener('click', playSound, { once: true });
+            } else { 
+                console.log("No new reports found or all submitted reports are hidden."); 
+            } 
+        } else { 
+            console.error('Failed to fetch recent reports:', response.statusText); 
+        } 
+    } catch (error) { 
+        console.error('Error fetching recent reports:', error); 
+    } 
 }
+
 
 // Function to simulate submitting the report and mark it as submitted
 function submitReportForm(lat, lng, reportId) {
