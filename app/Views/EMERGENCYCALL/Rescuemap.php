@@ -339,34 +339,36 @@
         </div>
 
         <div class="bfp-header">
-            <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
-            <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
-            <button id="directions" onclick="toggleDirections()">Show Steps</button>
-        </div>
+    <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
+    <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
+    <div id="directions" style="display: none;">Click on the map to create a start and end for the route.</div>
+<button id="directions" onclick="toggleDirections()">Show Steps</button>
+</div>
 
-        <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal">
-            &#128276;
-        </button>
 
-        <!-- Modal for new reports -->
-        <div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="newReportModalLabel">New Community Reports</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ul id="newReportsList" class="list-group">
-                            <!-- New reports will be listed here -->
-                        </ul>
-                    </div>
-                </div>
+<button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal" onclick="getRecentReports()">
+    &#128276;
+</button>
+
+<!-- Modal for new reports -->
+<div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newReportModalLabel">New Community Reports</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="newReportsList" class="list-group">
+                    <!-- New reports will be listed here -->
+                </ul>
             </div>
         </div>
     </div>
-    
-    <audio id="sirenSound" src="bfpcalapancity/public/alarm.mp3" preload="auto"></audio>
+</div>
+
+<audio id="sirenSound" src="bfpcalapancity/public/alarm.mp3" preload="auto"></audio>
+
     
     <?= view('EMERGENCYCALL/MapScript'); ?>
     

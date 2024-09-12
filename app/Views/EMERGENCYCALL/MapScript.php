@@ -222,11 +222,10 @@
         document.getElementById("directions").innerHTML = "Route canceled. Click on the map to create a new route.";
     }
 
-    function navigateToHydrant(lat, lng) {
-        endCoords = [lng, lat];
-        updateRoute();
+   async function navigateToHydrant(lat, lng) {
+        endCoords = [lng, lat]; // Set hydrant as end point
+        updateRoute(); // Update the route to the selected hydrant
     }
-
     const rescuerIcon = L.icon({
         iconUrl: 'https://img.icons8.com/3d-fluency/40/marker.png',
         iconSize: [40, 40],
@@ -235,222 +234,242 @@
         shadowSize: [41, 41]
     });
     // Function to show rescuer's geolocation
-    function showRescuerLocation(position) {
+   function showRescuerLocation(position) {
         const rescuerLatitude = position.coords.latitude;
         const rescuerLongitude = position.coords.longitude;
+        startCoords = [rescuerLongitude, rescuerLatitude]; // Set rescuer's location
 
-        map.setView([rescuerLatitude, rescuerLongitude], 16); // Set map view to rescuer's location
+        map.setView([rescuerLatitude, rescuerLongitude], 16); // Center map on rescuer's location
 
-        const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], {
-            icon: rescuerIcon
-        }).addTo(map);
-        rescuerMarker.bindPopup("'You are here.' -Rescuer").openPopup();
+        const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], { icon: rescuerIcon }).addTo(map);
+        rescuerMarker.bindPopup("'You are here.' - Rescuer").openPopup();
 
-        // Set rescuer's geolocation as starting point
-        startCoords = [rescuerLongitude, rescuerLatitude];
-
-        // Suggest nearest fire hydrants
-        suggestNearestHydrants({
-            lat: rescuerLatitude,
-            lng: rescuerLongitude
-        });
+        suggestNearestHydrants({ lat: rescuerLatitude, lng: rescuerLongitude });
     }
 
-    function toggleDirections() {
-        const directionsDiv = document.getElementById("directions");
-        const showStepsBtn = document.getElementById("show-steps");
-        if (directionsDiv.style.display === "none") {
-            directionsDiv.style.display = "block";
-            showStepsBtn.textContent = "Hide Steps";
-        } else {
-            directionsDiv.style.display = "none";
-            showStepsBtn.textContent = "Show Steps";
-        }
-    }
+
+    
 
     let startCoords = null;
     let endCoords = null;
 
-    function updateRoute() {
+async function updateRoute() {
         if (!startCoords || !endCoords) {
-            alert("Please reload the page.");
+            alert("Rescuer location or report location is missing. Please try again.");
             return;
         }
 
         const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
 
-        arcgisRest.solveRoute({
-            stops: [startCoords, endCoords],
-            endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
-            authentication
-        }).then((response) => {
-            routeLines.clearLayers();
-            L.geoJSON(response.routes.geoJson).addTo(routeLines);
-            const directionsHTML = response.directions[0].features.map((f) => {
-                const {
-                    text,
-                    length,
-                    time
-                } = f.attributes;
+        try {
+            const response = await arcgisRest.solveRoute({
+                stops: [startCoords, endCoords],
+                endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
+                authentication
+            });
+
+            routeLines.clearLayers(); // Clear previous route
+            L.geoJSON(response.routes.geoJson).addTo(routeLines); // Add new route to map
+
+            // Display directions
+            const directionsHTML = response.directions[0].features.map(f => {
+                const { text, length, time } = f.attributes;
                 return `<p>${text} (${length.toFixed(2)} km, ${time.toFixed(2)} minutes)</p>`;
             }).join("");
-            document.getElementById("directions").innerHTML = directionsHTML;
-            startCoords = null;
-            endCoords = null;
-        }).catch((error) => {
-            console.error(error);
-            alert("There was a problem using the route service. See the console for details.");
-        });
+            
+            // Show directions panel and add the route details
+            const directionsDiv = document.getElementById("directions");
+            directionsDiv.innerHTML = directionsHTML;
+            directionsDiv.style.display = "block"; // Show directions panel
 
-    }
-
-    function getRescuerLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showRescuerLocation);
-        } else {
-            console.log("Geolocation is not supported by this browser.");
+        } catch (error) {
+            console.error("Error calculating route:", error);
+            alert("There was a problem calculating the route. Please try again.");
         }
     }
 
-    getRescuerLocation();
+ function toggleDirections() {
+        const directionsDiv = document.getElementById("directions");
+        directionsDiv.style.display = directionsDiv.style.display === "none" ? "block" : "none";
+    }
+// Ensure rescuer's location is captured on page load
+document.addEventListener('DOMContentLoaded', function() {
+    getRescuerLocation(); // Get the rescuer's current location when the page loads
+});
 
-   function suggestNearestHydrants(location) {
-    const nearestHydrants = fireHydrants.filter(hydrant => {
-        const distance = getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng);
-        return distance <= 2000; // 2000 meters (2 kilometers)
-    });
+// Function to get and set the rescuer's location
+ function getRescuerLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showRescuerLocation);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
 
-    const suggestionsContainer = document.getElementById("hydrant-suggestions");
-    suggestionsContainer.innerHTML = ""; // Clear previous suggestions
+document.addEventListener('DOMContentLoaded', getRescuerLocation);
+function suggestNearestHydrants(rescuerLocation) {
+        const nearestHydrants = fireHydrants
+            .map(hydrant => {
+                const distance = getDistance(rescuerLocation.lat, rescuerLocation.lng, hydrant.lat, hydrant.lng);
+                const timeInMinutes = distance / 666.67; // Assumed speed: 40 km/h
+                return { ...hydrant, distance, timeInMinutes };
+            })
+            .filter(hydrant => hydrant.distance <= 2500) // 2.5km radius
+            .sort((a, b) => a.distance - b.distance); // Sort by distance
 
-    nearestHydrants.forEach(hydrant => {
-        const distance = getDistance(location.lat, location.lng, hydrant.lat, hydrant.lng);
-        const averageSpeedMetersPerSecond = 11.11; // Approximate average speed in meters per second (40 km/h)
-        const timeInSeconds = distance / averageSpeedMetersPerSecond;
-        const timeInMinutes = timeInSeconds / 60; // Convert time from seconds to minutes
+        // Update the suggestions list
+        const suggestionsContainer = document.getElementById("hydrant-suggestions");
+        suggestionsContainer.innerHTML = "";
 
-        const suggestionDiv = document.createElement("div");
-        suggestionDiv.classList.add("hydrant-suggestion");
+        nearestHydrants.forEach(hydrant => {
+            const suggestionDiv = document.createElement("div");
+            suggestionDiv.classList.add("hydrant-suggestion");
+            suggestionDiv.innerHTML = `
+                <h6>${hydrant.name}</h6>
+                <p>Distance: ${hydrant.distance.toFixed(2)} meters</p>
+                <p>Estimated Time: ${hydrant.timeInMinutes.toFixed(2)} minutes</p>
+                <button class="navigate-btn" onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
+                <button class="show-steps" onclick="toggleDirections()">Show Steps</button>
+            `;
+            suggestionsContainer.appendChild(suggestionDiv);
+        });
+    }
 
-        suggestionDiv.innerHTML = `
-            <h6>${hydrant.name}</h6>
-            <p>Distance: ${distance.toFixed(2)} meters</p>
-            <p>Estimated Time: ${timeInMinutes.toFixed(2)} minutes</p>
-            <button class="navigate-btn" onclick="navigateToHydrant(${hydrant.lat}, ${hydrant.lng})">Go now</button>
-            <button class="show-steps" onclick="toggleDirections()">Show Steps</button>
-        `;
-
-        suggestionsContainer.appendChild(suggestionDiv);
-    });
-}
-
-
-    function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371e3; // Earth's radius in meters
+// Function to calculate the distance between two geographic points using the Haversine formula
+ function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // Earth’s radius in meters
         const φ1 = toRadians(lat1);
         const φ2 = toRadians(lat2);
         const Δφ = toRadians(lat2 - lat1);
         const Δλ = toRadians(lon2 - lon1);
-
         const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        const distance = R * c;
-        return distance;
+        return R * c; // In meters
     }
 
-    function toRadians(degrees) {
+function toRadians(degrees) {
         return degrees * (Math.PI / 180);
     }
-
     const userMarker = L.icon({
         iconUrl: 'https://img.icons8.com/papercut/40/user-location.png',
         iconSize: [40, 40],
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
     });
-    async function getRecentReports() {
-        try {
-            const response = await fetch('https://bfpcalapancity.online/reports-recent');
-            const data = await response.json();
+    
+    // Function to track and remove submitted reports
+function markReportAsSubmitted(reportId) {
+    let submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
 
-            if (response.ok && Array.isArray(data)) {
-                const newReportsList = document.getElementById('newReportsList');
-                const sirenSound = document.getElementById('sirenSound');
-                let newReportsReceived = false;
+    // Add the current report to the list of submitted reports
+    if (!submittedReports.includes(reportId)) {
+        submittedReports.push(reportId);
+        localStorage.setItem('submittedReports', JSON.stringify(submittedReports));
+        console.log("Report marked as submitted:", reportId);
+    }
 
-                newReportsList.innerHTML = '';
+    // Remove the report from the list on the page
+    const reportItem = document.getElementById(`report-${reportId}`);
+    if (reportItem) {
+        reportItem.remove();
+        console.log("Report removed from UI:", reportId);
+    }
+}
 
-                data.forEach(report => {
-                    if (report.latitude && report.longitude) {
-                        newReportsReceived = true;
+// Function to check if a report has been submitted
+function isReportSubmitted(reportId) {
+    const submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
+    return submittedReports.includes(reportId);
+}
 
-                        const { latitude, longitude, fullName, fileproof, timestamp } = report;
+// Function to get recent reports and exclude already submitted ones
+async function getRecentReports() {
+    try {
+        const newReportsList = document.getElementById('newReportsList');
+        const sirenSound = document.getElementById('sirenSound');
 
-                        const listItem = document.createElement('li');
-                        listItem.classList.add('list-group-item');
+        const response = await fetch('https://bfpcalapancity.online/reports-recent');
+        const data = await response.json();
 
-                        // Create the file proof content based on file type
-                        let fileProofContent = '';
-                        const fullURL = `bfpcalapancity/public/community_report/${fileproof}`;
-                        if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
-                            fileProofContent = `<video src="${fullURL}" controls class="file-proof-video"></video>`;
-                        } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
-                            fileProofContent = `<img src="${fullURL}" alt="File Proof" class="file-proof-image">`;
-                        } else {
-                            fileProofContent = "Unsupported file type";
-                        }
+        if (response.ok && Array.isArray(data)) {
+            let newReportsReceived = false;
 
-                        listItem.innerHTML = `
-                            <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-                                <h4 style="margin-bottom: 5px;">User in Need: ${fullName}</h4>
-                                <p style="margin-bottom: 5px;"><strong>Timestamp:</strong> ${timestamp}</p>
-                                <p style="margin-bottom: 5px;"><strong>File Proof:</strong></p>
-                                <div class="fileProofContainer" style="margin-bottom: 10px;">${fileProofContent}</div>
-                                <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin-right: 10px;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
-                                <button style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="accessFireReportForm()">File Report</button>
-                                <div id="directions" style="display: none;"></div>
-                            </div>
-                        `;
+            // Clear previous content
+            newReportsList.innerHTML = '';
 
-                        newReportsList.appendChild(listItem);
+            data.forEach(report => {
+                const reportId = report.id; // Ensure each report has a unique 'id'
+                if (!isReportSubmitted(reportId)) { // Only show reports that have not been submitted
+                    newReportsReceived = true;
+                    const { latitude, longitude, fullName, fileproof, timestamp } = report;
 
-                        const marker = L.marker([latitude, longitude], {
-                            icon: userMarker
-                        }).addTo(map);
-                        const popupContent = `
-                            <div class="popup-content">
-                                <h4>User in Need: ${fullName}</h4>
-                                <p><strong>Timestamp:</strong> ${timestamp}</p>
-                                <p><strong>File Proof:</strong></p>
-                                <div class="fileProofContainer">${fileProofContent}</div>
-                                <button onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
-                                <button onclick="accessFireReportForm()">File Report</button>
-                                <button onclick="toggleDirections()">Show Steps</button>
-                                <div id="directions" style="display: none;"></div>
-                            </div>
-                        `;
-                        marker.bindPopup(popupContent);
+                    let fileProofContent = '';
+                    const fullURL = `bfpcalapancity/public/community_report/${fileproof}`;
+                    if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
+                        fileProofContent = `<video src="${fullURL}" controls class="file-proof-video"></video>`;
+                    } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
+                        fileProofContent = `<img src="${fullURL}" alt="File Proof" class="file-proof-image">`;
                     } else {
-                        console.warn('Invalid report location:', report);
+                        fileProofContent = "Unsupported file type";
                     }
-                });
 
-                // Play siren sound if new reports are received
-                if (newReportsReceived) {
-                    sirenSound.play();
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('list-group-item');
+                    listItem.id = `report-${reportId}`; // Assign an ID to the list item
+
+                    listItem.innerHTML = `
+                        <div style="padding: 10px; border-radius: 5px;">
+                            <h4>User in Need: ${fullName}</h4>
+                            <p><strong>Timestamp:</strong> ${timestamp}</p>
+                            <p style="margin-bottom: 5px;"><strong>File Proof:</strong></p>
+                            <div class="fileProofContainer" style="margin-bottom: 10px;">${fileProofContent}</div>
+                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
+                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button>
+                        </div>
+                    `;
+                    newReportsList.appendChild(listItem);
+
+                    const marker = L.marker([latitude, longitude], {
+                        icon: userMarker
+                    }).addTo(map);
+                    const popupContent = `
+                        <div class="popup-content">
+                            <h4>User in Need: ${fullName}</h4>
+                            <p><strong>Timestamp:</strong> ${timestamp}</p>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
                 }
+            });
 
-                const newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
-                newReportModal.show();
+            if (newReportsReceived) {
+                sirenSound.play();
             } else {
-                console.error('Failed to fetch recent reports:', response.statusText);
+                console.log("No new reports found or all submitted reports are hidden.");
             }
-        } catch (error) {
-            console.error('Error fetching recent reports:', error);
+        } else {
+            console.error('Failed to fetch recent reports:', response.statusText);
         }
+    } catch (error) {
+        console.error('Error fetching recent reports:', error);
+    }
+}
+
+// Function to simulate submitting the report and mark it as submitted
+function submitReportForm(lat, lng, reportId) {
+    // Simulate the form submission (you can change the URL if needed)
+    console.log("Form submission for report:", reportId);
+    window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&reportId=${reportId}`;
+
+    // Mark this report as submitted
+    markReportAsSubmitted(reportId);
+}
+
+
+function toggleDirections() {
+        const directionsDiv = document.getElementById("directions");
+        directionsDiv.style.display = directionsDiv.style.display === "none" ? "block" : "none";
     }
 
     function accessFireReportForm() {
@@ -483,49 +502,57 @@
         }
     }
 
-    function showRouteToRescuer(lat, lng) {
-    endCoords = [lng, lat];
-    updateRouteAndDisplayInfo();
-}
+ function showRouteToRescuer(lat, lng) {
+        endCoords = [lng, lat]; // Set the endCoords to the location of the report
+        updateRoute(); // Call the function to update and display the route
 
-async function updateRouteAndDisplayInfo() {
-    if (!startCoords || !endCoords) {
-        alert("Please reload the page.");
-        return;
+        // Close the modal after clicking the "Show Route" button
+        var modalElement = document.getElementById('newReportModal');
+        var modalInstance = bootstrap.Modal.getInstance(modalElement); // Get the instance of the modal
+        if (modalInstance) {
+            modalInstance.hide(); // Close the modal
+        }
+    }
+    
+  // Function to update and display the route
+async function updateRoute() {
+        if (!startCoords || !endCoords) {
+            alert("Rescuer location or report location is missing. Please try again.");
+            return;
+        }
+
+        const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
+
+        try {
+            const response = await arcgisRest.solveRoute({
+                stops: [startCoords, endCoords],
+                endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
+                authentication
+            });
+
+            routeLines.clearLayers(); // Clear previous route
+            L.geoJSON(response.routes.geoJson).addTo(routeLines); // Add new route to map
+
+            // Display directions
+            const directionsHTML = response.directions[0].features.map(f => {
+                const { text, length, time } = f.attributes;
+                return `<p>${text} (${length.toFixed(2)} km, ${time.toFixed(2)} minutes)</p>`;
+            }).join("");
+            
+            // Show directions panel and add the route details
+            const directionsDiv = document.getElementById("directions");
+            directionsDiv.innerHTML = directionsHTML;
+            directionsDiv.style.display = "block"; // Show directions panel
+
+        } catch (error) {
+            console.error("Error calculating route:", error);
+            alert("There was a problem calculating the route. Please try again.");
+        }
     }
 
-    const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
 
-    try {
-        const response = await arcgisRest.solveRoute({
-            stops: [startCoords, endCoords],
-            endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
-            authentication
-        });
-
-        routeLines.clearLayers();
-        L.geoJSON(response.routes.geoJson).addTo(routeLines);
-
-        const directionsHTML = response.directions[0].features.map((f) => {
-            const { text, length, time } = f.attributes;
-            return `<p>${text} (${length.toFixed(2)} meters, ${time.toFixed(2)} minutes)</p>`;
-        }).join("");
-
-        // Display route directions and info
-        const directionsDiv = document.getElementById("directions");
-        directionsDiv.style.display = "block";
-        directionsDiv.innerHTML = directionsHTML;
-
-        startCoords = null;
-        endCoords = null;
-    } catch (error) {
-        console.error("Error calculating route:", error);
-        alert("There was a problem calculating the route. Please try again.");
-    }
-}
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-        getRecentReports(); // Fetch new reports on mount
-    });
+   document.addEventListener('DOMContentLoaded', function () {
+    getRecentReports(); // Fetch new reports when the page loads
+});
+    
 </script>
