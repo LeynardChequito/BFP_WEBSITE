@@ -202,6 +202,7 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <div class="success-message">Fire Report Submitted Successfully!</div>
+        <a href="<?= site_url('fire-report/create') ?>" class="success-link">Submit another report</a>
         <a href="<?= site_url('rescuemap') ?>" class="success-submit">Return to Rescuemap</a>
     </div>
 </div>

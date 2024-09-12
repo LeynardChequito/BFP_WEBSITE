@@ -108,31 +108,29 @@
 <body>
 
 <?= view('WEBSITE/site'); ?>
-<div class="container mt-4">
-    <a href="javascript:history.go(-1);" class="btn btn-danger btn-back">Back</a>
-    <div class="row">
-        <div class="col-md-8 mx-auto">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title"><?= esc($news['title']) ?></h2>
-                    <div class="row">
-    <?php foreach (explode(',', $news['image']) as $image): ?>
-        <div class="col-md-4">
-            <img src="<?= base_url('bfpcalapancity/public/newsphoto/' . trim($image)); ?>" alt="News Photo" class="img-thumbnail mb-2">
-        </div>
-    <?php endforeach; ?>
-</div>
-
-                    <p class="card-text"><?= esc($news['content']) ?></p>
-                </div>
-                <div class="card-footer">
-                    <h12>VALIANT FIREFIGHTERS OF CALAPAN CITY<br> In case of fire and emergency Call CCFS Hotline: 288-7777 / 09156031561 / 09814782880</h12>
-                    <a href="<?= site_url('contact-us') ?>" class="nav-link">See more...</a>
+    <div class="container mt-4">
+        <a href="javascript:history.go(-1);" class="btn btn-danger btn-back">Back</a>
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body dynamic-columns">
+                        <h2 class="card-title"><?= esc($news['title']) ?></h2>
+                        <?php
+                            $photoPath = base_url('bfpcalapancity/public/newsphoto/' . esc($news['image']));
+                            $newsBody = esc($news['content']);
+                        ?>
+                        <img src="<?= $photoPath ?>" alt="News Photo" class="news-image">
+                        
+                        <p class="card-text"><?= $newsBody ?></p>
+                    </div>
+                    <div class="card-footer">
+                        <h12>VALIANT FIREFIGHTERS OF CALAPAN CITY<br> In case of fire and emergency Call CCFS Hotline: 288-7777 / 09156031561 / 09814782880</h12>
+                        <a href="<?= site_url('contact-us') ?>" class="nav-link">See more...</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
     <?= view('hf/footer'); ?>
 
