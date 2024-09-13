@@ -338,15 +338,18 @@
             document.getElementById('longitude').value = lng;
         }
 
-        // Modal control functions
-        function openModal() {
-            document.getElementById("myModal").style.display = "block";
-            getLocation();
-        }
+    // Function to open the modal and get the user's location
+    function openModal() {
+        document.getElementById("myModal").style.display = "block";
+        getLocation(); // Get the user's current location
+    }
 
-        function closeModal() {
-            document.getElementById("myModal").style.display = "none";
-        }
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+    }
+
+
 
         // Update Philippine time
         function updatePhilippineTime() {
