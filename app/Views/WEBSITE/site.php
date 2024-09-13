@@ -338,17 +338,20 @@
             document.getElementById('longitude').value = lng;
         }
 
-    // Function to open the modal and get the user's location
-    function openModal() {
+        document.addEventListener('DOMContentLoaded', function() {
+    // Other form submission logic, Firebase initialization, etc.
+
+    // Make openModal globally accessible
+    window.openModal = function() {
         document.getElementById("myModal").style.display = "block";
         getLocation(); // Get the user's current location
-    }
+    };
 
-    // Function to close the modal
-    function closeModal() {
+    // Make closeModal globally accessible
+    window.closeModal = function() {
         document.getElementById("myModal").style.display = "none";
-    }
-
+    };
+});
 
 
         // Update Philippine time
