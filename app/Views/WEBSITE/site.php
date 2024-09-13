@@ -283,17 +283,23 @@
 
         // Form submission logic
         document.addEventListener('DOMContentLoaded', function() {
-            const emergencyForm = document.getElementById('emergencyForm');
-            emergencyForm.addEventListener('submit', function(event) {
-                event.preventDefault();
+    const emergencyForm = document.getElementById('emergencyForm');
+    
+    if (emergencyForm) {
+        emergencyForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-                const formData = new FormData(this);
-                const xhr = new XMLHttpRequest();
-                xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
+            const formData = new FormData(this);
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
 
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
+            xhr.onload = function() {
+                try {
+                    // Check if the response is valid JSON
+                    const contentType = xhr.getResponseHeader("content-type");
+                    if (contentType && contentType.includes("application/json")) {
                         const response = JSON.parse(xhr.responseText);
+                        
                         if (response.success) {
                             alert("Form submitted successfully!");
                             triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
@@ -301,12 +307,26 @@
                         } else {
                             alert("Form submission failed: " + response.message);
                         }
+                    } else {
+                        console.error("Server response is not JSON:", xhr.responseText);
+                        alert("An unexpected error occurred. Please try again later.");
                     }
-                };
+                } catch (e) {
+                    console.error("Error parsing JSON:", e);
+                    alert("An unexpected error occurred. Please try again later.");
+                }
+            };
 
-                xhr.send(formData);
-            });
+            xhr.onerror = function() {
+                console.error("Request failed");
+                alert("An error occurred while submitting the form. Please check your connection and try again.");
+            };
+
+            xhr.send(formData);
         });
+    }
+});
+
 
         // Trigger a notification
         function triggerNotification(title, body) {
