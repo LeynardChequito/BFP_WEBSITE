@@ -6,66 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emergency Call Form</title>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-        // Import Firebase SDK modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
-
-        document.addEventListener('DOMContentLoaded', function() {
-    var emergencyForm = document.getElementById('emergencyForm');
-    if (emergencyForm) {
-        emergencyForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            var formData = new FormData(this);
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
-
-            xhr.onload = function() {
-                // Log the raw response for debugging
-                console.log(xhr.responseText);
-
-                try {
-                    // Check if the content-type is JSON
-                    var contentType = xhr.getResponseHeader('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        // Parse the JSON response
-                        var response = JSON.parse(xhr.responseText);
-
-                        // Handle the response
-                        if (response.success) {
-                            alert("Form submitted successfully!");
-
-                            // Post message to update the map
-                            window.parent.postMessage({
-                                action: 'updateMap',
-                                data: {
-                                    latitude: formData.get('latitude'),
-                                    longitude: formData.get('longitude'),
-                                    fullName: formData.get('fullName')
-                                }
-                            }, '*');
-                            closeModal();
-                        } else {
-                            alert("Form submission failed: " + response.message);
-                        }
-                    } else {
-                        alert("Unexpected response format: " + xhr.responseText);
-                    }
-                } catch (e) {
-                    alert("Failed to parse JSON response: " + e.message);
-                }
-            };
-
-            xhr.send(formData);
-        });
-    } else {
-        console.error("Element with id 'emergencyForm' not found.");
-    }
-});
-
-
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
@@ -88,6 +28,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="manifest" href="app/Views/manifest.json">
+
     <style>
         .bureau-of-fire-protection {
             font-family: "Bebas Neue", sans-serif;
@@ -268,8 +209,8 @@
         </div>
     </nav>
 
-    <!-- Modal -->
-    <div id="myModal" class="modal">
+      <!-- Modal for Emergency Form -->
+      <div id="myModal" class="modal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -277,7 +218,7 @@
                     <button type="button" class="close" onclick="closeModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
+                    <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
                         <div class="form-group">
                             <label for="fullName">Your Name:</label>
                             <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
@@ -292,7 +233,7 @@
                         </div>
                         <div class="form-group">
                             <label for="fileproof">Upload File Proof (Image/Video)</label>
-                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*;capture=camera,video/*;capture=camcorder" required>
+                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*, video/*" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Send</button>
                     </form>
@@ -300,32 +241,62 @@
             </div>
         </div>
     </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add event listener when DOM is fully loaded
-        var emergencyForm = document.getElementById('emergencyForm');
-        if (emergencyForm) {
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+
+    <script type="module">
+        const firebaseConfig = {
+            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+            authDomain: "pushnotifbfp.firebaseapp.com",
+            projectId: "pushnotifbfp",
+            storageBucket: "pushnotifbfp.appspot.com",
+            messagingSenderId: "214092622073",
+            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+            measurementId: "G-XMBH6JJ3M6"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+        let mToken;
+
+        // Retrieve FCM token for the current device
+        messaging.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc' })
+            .then((currentToken) => {
+                if (currentToken) {
+                    console.log('Token retrieved:', currentToken);
+                    mToken = currentToken;
+                } else {
+                    console.log('No registration token available.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error retrieving token:', error);
+            });
+
+        // Handle incoming messages (while the app is in the foreground)
+        messaging.onMessage((payload) => {
+            console.log('Message received:', payload);
+            displayNotification(payload.notification);
+        });
+
+        // Form submission logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const emergencyForm = document.getElementById('emergencyForm');
             emergencyForm.addEventListener('submit', function(event) {
                 event.preventDefault();
 
-                var formData = new FormData(this);
-                var xhr = new XMLHttpRequest();
+                const formData = new FormData(this);
+                const xhr = new XMLHttpRequest();
                 xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
 
                 xhr.onload = function() {
                     if (xhr.status === 200) {
-                        var response = JSON.parse(xhr.responseText);
+                        const response = JSON.parse(xhr.responseText);
                         if (response.success) {
                             alert("Form submitted successfully!");
-
-                            window.parent.postMessage({
-                                action: 'updateMap',
-                                data: {
-                                    latitude: formData.get('latitude'),
-                                    longitude: formData.get('longitude'),
-                                    fullName: formData.get('fullName')
-                                }
-                            }, '*');
+                            triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
                             closeModal();
                         } else {
                             alert("Form submission failed: " + response.message);
@@ -335,58 +306,56 @@
 
                 xhr.send(formData);
             });
-        } else {
-            console.error("Element with id 'emergencyForm' not found.");
+        });
+
+        // Trigger a notification
+        function triggerNotification(title, body) {
+            if (Notification.permission === "granted") {
+                new Notification(title, { body: body });
+            } else {
+                Notification.requestPermission().then((permission) => {
+                    if (permission === "granted") {
+                        new Notification(title, { body: body });
+                    }
+                });
+            }
         }
-    });
 
-    // Function to get the user's current location
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            alert("Geolocation is not supported by this browser.");
+        // Get the user's current location
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
         }
-    }
 
-    // Function to display user's current position on the modal form
-    function showPosition(position) {
-        var lat = position.coords.latitude;
-        var lng = position.coords.longitude;
+        // Display user's current position
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+        }
 
-        // Update the input fields in the modal form with the user's coordinates
-        document.getElementById('latitude').value = lat;
-        document.getElementById('longitude').value = lng;
-    }
+        // Modal control functions
+        function openModal() {
+            document.getElementById("myModal").style.display = "block";
+            getLocation();
+        }
 
-    // Function to open the modal and get the user's location
-    function openModal() {
-        document.getElementById("myModal").style.display = "block";
-        getLocation(); // Get the user's current location
-    }
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
 
-    // Function to close the modal
-    function closeModal() {
-        document.getElementById("myModal").style.display = "none";
-    }
+        // Update Philippine time
+        function updatePhilippineTime() {
+            const options = { timeZone: 'Asia/Manila', hour12: true, hour: 'numeric', minute: 'numeric', second: 'numeric' };
+            document.getElementById('philippineTime').innerText = new Date().toLocaleString('en-US', options);
+        }
 
-    // Function to update Philippine time
-    function updatePhilippineTime() {
-        const options = {
-            timeZone: 'Asia/Manila',
-            hour12: true,
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
-        };
-        const philippineTime = new Date().toLocaleString('en-US', options);
-        document.getElementById('philippineTime').innerText = philippineTime;
-    }
-
-    // Update time initially and set interval to update every second
-    updatePhilippineTime();
-    setInterval(updatePhilippineTime, 1000);
-</script>
+        setInterval(updatePhilippineTime, 1000);
+    </script>
 
     <!-- Your other scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
