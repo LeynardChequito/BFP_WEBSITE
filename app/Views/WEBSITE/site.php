@@ -219,7 +219,8 @@
                 </div>
                 <div class="modal-body">
                 <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
-                    <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />    
+
+                <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />   
                     <div class="form-group">
                             <label for="fullName">Your Name:</label>
                             <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
@@ -319,7 +320,6 @@ document.addEventListener('DOMContentLoaded', function() {
         alert("An unexpected error occurred. Please try again later.");
     }
 };
-
 
                     xhr.onerror = function() {
                         console.error("Request failed");
