@@ -7,7 +7,7 @@
     <title>BFP WEBSITE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        body {
+ body {
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
@@ -210,6 +210,15 @@
         <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
+    <!-- Modal for notifications -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Notifications</h2>
+            <div id="notificationContent"></div>
+        </div>
+    </div>
+
     <!-- External scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -222,133 +231,138 @@
         // Get the modal element
         const modal = document.getElementById('notificationModal');
 
-        // Function to get current time
-        function getCurrentTime() {
-            return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
-        }
-
-        // Function to update time every second
-        function updateTime() {
-            document.getElementById("current-time").textContent = getCurrentTime();
-            setTimeout(updateTime, 1000);
-        }
-
-        // Initialize Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
-            authDomain: "pushnotifbfp.firebaseapp.com",
-            projectId: "pushnotifbfp",
-            storageBucket: "pushnotifbfp.appspot.com",
-            messagingSenderId: "214092622073",
-            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
-            measurementId: "G-XMBH6JJ3M6"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const messaging = firebase.messaging();
-        let mToken;
-
-        // Retrieve FCM token
-        messaging.getToken({
-            vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
-        }).then((currentToken) => {
-            if (currentToken) {
-                console.log('Token retrieved:', currentToken);
-                mToken = currentToken;
-            } else {
-                console.log('No registration token available.');
+        // Ensure modal is found in the DOM
+        if (modal) {
+            // Function to get current time
+            function getCurrentTime() {
+                return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
             }
-        }).catch((error) => {
-            console.error('Error retrieving token:', error);
-        });
 
-// Handle incoming messages (in the foreground)
-messaging.onMessage((payload) => {
-    console.log('Message received: ', payload);
-    addNotificationToDropdown(payload.notification.title, payload.notification.body);
-    triggerNotification(payload.notification.title, payload.notification.body); // Trigger a browser notification
-});
-
-
-function addNotificationToDropdown(title, body) {
-    console.log('Adding notification to dropdown:', title, body); // Debugging statement
-    let count = localStorage.getItem("notification-count") || 0;
-    count = parseInt(count) + 1;
-    localStorage.setItem('notification-count', count);
-
-    document.getElementById('notification-counter').textContent = count;
-
-    const notificationContainer = document.getElementById('notification-container');
-    const notificationHTML = `
-        <div class="dropdown-separator"></div>
-        <a class="dropdown-item d-flex align-items-center" href="#">
-            <div class="mr-3 notification-item">
-                <div class="icon-circle bg-primary">
-                    <i class="fas fa-file-alt text-white"></i>
-                </div>
-            </div>
-            <div class="notification-details">
-                <div class="small text-gray-500 notification-time">${new Date().toLocaleTimeString()}</div>
-                <span class="font-weight-bold notification-title">${title}</span>
-                <p>${body}</p>
-            </div>
-        </a>
-    `;
-    notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
-}
-
-function triggerNotification(title, body) {
-    if (Notification.permission === "granted") {
-        new Notification(title, { body: body });
-    } else {
-        Notification.requestPermission().then((permission) => {
-            if (permission === "granted") {
-                new Notification(title, { body: body });
+            // Function to update time every second
+            function updateTime() {
+                document.getElementById("current-time").textContent = getCurrentTime();
+                setTimeout(updateTime, 1000);
             }
-        });
-    }
-}
 
-        if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/firebase-messaging-sw.js')
-            .then(function(registration) {
-                console.log('Service Worker registered with scope:', registration.scope);
-            }).catch(function(err) {
-                console.log('Service Worker registration failed:', err);
+            // Initialize Firebase
+            const firebaseConfig = {
+                apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+                authDomain: "pushnotifbfp.firebaseapp.com",
+                projectId: "pushnotifbfp",
+                storageBucket: "pushnotifbfp.appspot.com",
+                messagingSenderId: "214092622073",
+                appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+                measurementId: "G-XMBH6JJ3M6"
+            };
+
+            firebase.initializeApp(firebaseConfig);
+            const messaging = firebase.messaging();
+            let mToken;
+
+            // Retrieve FCM token
+            messaging.getToken({
+                vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+            }).then((currentToken) => {
+                if (currentToken) {
+                    console.log('Token retrieved:', currentToken);
+                    mToken = currentToken;
+                } else {
+                    console.log('No registration token available.');
+                }
+            }).catch((error) => {
+                console.error('Error retrieving token:', error);
             });
-    }
 
-    messaging.requestPermission()
-    .then(() => {
-        console.log('Notification permission granted.');
-        return messaging.getToken();
-    })
-    .then((currentToken) => {
-        if (currentToken) {
-            console.log('Token retrieved:', currentToken);
-            mToken = currentToken;
-        } else {
-            console.log('No registration token available.');
-        }
-    })
-    .catch((error) => {
-        console.error('Error retrieving token:', error);
-    });
+            // Handle incoming messages (in the foreground)
+            messaging.onMessage((payload) => {
+                console.log('Message received: ', payload);
+                addNotificationToDropdown(payload.notification.title, payload.notification.body);
+                triggerNotification(payload.notification.title, payload.notification.body); // Trigger a browser notification
+            });
 
-        // Open modal on notification click
-        $(".notification-dropdown").on("click", function() {
-            modal.style.display = "block";
-        });
 
-        // Close modal when clicked outside the modal
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+            function addNotificationToDropdown(title, body) {
+                console.log('Adding notification to dropdown:', title, body); // Debugging statement
+                let count = localStorage.getItem("notification-count") || 0;
+                count = parseInt(count) + 1;
+                localStorage.setItem('notification-count', count);
+
+                document.getElementById('notification-counter').textContent = count;
+
+                const notificationContainer = document.getElementById('notification-container');
+                const notificationHTML = `
+                    <div class="dropdown-separator"></div>
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="mr-3 notification-item">
+                            <div class="icon-circle bg-primary">
+                                <i class="fas fa-file-alt text-white"></i>
+                            </div>
+                        </div>
+                        <div class="notification-details">
+                            <div class="small text-gray-500 notification-time">${new Date().toLocaleTimeString()}</div>
+                            <span class="font-weight-bold notification-title">${title}</span>
+                            <p>${body}</p>
+                        </div>
+                    </a>
+                `;
+                notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
             }
-        };
 
-        // Start updating time
-        updateTime();
+            function triggerNotification(title, body) {
+                if (Notification.permission === "granted") {
+                    new Notification(title, { body: body });
+                } else {
+                    Notification.requestPermission().then((permission) => {
+                        if (permission === "granted") {
+                            new Notification(title, { body: body });
+                        }
+                    });
+                }
+            }
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    }).catch(function(err) {
+                        console.log('Service Worker registration failed:', err);
+                    });
+            }
+
+            messaging.requestPermission()
+            .then(() => {
+                console.log('Notification permission granted.');
+                return messaging.getToken();
+            })
+            .then((currentToken) => {
+                if (currentToken) {
+                    console.log('Token retrieved:', currentToken);
+                    mToken = currentToken;
+                } else {
+                    console.log('No registration token available.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error retrieving token:', error);
+            });
+
+            // Open modal on notification click
+            $(".notification-dropdown").on("click", function() {
+                modal.style.display = "block";
+            });
+
+            // Close modal when clicked outside the modal
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            };
+
+            // Start updating time
+            updateTime();
+        } else {
+            console.error("Modal not found in the DOM.");
+        }
     </script>
 </body>
 
