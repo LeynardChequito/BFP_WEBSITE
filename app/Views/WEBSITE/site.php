@@ -166,7 +166,7 @@
     </style>
 </head>
 
-<body onload="getLocation();">
+<body onload="getLocation()">
     <!-- First Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-image: linear-gradient(150deg, black, red);">
         <a class="navbar-brand" href="#">
