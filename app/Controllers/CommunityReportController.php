@@ -26,76 +26,65 @@ class CommunityReportController extends BaseController
     }
 
     public function submitCommunityReport()
-    {
-        helper(['form', 'url', 'session']);
+{
+    helper(['form', 'url', 'session']);
 
-        $rules = [
-            'fullName' => 'required|max_length[255]',
-            'latitude' => 'required|decimal',
-            'longitude' => 'required|decimal',
-            'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
-        ];
+    $rules = [
+        'fullName' => 'required|max_length[255]',
+        'latitude' => 'required|decimal',
+        'longitude' => 'required|decimal',
+        'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
+    ];
 
-        $messages = [
-            'fullName' => [
-                'required' => 'Full Name is required.',
-                'max_length' => 'Full Name should not exceed 255 characters.',
-            ],
-            'latitude' => [
-                'required' => 'Latitude is required.',
-                'decimal' => 'Latitude must be a valid decimal number.',
-            ],
-            'longitude' => [
-                'required' => 'Longitude is required.',
-                'decimal' => 'Longitude must be a valid decimal number.',
-            ],
-            'fileproof' => [
-                'uploaded' => 'File proof is required.',
-                'max_size' => 'File proof must not exceed 50MB.',
-                'ext_in' => 'File proof must be an image (jpg, jpeg, png) or video (mp4, mov, avi).',
-            ],
-        ];
+    $messages = [
+        'fullName' => [
+            'required' => 'Full Name is required.',
+            'max_length' => 'Full Name should not exceed 255 characters.',
+        ],
+        'latitude' => [
+            'required' => 'Latitude is required.',
+            'decimal' => 'Latitude must be a valid decimal number.',
+        ],
+        'longitude' => [
+            'required' => 'Longitude is required.',
+            'decimal' => 'Longitude must be a valid decimal number.',
+        ],
+        'fileproof' => [
+            'uploaded' => 'File proof is required.',
+            'max_size' => 'File proof must not exceed 50MB.',
+            'ext_in' => 'File proof must be an image (jpg, jpeg, png) or video (mp4, mov, avi).',
+        ],
+    ];
 
-        if ($this->validate($rules, $messages)) {
-            $communityReportModel = new CommunityReportModel();
+    if ($this->validate($rules, $messages)) {
+        $communityReportModel = new CommunityReportModel();
+        $fileproof = $this->request->getFile('fileproof');
 
-            $fileproof = $this->request->getFile('fileproof');
-            if ($fileproof->isValid() && !$fileproof->hasMoved()) {
-                $fileproofName = $fileproof->getRandomName();
-                $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
+        if ($fileproof->isValid() && !$fileproof->hasMoved()) {
+            $fileproofName = $fileproof->getRandomName();
+            $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
 
-                $data = [
-                    'fullName' => $this->request->getVar('fullName'),
-                    'latitude' => $this->request->getVar('latitude'),
-                    'longitude' => $this->request->getVar('longitude'),
-                    'fileproof' => $fileproofName,
-                ];
+            $data = [
+                'fullName' => $this->request->getVar('fullName'),
+                'latitude' => $this->request->getVar('latitude'),
+                'longitude' => $this->request->getVar('longitude'),
+                'fileproof' => $fileproofName,
+            ];
 
-                $communityReportModel->insert($data);
+            $communityReportModel->insert($data);
 
-                // Construct the image URL
-                $imageUrl = base_url('public/community_report/' . $fileproofName);
+            // Send notifications to admins
+            $this->notifyAllAdmins('New Emergency Call', 'A new emergency call has been submitted.', base_url('public/community_report/' . $fileproofName));
 
-                // Prepare notification details
-                $title = 'New Emergency Call';
-                $body = "A new emergency call has been submitted by {$data['fullName']} at coordinates ({$data['latitude']}, {$data['longitude']}).";
-
-                // Send notifications to all admins with tokens
-                $this->notifyAllAdmins($title, $body, $imageUrl);
-
-                $this->session->setFlashdata('success', 'Emergency Call successfully submitted!');
-
-                return redirect()->to('home');
-            } else {
-                $this->session->setFlashdata('failed', 'Failed to upload file proof.');
-                return redirect()->back()->withInput();
-            }
+            return $this->response->setJSON(['success' => true, 'message' => 'Emergency call successfully submitted!']);
         } else {
-            $data['validation'] = $this->validator;
-            $this->session->setFlashdata('failed', 'Failed! Emergency Call unsent. Please Try Again.');
-            return redirect()->back()->withInput()->with('validation', $this->validator);
+            return $this->response->setJSON(['success' => false, 'message' => 'Failed to upload file proof.']);
         }
+    } else {
+        return $this->response->setJSON(['success' => false, 'message' => 'Validation errors', 'errors' => $this->validator->getErrors()]);
     }
+}
+
 
     public function sendPushNotificationToUser($token, $title, $body, $imageUrl = null)
     {

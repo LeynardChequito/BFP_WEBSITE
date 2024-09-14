@@ -303,20 +303,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
 
                     xhr.onload = function() {
-    const contentType = xhr.getResponseHeader("content-type");
-    if (contentType && contentType.includes("application/json")) {
-        // Process JSON response
-        const response = JSON.parse(xhr.responseText);
-        if (response.success) {
-            alert("Form submitted successfully!");
-            triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
-            closeModal();
+    try {
+        const contentType = xhr.getResponseHeader("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                alert("Form submitted successfully!");
+                triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
+                closeModal();
+            } else {
+                alert("Form submission failed: " + response.message);
+            }
         } else {
-            alert("Form submission failed: " + response.message);
+            // Log the entire response for debugging purposes
+            console.error("Unexpected response type. Expected JSON but received:", xhr.responseText);
+            alert("An unexpected error occurred. Please try again later.");
         }
-    } else {
-        // Handle non-JSON response (likely an error page or HTML content)
-        console.error("Server response is not JSON:", xhr.responseText);
+    } catch (error) {
+        console.error("Error parsing the response as JSON:", error);
         alert("An unexpected error occurred. Please try again later.");
     }
 };
