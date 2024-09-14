@@ -20,7 +20,6 @@ const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler(function(payload) {
   console.log('Received background message ', payload);
 
-  // Customize notification content based on the received payload
   const notificationTitle = 'EMERGENCY ALERT!!!';
   const notificationOptions = {
       body: payload.data.body || 'No additional information provided',
@@ -31,13 +30,12 @@ messaging.setBackgroundMessageHandler(function(payload) {
       }
   };
 
-  // Display the notification
   return self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 // Message handler to receive notification details from the site.php form
 self.addEventListener('message', (event) => {
-  // Ensure the event handler properly responds to the message
+  console.log('Message received in the worker:', event.data);
   event.waitUntil(
       // Asynchronous task, like fetching data or handling a notification
       fetch(event.data.url).then(response => {

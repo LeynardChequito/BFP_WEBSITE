@@ -1,10 +1,9 @@
 <?php
 
-function sendNotification($title, $body, $tokens)
-{
+function sendNotification($title, $body, $tokens) {
     $headers = [
-        'Authorization: key=aaaamdjqkpk:APA91bH4dQbOlZJbcnrviv8Cak23oGKjVbzs3O0V9s1jEo_SLynqGa-XqxLa4rXtXAWn7eSeeyuqjf9fexjsxzJJVPXmU3GzY8sjddKyRqiFoZdr14ryMhvpGD2I-KmfRjL2rVWVVPnV',
-        'Content-Type: application/json'
+        'Authorization: key=your-server-key',
+        'Content-Type: application/json',
     ];
 
     $request = [
@@ -12,7 +11,7 @@ function sendNotification($title, $body, $tokens)
             'title' => $title,
             'body' => $body,
             'sound' => 'default',
-            'click_action' => 'FLUTTER_NOTIFICATION_CLICK'
+            'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
         ],
         'data' => [
             'title' => $title,
@@ -26,7 +25,7 @@ function sendNotification($title, $body, $tokens)
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request));
 
     $response = curl_exec($ch);
@@ -46,5 +45,3 @@ function sendNotification($title, $body, $tokens)
 
     return $response;
 }
-
-

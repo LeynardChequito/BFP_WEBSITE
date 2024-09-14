@@ -244,19 +244,17 @@
                 setTimeout(updateTime, 1000);
             }
 
-            // Initialize Firebase
             const firebaseConfig = {
-                apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
-                authDomain: "pushnotifbfp.firebaseapp.com",
-                projectId: "pushnotifbfp",
-                storageBucket: "pushnotifbfp.appspot.com",
-                messagingSenderId: "214092622073",
-                appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
-                measurementId: "G-XMBH6JJ3M6"
-            };
-
-            firebase.initializeApp(firebaseConfig);
-            const messaging = firebase.messaging();
+    apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+    authDomain: "pushnotifbfp.firebaseapp.com",
+    projectId: "pushnotifbfp",
+    storageBucket: "pushnotifbfp.appspot.com",
+    messagingSenderId: "214092622073",
+    appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+    measurementId: "G-XMBH6JJ3M6"
+};
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
             let mToken;
 
             // Retrieve FCM token
@@ -321,30 +319,29 @@
             }
 
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                    .then(function(registration) {
-                        console.log('Service Worker registered with scope:', registration.scope);
-                    }).catch(function(err) {
-                        console.log('Service Worker registration failed:', err);
-                    });
-            }
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then(function (registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+        }).catch(function (err) {
+            console.log('Service Worker registration failed:', err);
+        });
+}
+
 
             messaging.requestPermission()
-            .then(() => {
-                console.log('Notification permission granted.');
-                return messaging.getToken();
-            })
-            .then((currentToken) => {
-                if (currentToken) {
-                    console.log('Token retrieved:', currentToken);
-                    mToken = currentToken;
-                } else {
-                    console.log('No registration token available.');
-                }
-            })
-            .catch((error) => {
-                console.error('Error retrieving token:', error);
-            });
+  .then(() => messaging.getToken())
+  .then((currentToken) => {
+      if (currentToken) {
+          console.log('Token retrieved:', currentToken);
+          // Send the token to the server or store it locally
+      } else {
+          console.log('No registration token available.');
+      }
+  })
+  .catch((error) => {
+      console.error('Error retrieving token:', error);
+  });
+
 
             // Open modal on notification click
             $(".notification-dropdown").on("click", function() {
