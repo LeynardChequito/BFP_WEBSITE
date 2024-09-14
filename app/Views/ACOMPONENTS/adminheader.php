@@ -210,15 +210,6 @@
         <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
-    <!-- Modal for notifications -->
-    <div id="notificationModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Notifications</h2>
-            <div id="notificationContent"></div>
-        </div>
-    </div>
-
     <!-- External scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
