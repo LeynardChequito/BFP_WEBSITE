@@ -8,6 +8,12 @@ function sendNotification($title, $body, $tokens)
     ];
 
     $request = [
+        'notification' => [
+            'title' => $title,
+            'body' => $body,
+            'sound' => 'default',
+            'click_action' => 'FLUTTER_NOTIFICATION_CLICK'
+        ],
         'data' => [
             'title' => $title,
             'body' => $body,
@@ -23,9 +29,22 @@ function sendNotification($title, $body, $tokens)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request));
 
-    $res = curl_exec($ch);
+    $response = curl_exec($ch);
 
+    if (curl_errno($ch)) {
+        $error_msg = curl_error($ch);
+        curl_close($ch);
+        return 'cURL error: ' . $error_msg;
+    }
+
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    return $res;
+    if ($http_code != 200) {
+        return 'FCM Error: HTTP status code ' . $http_code . ' - Response: ' . $response;
+    }
+
+    return $response;
 }
+
+
