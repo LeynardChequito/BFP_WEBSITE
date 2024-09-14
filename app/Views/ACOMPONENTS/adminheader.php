@@ -230,8 +230,23 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <!-- JavaScript code for handling notifications and updating time -->
-    <script type="module">
- const firebaseConfig = {
+<script type="module">
+       // Get the modal element
+const modal = document.getElementById('notificationModal');
+
+// Function to get current time
+function getCurrentTime() {
+    return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
+}
+
+// Function to update time every second
+function updateTime() {
+    document.getElementById("current-time").textContent = getCurrentTime();
+    setTimeout(updateTime, 1000);
+}
+
+// Initialize Firebase and update time
+const firebaseConfig = {
     apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
     authDomain: "pushnotifbfp.firebaseapp.com",
     projectId: "pushnotifbfp",
@@ -240,22 +255,12 @@
     appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
     measurementId: "G-XMBH6JJ3M6"
 };
-        // Function to get current time
-        function getCurrentTime() {
-            return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
-        }
 
-        // Function to update time every second
-        function updateTime() {
-            document.getElementById("current-time").textContent = getCurrentTime();
-            setTimeout(updateTime, 1000);
-        }
-
-        // Initialize Firebase and update time
-        firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 let mToken;
 
+// Retrieve FCM token
 messaging.getToken({
     vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
 }).then((currentToken) => {
@@ -269,13 +274,13 @@ messaging.getToken({
     console.error('Error retrieving token:', error);
 });
 
-        // Handle incoming messages
-        messaging.onMessage((payload) => {
+// Handle incoming messages
+messaging.onMessage((payload) => {
     console.log('Message received:', payload);
     addNotificationToDropdown(payload.notification.title, payload.notification.body);
 });
 
-// Function to add notification to dropdown
+
 function addNotificationToDropdown(title, body) {
     let count = localStorage.getItem("notification-count") || 0;
     count = parseInt(count) + 1;
@@ -300,7 +305,10 @@ function addNotificationToDropdown(title, body) {
         </a>
     `;
     notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
-}  function triggerNotification(title, body) {
+}
+
+// Function to trigger browser notification
+function triggerNotification(title, body) {
     if (Notification.permission === "granted") {
         new Notification(title, { body: body });
     } else {
@@ -312,26 +320,19 @@ function addNotificationToDropdown(title, body) {
     }
 }
 
-        // Open modal on notification click
-        $(".notification-dropdown").on("click", function() {
-            modal.style.display = "block";
-        });
+$(".notification-dropdown").on("click", function() {
+    modal.style.display = "block";
+});
 
-        // Close modal when close button clicked
-        const span = document.getElementsByClassName("close")[0];
-        span.onclick = function() {
-            modal.style.display = "none";
-        };
+// Close modal when clicked outside the modal
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+};
 
-        // Close modal when clicked outside the modal
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        };
-
-        // Start updating time
-        updateTime();
+// Start updating time
+updateTime();
     </script>
 </body>
 
