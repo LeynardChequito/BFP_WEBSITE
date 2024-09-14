@@ -209,8 +209,8 @@
         </div>
     </nav>
 
-      <!-- Modal for Emergency Form -->
-      <div id="myModal" class="modal">
+    <!-- Modal for Emergency Form -->
+    <div id="myModal" class="modal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -262,7 +262,9 @@
         let mToken;
 
         // Retrieve FCM token for the current device
-        messaging.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc' })
+        messaging.getToken({
+                vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+            })
             .then((currentToken) => {
                 if (currentToken) {
                     console.log('Token retrieved:', currentToken);
@@ -283,59 +285,62 @@
 
         // Form submission logic
         document.addEventListener('DOMContentLoaded', function() {
-    const emergencyForm = document.getElementById('emergencyForm');
-    
-    if (emergencyForm) {
-        emergencyForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+            const emergencyForm = document.getElementById('emergencyForm');
 
-            const formData = new FormData(this);
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
+            if (emergencyForm) {
+                emergencyForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
 
-            xhr.onload = function() {
-                try {
-                    // Check if the response is valid JSON
-                    const contentType = xhr.getResponseHeader("content-type");
-                    if (contentType && contentType.includes("application/json")) {
-                        const response = JSON.parse(xhr.responseText);
-                        
-                        if (response.success) {
-                            alert("Form submitted successfully!");
-                            triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
-                            closeModal();
-                        } else {
-                            alert("Form submission failed: " + response.message);
+                    const formData = new FormData(this);
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
+
+                    xhr.onload = function() {
+                        try {
+                            // Check if the response is valid JSON
+                            const contentType = xhr.getResponseHeader("content-type");
+                            if (contentType && contentType.includes("application/json")) {
+                                const response = JSON.parse(xhr.responseText);
+
+                                if (response.success) {
+                                    alert("Form submitted successfully!");
+                                    triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
+                                    closeModal();
+                                } else {
+                                    alert("Form submission failed: " + response.message);
+                                }
+                            } else {
+                                console.error("Server response is not JSON:", xhr.responseText);
+                                alert("An unexpected error occurred. Please try again later.");
+                            }
+                        } catch (e) {
+                            console.error("Error parsing JSON:", e);
+                            alert("An unexpected error occurred. Please try again later.");
                         }
-                    } else {
-                        console.error("Server response is not JSON:", xhr.responseText);
-                        alert("An unexpected error occurred. Please try again later.");
-                    }
-                } catch (e) {
-                    console.error("Error parsing JSON:", e);
-                    alert("An unexpected error occurred. Please try again later.");
-                }
-            };
+                    };
 
-            xhr.onerror = function() {
-                console.error("Request failed");
-                alert("An error occurred while submitting the form. Please check your connection and try again.");
-            };
+                    xhr.onerror = function() {
+                        console.error("Request failed");
+                        alert("An error occurred while submitting the form. Please check your connection and try again.");
+                    };
 
-            xhr.send(formData);
+                    xhr.send(formData);
+                });
+            }
         });
-    }
-});
-
 
         // Trigger a notification
         function triggerNotification(title, body) {
             if (Notification.permission === "granted") {
-                new Notification(title, { body: body });
+                new Notification(title, {
+                    body: body
+                });
             } else {
                 Notification.requestPermission().then((permission) => {
                     if (permission === "granted") {
-                        new Notification(title, { body: body });
+                        new Notification(title, {
+                            body: body
+                        });
                     }
                 });
             }
@@ -359,24 +364,30 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-    // Other form submission logic, Firebase initialization, etc.
+            // Other form submission logic, Firebase initialization, etc.
 
-    // Make openModal globally accessible
-    window.openModal = function() {
-        document.getElementById("myModal").style.display = "block";
-        getLocation(); // Get the user's current location
-    };
+            // Make openModal globally accessible
+            window.openModal = function() {
+                document.getElementById("myModal").style.display = "block";
+                getLocation(); // Get the user's current location
+            };
 
-    // Make closeModal globally accessible
-    window.closeModal = function() {
-        document.getElementById("myModal").style.display = "none";
-    };
-});
+            // Make closeModal globally accessible
+            window.closeModal = function() {
+                document.getElementById("myModal").style.display = "none";
+            };
+        });
 
 
         // Update Philippine time
         function updatePhilippineTime() {
-            const options = { timeZone: 'Asia/Manila', hour12: true, hour: 'numeric', minute: 'numeric', second: 'numeric' };
+            const options = {
+                timeZone: 'Asia/Manila',
+                hour12: true,
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric'
+            };
             document.getElementById('philippineTime').innerText = new Date().toLocaleString('en-US', options);
         }
 
