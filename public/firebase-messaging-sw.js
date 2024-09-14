@@ -36,9 +36,32 @@ messaging.setBackgroundMessageHandler(function(payload) {
 });
 
 // Message handler to receive notification details from the site.php form
-self.addEventListener('message', function(event) {
-  const notificationPayload = event.data;
-  console.log('Received notification details:', notificationPayload);
+self.addEventListener('message', (event) => {
+  // Ensure the event handler properly responds to the message
+  event.waitUntil(
+      // Asynchronous task, like fetching data or handling a notification
+      fetch(event.data.url).then(response => {
+          // Do something with the response
+          return response.json();
+      }).then(data => {
+          // Use the data or send a response
+          console.log('Data fetched:', data);
+      }).catch(error => {
+          console.error('Error:', error);
+      })
+  );
+});
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  // Perform async task
+  new Promise((resolve, reject) => {
+      // Some asynchronous operation like a fetch
+      fetch(request.url).then(response => resolve(response)).catch(err => reject(err));
+  }).then(response => {
+      sendResponse(response);
+  }).catch(error => {
+      sendResponse({ error: error.message });
+  });
 
-  // You can process the notification details here as needed
+  // Return true to indicate asynchronous response
+  return true;
 });
