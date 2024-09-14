@@ -77,23 +77,6 @@
             <?= session('error') ?>
         </div>
     <?php endif; ?>
-    <!-- <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-11">
-                <div id="carouselExample" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <?php foreach ($imageSources as $index => $imageSource) : ?>
-                            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                                <img class="d-block w-100" src="<?= base_url($imageSource) ?>" alt="Image <?= $index + 1 ?>">
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <p><a href="<?= site_url('news') ?>" class="btn btn-danger">PRESS RELEASE</a></p>
-            </div>
-        </div>
-    </div> -->
-
     <?= view('hf/footer'); ?>
 
     <div class="notification-container" id="notificationContainer"></div>

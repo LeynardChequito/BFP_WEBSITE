@@ -292,48 +292,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Form submission logic
         document.addEventListener('DOMContentLoaded', function() {
-            const emergencyForm = document.getElementById('emergencyForm');
+    const emergencyForm = document.getElementById('emergencyForm');
 
-            if (emergencyForm) {
-                emergencyForm.addEventListener('submit', function(event) {
-                    event.preventDefault();
+    if (emergencyForm) {
+        emergencyForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-                    const formData = new FormData(this);
-                    const xhr = new XMLHttpRequest();
-                    xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
+            const formData = new FormData(this);
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
 
-                    xhr.onload = function() {
-    try {
-        const contentType = xhr.getResponseHeader("content-type");
-        if (contentType && contentType.includes("application/json")) {
-            const response = JSON.parse(xhr.responseText);
-            if (response.success) {
-                alert("Form submitted successfully!");
-                triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
-                closeModal();
-            } else {
-                alert("Form submission failed: " + response.message);
-            }
-        } else {
-            // Log the entire response for debugging purposes
-            console.error("Unexpected response type. Expected JSON but received:", xhr.responseText);
-            alert("An unexpected error occurred. Please try again later.");
-        }
-    } catch (error) {
-        console.error("Error parsing the response as JSON:", error);
-        alert("An unexpected error occurred. Please try again later.");
-    }
-};
+            xhr.onload = function() {
+                try {
+                    const contentType = xhr.getResponseHeader("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            alert("Form submitted successfully!");
+                            triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
+                            closeModal();
+                        } else {
+                            alert("Form submission failed: " + response.message);
+                        }
+                    } else {
+                        console.error("Unexpected response:", xhr.responseText);
+                        alert("An unexpected error occurred. Please try again later.");
+                    }
+                } catch (error) {
+                    console.error("Error parsing the response as JSON:", error);
+                    alert("An unexpected error occurred. Please try again later.");
+                }
+            };
 
-                    xhr.onerror = function() {
-                        console.error("Request failed");
-                        alert("An error occurred while submitting the form. Please check your connection and try again.");
-                    };
+            xhr.onerror = function() {
+                console.error("Request failed");
+                alert("An error occurred while submitting the form. Please check your connection and try again.");
+            };
 
-                    xhr.send(formData);
-                });
-            }
+            xhr.send(formData);
         });
+    }
+});
+
 
         // Trigger a notification
         function triggerNotification(title, body) {

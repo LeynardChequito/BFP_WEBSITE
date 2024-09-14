@@ -231,16 +231,15 @@
 
     <!-- JavaScript code for handling notifications and updating time -->
     <script type="module">
-        const firebaseConfig = {
-        apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
-        authDomain: "pushnotifbfp.firebaseapp.com",
-        projectId: "pushnotifbfp",
-        storageBucket: "pushnotifbfp.appspot.com",
-        messagingSenderId: "214092622073",
-        appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
-        measurementId: "G-XMBH6JJ3M6"
-        };
-
+ const firebaseConfig = {
+    apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+    authDomain: "pushnotifbfp.firebaseapp.com",
+    projectId: "pushnotifbfp",
+    storageBucket: "pushnotifbfp.appspot.com",
+    messagingSenderId: "214092622073",
+    appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+    measurementId: "G-XMBH6JJ3M6"
+};
         // Function to get current time
         function getCurrentTime() {
             return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
@@ -254,53 +253,64 @@
 
         // Initialize Firebase and update time
         firebase.initializeApp(firebaseConfig);
-        const fcm = firebase.messaging();
-        let mToken;
+const messaging = firebase.messaging();
+let mToken;
 
-        // Get Firebase token
-        fcm.getToken({
-            vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
-        }).then((currentToken) => {
-            console.log('Token retrieved:', currentToken);
-            mToken = currentToken;
-        }).catch((error) => {
-            console.error('Error retrieving token:', error);
-        });
+messaging.getToken({
+    vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+}).then((currentToken) => {
+    if (currentToken) {
+        console.log('Token retrieved:', currentToken);
+        mToken = currentToken;
+    } else {
+        console.log('No registration token available.');
+    }
+}).catch((error) => {
+    console.error('Error retrieving token:', error);
+});
 
         // Handle incoming messages
-        fcm.onMessage((data) => {
-            console.log('onMessage: ', data);
-            let count = localStorage.getItem("notification-count");
-            if (count) {
-                localStorage.setItem('notification-count', parseInt(count) + 1);
-            } else {
-                localStorage.setItem('notification-count', 1);
+        messaging.onMessage((payload) => {
+    console.log('Message received:', payload);
+    addNotificationToDropdown(payload.notification.title, payload.notification.body);
+});
+
+// Function to add notification to dropdown
+function addNotificationToDropdown(title, body) {
+    let count = localStorage.getItem("notification-count") || 0;
+    count = parseInt(count) + 1;
+    localStorage.setItem('notification-count', count);
+
+    document.getElementById('notification-counter').textContent = count;
+
+    const notificationContainer = document.getElementById('notification-container');
+    const notificationHTML = `
+        <div class="dropdown-separator"></div>
+        <a class="dropdown-item d-flex align-items-center" href="#">
+            <div class="mr-3 notification-item">
+                <div class="icon-circle bg-primary">
+                    <i class="fas fa-file-alt text-white"></i>
+                </div>
+            </div>
+            <div class="notification-details">
+                <div class="small text-gray-500 notification-time">${new Date().toLocaleTimeString()}</div>
+                <span class="font-weight-bold notification-title">${title}</span>
+                <p>${body}</p>
+            </div>
+        </a>
+    `;
+    notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
+}  function triggerNotification(title, body) {
+    if (Notification.permission === "granted") {
+        new Notification(title, { body: body });
+    } else {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                new Notification(title, { body: body });
             }
-
-            $('#notification-counter').text(localStorage.getItem("notification-count"));
-            $('#notification-container').append(
-                `<div class="dropdown-separator"></div>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="mr-3 notification-item">
-                        <div class="icon-circle bg-primary">
-                            <i class="fas fa-file-alt text-white"></i> 
-                        </div>
-                    </div>
-                    <div class="notification-details">
-                        <div class="small text-gray-500 notification-time">${getCurrentTime()}</div>
-                        <span class="font-weight-bold notification-title">${data.notification.title}</span>
-                    </div>
-                </a>`
-            );
-
-            $('#notificationContent').append(
-                `<div class="notification">
-                    <div class="notification-time">${getCurrentTime()}</div>
-                    <div class="notification-title">${data.notification.title}</div>
-                    <div class="notification-body">${data.notification.body}</div>
-                </div>`
-            );
         });
+    }
+}
 
         // Open modal on notification click
         $(".notification-dropdown").on("click", function() {

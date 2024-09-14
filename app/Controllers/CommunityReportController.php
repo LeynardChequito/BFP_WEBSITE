@@ -36,27 +36,7 @@ class CommunityReportController extends BaseController
         'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
     ];
 
-    $messages = [
-        'fullName' => [
-            'required' => 'Full Name is required.',
-            'max_length' => 'Full Name should not exceed 255 characters.',
-        ],
-        'latitude' => [
-            'required' => 'Latitude is required.',
-            'decimal' => 'Latitude must be a valid decimal number.',
-        ],
-        'longitude' => [
-            'required' => 'Longitude is required.',
-            'decimal' => 'Longitude must be a valid decimal number.',
-        ],
-        'fileproof' => [
-            'uploaded' => 'File proof is required.',
-            'max_size' => 'File proof must not exceed 50MB.',
-            'ext_in' => 'File proof must be an image (jpg, jpeg, png) or video (mp4, mov, avi).',
-        ],
-    ];
-
-    if ($this->validate($rules, $messages)) {
+    if ($this->validate($rules)) {
         $communityReportModel = new CommunityReportModel();
         $fileproof = $this->request->getFile('fileproof');
 
@@ -73,8 +53,8 @@ class CommunityReportController extends BaseController
 
             $communityReportModel->insert($data);
 
-            // Send notifications to admins
-            $this->notifyAllAdmins('New Emergency Call', 'A new emergency call has been submitted.', base_url('public/community_report/' . $fileproofName));
+            // Notify admins of the new emergency call
+            $this->notifyAllAdmins('New Emergency Call', 'A new emergency call has been submitted.');
 
             return $this->response->setJSON(['success' => true, 'message' => 'Emergency call successfully submitted!']);
         } else {
@@ -85,56 +65,42 @@ class CommunityReportController extends BaseController
     }
 }
 
+public function sendPushNotificationToUser($token, $title, $body)
+{
+    $url = 'https://fcm.googleapis.com/fcm/send';
+    $headers = [
+        'Authorization: key=' . $this->firebaseServerKey,
+        'Content-Type: application/json'
+    ];
 
-    public function sendPushNotificationToUser($token, $title, $body, $imageUrl = null)
-    {
-        // Prepare the payload for the push notification
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        $headers = [
-            'Authorization: key=' . $this->firebaseServerKey,
-            'Content-Type: application/json'
-        ];
+    $notification = [
+        'title' => $title,
+        'body' => $body,
+        'click_action' => 'FLUTTER_NOTIFICATION_CLICK'
+    ];
 
-        $notification = [
-            'title' => $title,
-            'body' => $body,
-        ];
+    $fields = [
+        'to' => $token,
+        'notification' => $notification
+    ];
 
-        if ($imageUrl) {
-            $notification['image'] = $imageUrl;
-        }
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+    $result = curl_exec($ch);
+    curl_close($ch);
 
-        $fields = [
-            'to' => $token,
-            'notification' => $notification,
-            'data' => [
-                'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
-                'title' => $title,
-                'body' => $body,
-                'image' => $imageUrl
-            ]
-        ];
-
-        // Initialize cURL and send the notification
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-        $result = curl_exec($ch);
-        curl_close($ch);
-
-        return json_decode($result, true);
-    }
-
-    private function notifyAllAdmins($title, $body, $imageUrl = null)
+    return json_decode($result, true);
+}    private function notifyAllAdmins($title, $body)
     {
         $adminModel = new AdminModel();
         $admins = $adminModel->where('token IS NOT NULL')->findAll();
-
+    
         foreach ($admins as $admin) {
-            $this->sendPushNotificationToUser($admin['token'], $title, $body, $imageUrl);
+            $this->sendPushNotificationToUser($admin['token'], $title, $body);
         }
     }
 
