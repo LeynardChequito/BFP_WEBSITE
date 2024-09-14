@@ -49,7 +49,7 @@
             color: #fff;
             font-size: 14px;
             margin-left: auto;
-            margin-right: 20px; /* Adjusted margin for alignment */
+            margin-right: 20px;
         }
 
         .notification-dropdown {
@@ -172,8 +172,8 @@
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s, color 0.3s;
-            margin-right: 10px; /* Adjusted margin for alignment */
-            margin-left: 580px; /* Added margin for distance from bell icon */
+            margin-right: 10px;
+            margin-left: 580px;
         }
 
         .view-map-btn:hover {
@@ -187,17 +187,14 @@
 
     <!-- Header section -->
     <div class="header desktop-header">
-        <!-- Logo -->
         <img src="<?= base_url(); ?>/bfpcalapancity/public/images/Banner03_18Aug2018.png" alt="Logo" class="logo">
 
         <!-- Notification dropdown -->
         <div class="notification-dropdown position-relative">
-            <!-- Notification icon and counter -->
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill">
                 <i class="fas fa-bell notification-icon"></i>
                 <span id="notification-counter" class="badge badge-danger badge-counter">0</span>
             </span>
-            <!-- Dropdown content to display notifications -->
             <div class="dropdown-content">
                 <h6 class="dropdown-header">Community Emergency Message</h6>
                 <div class="dropdown-separator"></div>
@@ -230,109 +227,109 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <!-- JavaScript code for handling notifications and updating time -->
-<script type="module">
-       // Get the modal element
-const modal = document.getElementById('notificationModal');
+    <script type="module">
+        // Get the modal element
+        const modal = document.getElementById('notificationModal');
 
-// Function to get current time
-function getCurrentTime() {
-    return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
-}
+        // Function to get current time
+        function getCurrentTime() {
+            return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
+        }
 
-// Function to update time every second
-function updateTime() {
-    document.getElementById("current-time").textContent = getCurrentTime();
-    setTimeout(updateTime, 1000);
-}
+        // Function to update time every second
+        function updateTime() {
+            document.getElementById("current-time").textContent = getCurrentTime();
+            setTimeout(updateTime, 1000);
+        }
 
-// Initialize Firebase and update time
-const firebaseConfig = {
-    apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
-    authDomain: "pushnotifbfp.firebaseapp.com",
-    projectId: "pushnotifbfp",
-    storageBucket: "pushnotifbfp.appspot.com",
-    messagingSenderId: "214092622073",
-    appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
-    measurementId: "G-XMBH6JJ3M6"
-};
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+            authDomain: "pushnotifbfp.firebaseapp.com",
+            projectId: "pushnotifbfp",
+            storageBucket: "pushnotifbfp.appspot.com",
+            messagingSenderId: "214092622073",
+            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+            measurementId: "G-XMBH6JJ3M6"
+        };
 
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
-let mToken;
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+        let mToken;
 
-// Retrieve FCM token
-messaging.getToken({
-    vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
-}).then((currentToken) => {
-    if (currentToken) {
-        console.log('Token retrieved:', currentToken);
-        mToken = currentToken;
-    } else {
-        console.log('No registration token available.');
-    }
-}).catch((error) => {
-    console.error('Error retrieving token:', error);
-});
-
-// Handle incoming messages
-messaging.onMessage((payload) => {
-    console.log('Message received:', payload);
-    addNotificationToDropdown(payload.notification.title, payload.notification.body);
-});
-
-
-function addNotificationToDropdown(title, body) {
-    let count = localStorage.getItem("notification-count") || 0;
-    count = parseInt(count) + 1;
-    localStorage.setItem('notification-count', count);
-
-    document.getElementById('notification-counter').textContent = count;
-
-    const notificationContainer = document.getElementById('notification-container');
-    const notificationHTML = `
-        <div class="dropdown-separator"></div>
-        <a class="dropdown-item d-flex align-items-center" href="#">
-            <div class="mr-3 notification-item">
-                <div class="icon-circle bg-primary">
-                    <i class="fas fa-file-alt text-white"></i>
-                </div>
-            </div>
-            <div class="notification-details">
-                <div class="small text-gray-500 notification-time">${new Date().toLocaleTimeString()}</div>
-                <span class="font-weight-bold notification-title">${title}</span>
-                <p>${body}</p>
-            </div>
-        </a>
-    `;
-    notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
-}
-
-// Function to trigger browser notification
-function triggerNotification(title, body) {
-    if (Notification.permission === "granted") {
-        new Notification(title, { body: body });
-    } else {
-        Notification.requestPermission().then((permission) => {
-            if (permission === "granted") {
-                new Notification(title, { body: body });
+        // Retrieve FCM token
+        messaging.getToken({
+            vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+        }).then((currentToken) => {
+            if (currentToken) {
+                console.log('Token retrieved:', currentToken);
+                mToken = currentToken;
+            } else {
+                console.log('No registration token available.');
             }
+        }).catch((error) => {
+            console.error('Error retrieving token:', error);
         });
-    }
-}
 
-$(".notification-dropdown").on("click", function() {
-    modal.style.display = "block";
-});
+        // Handle incoming messages
+        messaging.onMessage((payload) => {
+            console.log('Message received:', payload);
+            addNotificationToDropdown(payload.notification.title, payload.notification.body);
+        });
 
-// Close modal when clicked outside the modal
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-};
+        function addNotificationToDropdown(title, body) {
+            let count = localStorage.getItem("notification-count") || 0;
+            count = parseInt(count) + 1;
+            localStorage.setItem('notification-count', count);
 
-// Start updating time
-updateTime();
+            document.getElementById('notification-counter').textContent = count;
+
+            const notificationContainer = document.getElementById('notification-container');
+            const notificationHTML = `
+                <div class="dropdown-separator"></div>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3 notification-item">
+                        <div class="icon-circle bg-primary">
+                            <i class="fas fa-file-alt text-white"></i>
+                        </div>
+                    </div>
+                    <div class="notification-details">
+                        <div class="small text-gray-500 notification-time">${new Date().toLocaleTimeString()}</div>
+                        <span class="font-weight-bold notification-title">${title}</span>
+                        <p>${body}</p>
+                    </div>
+                </a>
+            `;
+            notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
+        }
+
+        // Function to trigger browser notification
+        function triggerNotification(title, body) {
+            if (Notification.permission === "granted") {
+                new Notification(title, { body: body });
+            } else {
+                Notification.requestPermission().then((permission) => {
+                    if (permission === "granted") {
+                        new Notification(title, { body: body });
+                    }
+                });
+            }
+        }
+
+        // Open modal on notification click
+        $(".notification-dropdown").on("click", function() {
+            modal.style.display = "block";
+        });
+
+        // Close modal when clicked outside the modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        // Start updating time
+        updateTime();
     </script>
 </body>
 
