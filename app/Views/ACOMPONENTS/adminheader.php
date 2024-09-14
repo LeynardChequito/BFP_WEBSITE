@@ -271,50 +271,53 @@
             console.error('Error retrieving token:', error);
         });
 
-        // Handle incoming messages
-        messaging.onMessage((payload) => {
-            console.log('Message received:', payload);
-            addNotificationToDropdown(payload.notification.title, payload.notification.body);
-        });
+// Handle incoming messages (in the foreground)
+messaging.onMessage((payload) => {
+    console.log('Message received: ', payload);
+    addNotificationToDropdown(payload.notification.title, payload.notification.body);
+    triggerNotification(payload.notification.title, payload.notification.body); // Trigger a browser notification
+});
 
-        function addNotificationToDropdown(title, body) {
-            let count = localStorage.getItem("notification-count") || 0;
-            count = parseInt(count) + 1;
-            localStorage.setItem('notification-count', count);
 
-            document.getElementById('notification-counter').textContent = count;
+function addNotificationToDropdown(title, body) {
+    console.log('Adding notification to dropdown:', title, body); // Debugging statement
+    let count = localStorage.getItem("notification-count") || 0;
+    count = parseInt(count) + 1;
+    localStorage.setItem('notification-count', count);
 
-            const notificationContainer = document.getElementById('notification-container');
-            const notificationHTML = `
-                <div class="dropdown-separator"></div>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="mr-3 notification-item">
-                        <div class="icon-circle bg-primary">
-                            <i class="fas fa-file-alt text-white"></i>
-                        </div>
-                    </div>
-                    <div class="notification-details">
-                        <div class="small text-gray-500 notification-time">${new Date().toLocaleTimeString()}</div>
-                        <span class="font-weight-bold notification-title">${title}</span>
-                        <p>${body}</p>
-                    </div>
-                </a>
-            `;
-            notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
-        }
+    document.getElementById('notification-counter').textContent = count;
 
-        // Function to trigger browser notification
-        function triggerNotification(title, body) {
-            if (Notification.permission === "granted") {
+    const notificationContainer = document.getElementById('notification-container');
+    const notificationHTML = `
+        <div class="dropdown-separator"></div>
+        <a class="dropdown-item d-flex align-items-center" href="#">
+            <div class="mr-3 notification-item">
+                <div class="icon-circle bg-primary">
+                    <i class="fas fa-file-alt text-white"></i>
+                </div>
+            </div>
+            <div class="notification-details">
+                <div class="small text-gray-500 notification-time">${new Date().toLocaleTimeString()}</div>
+                <span class="font-weight-bold notification-title">${title}</span>
+                <p>${body}</p>
+            </div>
+        </a>
+    `;
+    notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
+}
+
+function triggerNotification(title, body) {
+    if (Notification.permission === "granted") {
+        new Notification(title, { body: body });
+    } else {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
                 new Notification(title, { body: body });
-            } else {
-                Notification.requestPermission().then((permission) => {
-                    if (permission === "granted") {
-                        new Notification(title, { body: body });
-                    }
-                });
             }
-        }
+        });
+    }
+}
+
         if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/firebase-messaging-sw.js')
             .then(function(registration) {
@@ -323,6 +326,24 @@
                 console.log('Service Worker registration failed:', err);
             });
     }
+
+    messaging.requestPermission()
+    .then(() => {
+        console.log('Notification permission granted.');
+        return messaging.getToken();
+    })
+    .then((currentToken) => {
+        if (currentToken) {
+            console.log('Token retrieved:', currentToken);
+            mToken = currentToken;
+        } else {
+            console.log('No registration token available.');
+        }
+    })
+    .catch((error) => {
+        console.error('Error retrieving token:', error);
+    });
+
         // Open modal on notification click
         $(".notification-dropdown").on("click", function() {
             modal.style.display = "block";
