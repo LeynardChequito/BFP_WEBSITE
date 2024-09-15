@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fire Reports Graph</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+<!-- Font Awesome CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -111,18 +112,17 @@ function calculateDamageCosts(reports) {
     const monthlyCosts = Array.from({ length: 12 }, () => 0);
     reports.forEach(report => {
         const propertyDamageCost = report.property_damage_cost;
-        // Check if property_damage_cost is a number or a valid numeric string
+        // Check if property_damage_cost is a valid number
         if (propertyDamageCost && !isNaN(parseFloat(propertyDamageCost))) {
-            const numericCost = parseFloat(propertyDamageCost); // Parse the cost as a float
+            const numericCost = parseFloat(propertyDamageCost);
             const month = new Date(report.report_date).getMonth();
             monthlyCosts[month] += numericCost;
         } else {
-            console.warn(`No valid number found in property_damage_cost: ${propertyDamageCost}`);
+            console.warn(`Skipping invalid property_damage_cost: ${propertyDamageCost}`);
         }
     });
-    return { monthlyCosts: monthlyCosts };
+    return { monthlyCosts };
 }
-
 
         // Function to calculate cause percentages
         function calculateCausePercentages(reports) {
@@ -150,12 +150,12 @@ function calculateMonthlyInjuries(reports) {
         const monthIndex = new Date(report.report_date).getMonth();
         const injuries = report.number_of_injuries;
 
-        // Check if number_of_injuries is a valid number (whether string or number)
-        if (injuries !== null && !isNaN(parseInt(injuries))) {
-            const parsedInjuries = parseInt(injuries, 10); // Parse injuries as an integer
+        // Ensure injuries is a valid number
+        if (injuries !== null && !isNaN(parseInt(injuries, 10))) {
+            const parsedInjuries = parseInt(injuries, 10);
             monthlyInjuries[monthIndex] += parsedInjuries;
         } else {
-            console.warn(`Unexpected format for number_of_injuries: ${injuries}`);
+            console.warn(`Skipping invalid number_of_injuries: ${injuries}`);
         }
     });
 
@@ -164,7 +164,7 @@ function calculateMonthlyInjuries(reports) {
 
         // Fetch data and render charts on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
-            fetch('/graph/getReports')
+            fetch('graph/getReports')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
