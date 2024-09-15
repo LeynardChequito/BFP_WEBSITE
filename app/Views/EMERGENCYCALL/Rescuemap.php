@@ -810,34 +810,39 @@ document.addEventListener('DOMContentLoaded', function () {
     loadTasks();
 });
 
-// Function to mark a report as read and remove it from newReportsList (locally)
+// Function to remove a report notification with confirmation
 function removeNotification(reportId) {
     const confirmation = confirm("Are you sure you want to remove this notification?");
     if (confirmation) {
-        markReportAsSubmitted(reportId);
+        // Mark the report as removed (store the ID in localStorage)
+        markReportAsRemoved(reportId);
+
+        // Remove the report from the UI
         const reportItem = document.getElementById(`report-${reportId}`);
         if (reportItem) {
             reportItem.remove();
         }
     }
 }
+// Function to store removed reports in localStorage to avoid fetching them again
+function markReportAsRemoved(reportId) {
+    let removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
 
-// Function to store submitted reports in localStorage to avoid re-rendering them
-function markReportAsSubmitted(reportId) {
-    let submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
-
-    if (!submittedReports.includes(reportId)) {
-        submittedReports.push(reportId);
-        localStorage.setItem('submittedReports', JSON.stringify(submittedReports));
+    if (!removedReports.includes(reportId)) {
+        removedReports.push(reportId);
+        localStorage.setItem('removedReports', JSON.stringify(removedReports));
     }
 }
-
-// Function to check if a report has been marked as submitted
+// Function to check if a report has been submitted (already marked as handled)
 function isReportSubmitted(reportId) {
     const submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
     return submittedReports.includes(reportId);
 }
-
+// Function to check if a report has been removed
+function isReportRemoved(reportId) {
+    const removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
+    return removedReports.includes(reportId);
+}
 // Function to get recent reports from the database and display them
 async function getRecentReports() {
     try {
@@ -854,8 +859,8 @@ async function getRecentReports() {
             data.forEach(report => {
                 const reportId = report.id;
 
-                // Skip rendering if the report is already marked as submitted
-                if (!isReportSubmitted(reportId)) {
+                // Skip rendering if the report has been removed
+                if (!isReportRemoved(reportId) && !isReportSubmitted(reportId)) {
                     newReportsReceived = true;
                     const { latitude, longitude, fullName, fileproof, timestamp } = report;
                     const listItem = document.createElement('li');
@@ -870,7 +875,7 @@ async function getRecentReports() {
                                 <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
                             </div>
                             <button class="btn btn-primary" onclick="removeNotification(${reportId})">Remove Notification</button>
-                                                        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
+                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
                             <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
                         </div>
                     `;
@@ -888,9 +893,7 @@ async function getRecentReports() {
         console.error('Error fetching recent reports:', error);
     }
 }
-
-
-// Function to simulate submitting the report and mark it as submitted
+// Function to mark a report as submitted
 function submitReportForm(lat, lng, reportId) {
     // Simulate the form submission (you can change the URL if needed)
     console.log("Form submission for report:", reportId);
