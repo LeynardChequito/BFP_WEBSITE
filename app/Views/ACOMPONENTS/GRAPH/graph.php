@@ -110,18 +110,14 @@
 function calculateDamageCosts(reports) {
     const monthlyCosts = Array.from({ length: 12 }, () => 0);
     reports.forEach(report => {
-        if (report.property_damage_cost && typeof report.property_damage_cost === 'string') {
-            // Check if the cost is a valid number, ignore cases like 'UNKNOWN'
-            const costMatch = report.property_damage_cost.match(/\d+/);
-            if (costMatch) {
-                const numericCost = parseInt(costMatch[0], 10); // Extract and parse the first number found
-                const month = new Date(report.report_date).getMonth();
-                monthlyCosts[month] += numericCost;
-            } else {
-                console.warn(`No valid number found in property_damage_cost: ${report.property_damage_cost}`);
-            }
+        const propertyDamageCost = report.property_damage_cost;
+        // Check if property_damage_cost is a number or a valid numeric string
+        if (propertyDamageCost && !isNaN(parseFloat(propertyDamageCost))) {
+            const numericCost = parseFloat(propertyDamageCost); // Parse the cost as a float
+            const month = new Date(report.report_date).getMonth();
+            monthlyCosts[month] += numericCost;
         } else {
-            console.warn(`Invalid property_damage_cost format: ${report.property_damage_cost}`);
+            console.warn(`No valid number found in property_damage_cost: ${propertyDamageCost}`);
         }
     });
     return { monthlyCosts: monthlyCosts };
@@ -152,16 +148,14 @@ function calculateMonthlyInjuries(reports) {
 
     reports.forEach(report => {
         const monthIndex = new Date(report.report_date).getMonth();
+        const injuries = report.number_of_injuries;
 
-        // Check if the number_of_injuries is valid and parse it
-        if (report.number_of_injuries !== null && report.number_of_injuries !== undefined) {
-            // Attempt to parse number_of_injuries if it's a string or use directly if it's already a number
-            const injuries = parseInt(report.number_of_injuries, 10);
-            if (!isNaN(injuries)) {
-                monthlyInjuries[monthIndex] += injuries;
-            } else {
-                console.warn(`Unexpected format for number_of_injuries: ${report.number_of_injuries}`);
-            }
+        // Check if number_of_injuries is a valid number (whether string or number)
+        if (injuries !== null && !isNaN(parseInt(injuries))) {
+            const parsedInjuries = parseInt(injuries, 10); // Parse injuries as an integer
+            monthlyInjuries[monthIndex] += parsedInjuries;
+        } else {
+            console.warn(`Unexpected format for number_of_injuries: ${injuries}`);
         }
     });
 
