@@ -180,6 +180,9 @@
             background-color: lightblue;
             color: black;
         }
+        .components li {
+        padding-left: 15px; /* Adds 2px space to the left of the list items */
+    }
     </style>
 </head>
 
