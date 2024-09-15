@@ -38,8 +38,8 @@
             border: 16px solid #f3f4f6;
             border-top: 16px solid #d72631;
             border-radius: 50%;
-            width: 120px;
-            height: 120px;
+            width: 50px;
+            height: 50px;
             animation: spin 2s linear infinite;
             margin-top: 30px;
         }
