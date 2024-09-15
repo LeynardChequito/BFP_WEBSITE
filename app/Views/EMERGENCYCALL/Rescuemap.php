@@ -811,37 +811,37 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Function to remove a report notification with confirmation
-function removeNotification(reportId) {
+function removeNotification(communityreport_id) {
     const confirmation = confirm("Are you sure you want to remove this notification?");
     if (confirmation) {
         // Mark the report as removed (store the ID in localStorage)
-        markReportAsRemoved(reportId);
+        markReportAsRemoved(communityreport_id);
 
         // Remove the report from the UI
-        const reportItem = document.getElementById(`report-${reportId}`);
+        const reportItem = document.getElementById(`report-${communityreport_id}`);
         if (reportItem) {
             reportItem.remove();
         }
     }
 }
 // Function to store removed reports in localStorage to avoid fetching them again
-function markReportAsRemoved(reportId) {
+function markReportAsRemoved(communityreport_id) {
     let removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
 
-    if (!removedReports.includes(reportId)) {
-        removedReports.push(reportId);
+    if (!removedReports.includes(communityreport_id)) {
+        removedReports.push(communityreport_id);
         localStorage.setItem('removedReports', JSON.stringify(removedReports));
     }
 }
 // Function to check if a report has been submitted (already marked as handled)
-function isReportSubmitted(reportId) {
+function isReportSubmitted(communityreport_id) {
     const submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
-    return submittedReports.includes(reportId);
+    return submittedReports.includes(communityreport_id);
 }
 // Function to check if a report has been removed
-function isReportRemoved(reportId) {
+function isReportRemoved(communityreport_id) {
     const removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
-    return removedReports.includes(reportId);
+    return removedReports.includes(communityreport_id);
 }
 // Function to get recent reports from the database and display them
 async function getRecentReports() {
@@ -857,15 +857,15 @@ async function getRecentReports() {
             newReportsList.innerHTML = ''; // Clear previous reports
 
             data.forEach(report => {
-                const reportId = report.id;
+                const communityreport_id = report.id;
 
                 // Skip rendering if the report has been removed
-                if (!isReportRemoved(reportId) && !isReportSubmitted(reportId)) {
+                if (!isReportRemoved(communityreport_id) && !isReportSubmitted(communityreport_id)) {
                     newReportsReceived = true;
                     const { latitude, longitude, fullName, fileproof, timestamp } = report;
                     const listItem = document.createElement('li');
                     listItem.classList.add('list-group-item');
-                    listItem.id = `report-${reportId}`;
+                    listItem.id = `report-${communityreport_id}`;
                     listItem.innerHTML = `
                         <div style="padding: 10px; border-radius: 5px;">
                             <h4>User in Need: ${fullName}</h4>
@@ -874,9 +874,9 @@ async function getRecentReports() {
                             <div class="fileProofContainer" style="margin-bottom: 10px;">
                                 <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
                             </div>
-                            <button class="btn btn-primary" onclick="removeNotification(${reportId})">Remove Notification</button>
+                            <button class="btn btn-primary" onclick="removeNotification(${communityreport_id})">Remove Notification</button>
                             <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
-                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
+                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">Submit Fire Report</button> 
                         </div>
                     `;
                     newReportsList.appendChild(listItem);
@@ -894,13 +894,13 @@ async function getRecentReports() {
     }
 }
 // Function to mark a report as submitted
-function submitReportForm(lat, lng, reportId) {
+function submitReportForm(lat, lng, communityreport_id) {
     // Simulate the form submission (you can change the URL if needed)
-    console.log("Form submission for report:", reportId);
-    window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&reportId=${reportId}`;
+    console.log("Form submission for report:", communityreport_id);
+    window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
 
     // Mark this report as submitted
-    markReportAsSubmitted(reportId);
+    markReportAsSubmitted(communityreport_id);
 }
 
 
