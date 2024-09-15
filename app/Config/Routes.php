@@ -72,7 +72,7 @@ $routes->post('carousel/delete/(:num)', 'CarouselController::delete/$1', ['filte
 // GRAPH
 $routes->get('graph', 'GraphController::graph',);
 $routes->get('graph/getReports', 'GraphController::getReports',);
-
+$routes->get('graph/getReport', 'GraphController::getReport',);
 
 //MAPPING
 $routes->get('user-location', 'LocationController::showUserLocation', ['filter' => 'user']);

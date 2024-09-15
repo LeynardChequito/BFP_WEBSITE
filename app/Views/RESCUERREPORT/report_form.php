@@ -73,9 +73,9 @@
             <!-- Sidebar -->
             <?= view('ACOMPONENTS/amanagesidebar'); ?>
 
-            <div class="col-md-9"><h2 class="form-header">ADD FIRE REPORTs</h2>
+            <div class="col-md-9">
+                <h2 class="form-header">ADD FIRE REPORT</h2>
                 <div class="form-container card">
-                    
                     <div class="card-body">
                         
                         <form action="<?= base_url('rescuer-report/save') ?>" method="post" enctype="multipart/form-data">
@@ -85,7 +85,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="user_name">Name of Rescuer:</label>
-                                        <input type="text" class="form-control" name="user_name" id="user_name" required>
+                                        <input type="text" class="form-control" name="user_name" id="user_name" placeholder="Enter Rescuer's Name" required>
                                     </div>
                                 </div>
 
@@ -117,7 +117,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="address">Address:</label>
-                                        <textarea class="form-control" name="address" id="address" rows="3" required></textarea>
+                                        <textarea class="form-control" name="address" id="address" rows="3" placeholder="Enter the Complete Address of Fire Incident" required></textarea>
                                     </div>
                                 </div>
 
@@ -153,7 +153,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="property_damage_cost">Property Damage Cost:</label>
-                                        <select class="form-control" name="property_damage_cost" id="property_damage_cost" required>
+                                        <select class="form-control" name="property_damage_cost" id="property_damage_cost" required onchange="toggleCustomAmount()">
                                             <option value="₱0 - ₱99">₱0 - ₱99</option>
                                             <option value="₱100 - ₱999">₱100 - ₱999</option>
                                             <option value="₱1000 - ₱9999">₱1,000 - ₱9,999</option>
@@ -164,8 +164,15 @@
                                             <option value="₱250000 - ₱499999">₱250,000 - ₱499,999</option>
                                             <option value="₱500000 - ₱999999">₱500,000 - ₱999,999</option>
                                             <option value="₱1000000">₱1,000,000</option>
-                                            <option value="UNKNOWN">UNKNOWN</option>
+                                            <option value="custom">Other Amount</option>
                                         </select>
+                                        <div id="custom_amount_field" style="display:none; margin-top: 10px;">
+                                            <label for="custom_amount">Enter Custom Amount:</label>
+                                            <div style="display: flex; align-items: center;">
+                                                <span>₱</span>
+                                                <input type="number" class="form-control" name="custom_amount" id="custom_amount" placeholder="Enter amount">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -173,8 +180,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="number_of_injuries">Number of Injuries:</label>
-                                        <input type="number" class="form-control" name="number_of_injuries" id="number_of_injuries">
+                                        <label for="number_of_injuries">Number of Casualties:</label>
+                                        <input type="number" class="form-control" name="number_of_injuries" id="number_of_injuries" placeholder="Enter the Number of Casualties">
                                     </div>
                                 </div>
 
@@ -204,6 +211,19 @@
     </div>
 
     <?= view('hf/footer'); ?>
+
+    <script>
+        function toggleCustomAmount() {
+            const select = document.getElementById('property_damage_cost');
+            const customAmountField = document.getElementById('custom_amount_field');
+            
+            if (select.value === 'custom') {
+                customAmountField.style.display = 'block';
+            } else {
+                customAmountField.style.display = 'none';
+            }
+        }
+    </script>
 
 </body>
 

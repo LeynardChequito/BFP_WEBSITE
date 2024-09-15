@@ -7,7 +7,6 @@ use App\Models\RescuerReportModel;
 
 class GraphController extends BaseController
 {
-
     protected $rescuerReportModel;
 
     public function __construct()
@@ -15,38 +14,141 @@ class GraphController extends BaseController
         $this->rescuerReportModel = new RescuerReportModel();
     }
 
+    // Render the graph view
     public function graph()
     {
         return view('ACOMPONENTS/GRAPH/graph');
     }
 
+    // Fetch reports based on the time period (weekly, monthly, yearly)
     public function getReports()
-{
-    $reports = $this->rescuerReportModel->findAll();
+    {
+        // Get the selected time period and month (if applicable)
+        $timePeriod = $this->request->getVar('timePeriod') ?? 'weekly';
+        $selectedMonth = $this->request->getVar('month') ?? null;
 
-    // Sanitize the data
-    foreach ($reports as &$report) {
-        // Sanitize property_damage_cost
-        if (!is_numeric($report['property_damage_cost']) || $report['property_damage_cost'] === 'UNKNOWN') {
-            $report['property_damage_cost'] = 0; // You can set this to `null` if you prefer
-        } else {
-            // Ensure it's a float value
-            $report['property_damage_cost'] = (float) $report['property_damage_cost'];
-        }
-    }
-    foreach ($reports as &$report) {
-        // Sanitize number_of_injuries
-        if (!is_numeric($report['number_of_injuries'])) {
-            $report['number_of_injuries'] = 0;
-        } else {
-            $report['number_of_injuries'] = (int) $report['number_of_injuries'];
+        $model = new RescuerReportModel();
+        $reports = $model->findAll(); // Ensure this fetches data from the database
+
+        if (empty($reports)) {
+            return $this->response->setJSON([]); // Return an empty array if no reports are found
         }
     
-        // Debugging log
-        logger()->info('Sanitized Report:', $report);
+        return $this->response->setJSON($reports);
     }
-    
-    return $this->response->setJSON($reports);
-}
 
+    public function getReport()
+    {
+        // Get the selected time period and month (if applicable)
+        $timePeriod = $this->request->getVar('timePeriod') ?? 'weekly';
+        $selectedMonth = $this->request->getVar('month') ?? null;
+
+        $model = new RescuerReportModel();
+        $reports = $model->findAll(); // Ensure this fetches data from the database
+
+        // Process data based on the selected time period
+        switch ($timePeriod) {
+            case 'weekly':
+                $data = $this->calculateWeeklyInjuries($reports, $selectedMonth);
+                break;
+            case 'monthly':
+                $data = $this->calculateMonthlyInjuries($reports);
+                break;
+            case 'yearly':
+                $data = $this->calculateYearlyInjuries($reports);
+                break;
+            default:
+                // If time period is not valid, default to weekly
+                $data = $this->calculateWeeklyInjuries($reports, $selectedMonth);
+        }
+
+        // Return the processed data as JSON
+        return $this->response->setJSON($data);
+    }
+    // Function to calculate weekly injuries for a specific month
+    private function calculateWeeklyInjuries($reports, $selectedMonth)
+    {
+        // Initialize an array to store injuries by week
+        $weeklyInjuries = [
+            'Week 1' => 0,
+            'Week 2' => 0,
+            'Week 3' => 0,
+            'Week 4' => 0,
+            'Week 5' => 0
+        ];
+
+        // Loop through all the reports
+        foreach ($reports as $report) {
+            // Convert the report date to a timestamp
+            $reportDate = strtotime($report['report_date']);
+
+            // Filter by the selected month if provided
+            if ($selectedMonth) {
+                $reportMonth = date('F', $reportDate); // Get the month name
+                if ($reportMonth !== $selectedMonth) {
+                    continue; // Skip if the report is not from the selected month
+                }
+            }
+
+            // Determine the week number within the month
+            $day = date('j', $reportDate); // Get the day of the month (1-31)
+
+            // Calculate the week based on the day of the month
+            $weekNumber = ceil($day / 7);
+
+            // Map the week number to "Week 1", "Week 2", etc.
+            $weekLabel = 'Week ' . $weekNumber;
+
+            // Increment the injuries for that week
+            if (isset($weeklyInjuries[$weekLabel])) {
+                $weeklyInjuries[$weekLabel] += $report['number_of_injuries'];
+            }
+        }
+
+        return $weeklyInjuries;
+    }
+
+    // Function to calculate monthly injuries (using month names)
+    private function calculateMonthlyInjuries($reports)
+    {
+        $monthlyInjuries = [
+            'January' => 0,
+            'February' => 0,
+            'March' => 0,
+            'April' => 0,
+            'May' => 0,
+            'June' => 0,
+            'July' => 0,
+            'August' => 0,
+            'September' => 0,
+            'October' => 0,
+            'November' => 0,
+            'December' => 0
+        ];
+
+        foreach ($reports as $report) {
+            $month = date('F', strtotime($report['report_date'])); // Get the full month name (January, February, etc.)
+            $monthlyInjuries[$month] += $report['number_of_injuries'];
+        }
+
+        return $monthlyInjuries;
+    }
+
+    // Function to calculate yearly injuries (grouped by year)
+    private function calculateYearlyInjuries($reports)
+    {
+        $yearlyInjuries = [];
+
+        foreach ($reports as $report) {
+            $year = date('Y', strtotime($report['report_date'])); // Get the year (e.g., 2023)
+
+            if (!isset($yearlyInjuries[$year])) {
+                $yearlyInjuries[$year] = 0;
+            }
+
+            $yearlyInjuries[$year] += $report['number_of_injuries'];
+        }
+
+        return $yearlyInjuries;
+    }
 }

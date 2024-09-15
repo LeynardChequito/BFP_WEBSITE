@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fire Reports Graph</title>
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
-<!-- Font Awesome CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background-color: #f8f9fa;
@@ -84,11 +83,41 @@
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="chart-container standard-size">
-                            <p>NUMBER OF INJURIES</p>
-                            <canvas id="monthlyInjuriesChart"></canvas>
-                        </div>
-                    </div>
+            <div class="chart-header">Fire Reports - Number of Injuries</div>
+
+            <!-- Time Period Selector -->
+            <div class="form-group">
+                <label for="timePeriod">Select Time Period:</label>
+                <select class="form-control" id="timePeriod">
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="monthSelector">Select Month:</label>
+                <select class="form-control" id="monthSelector">
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="chart-container standard-size">
+                <p>Number of Injuries</p>
+                <canvas id="injuriesChart"></canvas>
+            </div>
+        </div>
                 </div>
             </div>
         </div>
@@ -97,10 +126,12 @@
     </div>
 
     <script>
-        // Define functions to process data and set up charts
-
         // Function to calculate monthly incidents count
-        function calculateMonthlyIncidents(reports) {
+        function calculateMonthlyIncidents(reports = []) { 
+            if (!Array.isArray(reports)) {
+                console.error('Invalid data format. Expected an array.');
+                return [];
+            }
             return Array.from({ length: 12 }, (_, monthIndex) => {
                 const monthReports = reports.filter(report => new Date(report.report_date).getMonth() === monthIndex);
                 return monthReports.length;
@@ -108,20 +139,26 @@
         }
 
 // Function to calculate monthly damage costs
-function calculateDamageCosts(reports) {
-    const monthlyCosts = Array.from({ length: 12 }, () => 0);
+function calculateDamageCosts(reports = []) {
+    const monthlyCosts = Array.from({ length: 12 }, () => 0); // Initialize with 12 months
+
     reports.forEach(report => {
-        const propertyDamageCost = report.property_damage_cost;
-        // Check if property_damage_cost is a valid number
-        if (propertyDamageCost && !isNaN(parseFloat(propertyDamageCost))) {
-            const numericCost = parseFloat(propertyDamageCost);
-            const month = new Date(report.report_date).getMonth();
-            monthlyCosts[month] += numericCost;
+        // Check if property_damage_cost is a valid string and not "UNKNOWN"
+        if (report.property_damage_cost && typeof report.property_damage_cost === 'string' && report.property_damage_cost !== 'UNKNOWN') {
+            const matches = report.property_damage_cost.match(/\d+/g); // Extract all numeric values
+            if (matches) {
+                const totalCost = matches.map(Number).reduce((sum, num) => sum + num, 0); // Sum all numeric values
+                const month = new Date(report.report_date).getMonth(); // Get the month from report_date
+                monthlyCosts[month] += totalCost; // Add the total cost to the corresponding month
+            } else {
+                console.warn(`Could not extract number from property_damage_cost: ${report.property_damage_cost}`);
+            }
         } else {
-            console.warn(`Skipping invalid property_damage_cost: ${propertyDamageCost}`);
+            console.warn(`Invalid or missing property_damage_cost in report:`, report);
         }
     });
-    return { monthlyCosts };
+
+    return { monthlyCosts: monthlyCosts };
 }
 
         // Function to calculate cause percentages
@@ -142,34 +179,9 @@ function calculateDamageCosts(reports) {
             return causePercentages;
         }
 
-// Function to calculate monthly injuries count
-function calculateMonthlyInjuries(reports) {
-    const monthlyInjuries = Array.from({ length: 12 }, () => 0);
-
-    reports.forEach(report => {
-        const reportDate = new Date(report.report_date);
-        if (isNaN(reportDate)) {
-            console.warn(`Invalid report_date: ${report.report_date}`);
-        }
-        const monthIndex = reportDate.getMonth();
-        const injuries = report.number_of_injuries;
-
-        // Ensure injuries is a valid number
-        if (injuries !== null && !isNaN(parseInt(injuries, 10))) {
-            const parsedInjuries = parseInt(injuries, 10);
-            monthlyInjuries[monthIndex] += parsedInjuries;
-        } else {
-            console.warn(`Skipping invalid number_of_injuries: ${injuries}`);
-        }
-    });
-
-    console.log("Injuries Data for Chart:", monthlyInjuries);
-    return monthlyInjuries;
-}
-
         // Fetch data and render charts on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
-            fetch('graph/getReports')
+            fetch('/graph/getReports')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -177,166 +189,242 @@ function calculateMonthlyInjuries(reports) {
         return response.json();
     })
     .then(reports => {
-        console.log('Fetched reports:', reports); // Check if reports have number_of_injuries data
+        console.log('Fetched reports:', reports); // Log the reports to see what data is coming in
 
-        // Process and render chart data
-        const monthlyInjuries = calculateMonthlyInjuries(reports);
-        renderMonthlyInjuriesChart(monthlyInjuries);
+        if (!Array.isArray(reports)) {
+            throw new Error('Invalid data format. Expected an array.');
+        }
+
+        // Process data
+        const monthlyIncidents = calculateMonthlyIncidents(reports);
+        const damageCosts = calculateDamageCosts(reports);
+        const causePercentages = calculateCausePercentages(reports);
+        
+        // Render charts
+        renderMonthlyBarChart(monthlyIncidents);
+        renderDamageLineChart(damageCosts);
+        renderCausePieChart(causePercentages);
     })
     .catch(error => {
         console.error('Error fetching or processing data:', error);
     });
 
 
-        // Function to render monthly incidents bar chart
-        function renderMonthlyBarChart(monthlyIncidents) {
-            const ctx = document.getElementById('monthlyBarChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                    datasets: [{
-                        label: 'Number of Fire Incidents',
-                        data: monthlyIncidents,
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+            function renderMonthlyBarChart(monthlyIncidents) {
+                const ctx = document.getElementById('monthlyBarChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                        datasets: [{
+                            label: 'Number of Fire Incidents',
+                            data: monthlyIncidents,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
                     },
-                    scales: {
-                        x: {
-                            grid: {
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
                                 display: false
                             }
                         },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Function to render damage costs line chart
-        function renderDamageLineChart(damageCosts) {
-            const ctx = document.getElementById('damageLineChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                    datasets: [{
-                        label: 'Property Damage Cost',
-                        data: damageCosts.monthlyCosts,
-                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value, index, values) {
-                                    return '₱' + value.toLocaleString();
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
                                 }
                             }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        // Function to render cause pie chart
-        function renderCausePieChart(causePercentages) {
-            const ctx = document.getElementById('causePieChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(causePercentages),
-                    datasets: [{
-                        label: 'Cause of Fire Incidents',
-                        data: Object.values(causePercentages),
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(54, 162, 235, 0.5)',
-                            'rgba(255, 206, 86, 0.5)',
-                            'rgba(75, 192, 192, 0.5)',
-                            'rgba(153, 102, 255, 0.5)',
-                            'rgba(255, 159, 64, 0.5)',
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(54, 162, 235, 0.5)',
-                            'rgba(255, 206, 86, 0.5)',
-                            'rgba(75, 192, 192, 0.5)',
-                            'rgba(153, 102, 255, 0.5)',
-                            'rgba(255, 159, 64, 0.5)'
-                        ],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'right'
+            function renderDamageLineChart(damageCosts) {
+                const ctx = document.getElementById('damageLineChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                        datasets: [{
+                            label: 'Property Damage Cost',
+                            data: damageCosts.monthlyCosts,
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value, index, values) {
+                                        return '₱' + value.toLocaleString();
+                                    }
+                                }
+                            }
                         }
                     }
+                });
+            }
+
+            function renderCausePieChart(causePercentages) {
+                const ctx = document.getElementById('causePieChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(causePercentages),
+                        datasets: [{
+                            label: 'Cause of Fire Incidents',
+                            data: Object.values(causePercentages),
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.5)',
+                                'rgba(54, 162, 235, 0.5)',
+                                'rgba(255, 206, 86, 0.5)',
+                                'rgba(75, 192, 192, 0.5)',
+                                'rgba(153, 102, 255, 0.5)',
+                                'rgba(255, 159, 64, 0.5)',
+                                'rgba(255, 99, 132, 0.5)',
+                                'rgba(54, 162, 235, 0.5)',
+                                'rgba(255, 206, 86, 0.5)',
+                                'rgba(75, 192, 192, 0.5)',
+                                'rgba(153, 102, 255, 0.5)',
+                                'rgba(255, 159, 64, 0.5)'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        // Function for handling injuries chart with time period and month selectors
+        document.addEventListener('DOMContentLoaded', function () {
+            const timePeriodSelector = document.getElementById('timePeriod');
+            const monthSelector = document.getElementById('monthSelector'); 
+            const injuriesChartElement = document.getElementById('injuriesChart').getContext('2d');
+            let injuriesChart;
+
+            // Initial fetch with the default 'weekly' time period and selected month
+            fetchDataAndRenderChart('weekly', monthSelector.value);
+
+            timePeriodSelector.addEventListener('change', function () {
+                const selectedTimePeriod = timePeriodSelector.value;
+                const selectedMonth = selectedTimePeriod === 'weekly' ? monthSelector.value : null;
+
+                if (selectedTimePeriod === 'weekly') {
+                    monthSelector.parentElement.style.display = 'block';
+                } else {
+                    monthSelector.parentElement.style.display = 'none';
+                }
+
+                fetchDataAndRenderChart(selectedTimePeriod, selectedMonth);
+            });
+
+            monthSelector.addEventListener('change', function () {
+                const selectedTimePeriod = timePeriodSelector.value;
+                if (selectedTimePeriod === 'weekly') {
+                    const selectedMonth = monthSelector.value;
+                    fetchDataAndRenderChart(selectedTimePeriod, selectedMonth);
                 }
             });
-        }
 
-        function renderMonthlyInjuriesChart(monthlyInjuries) {
-    const ctx = document.getElementById('monthlyInjuriesChart').getContext('2d');
-    console.log("Injuries Data for Chart:", monthlyInjuries); // Debugging log
+            function getWeekRanges(month) {
+                const daysInMonth = new Date(new Date().getFullYear(), month, 0).getDate();
+                const weeks = [];
+                let startDay = 1;
 
-    new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        datasets: [{
-            label: 'Number of Injuries',
-            data: monthlyInjuries, // This should be valid data
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    precision: 0 // Ensure integer values
+                for (let week = 1; startDay <= daysInMonth; week++) {
+                    let endDay = Math.min(startDay + 6, daysInMonth);
+                    weeks.push(`Week ${week} (Day ${startDay}-${endDay})`);
+                    startDay += 7;
                 }
+
+                return weeks;
             }
-        }
-    }
-});
 
-}
+            function fetchDataAndRenderChart(timePeriod, month = null) {
+                let url = `/graph/getReport?timePeriod=${timePeriod}`;
+                if (month) {
+                    url += `&month=${month}`;
+                }
 
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (injuriesChart) {
+                            injuriesChart.destroy();
+                        }
+
+                        let labels = [];
+                        if (timePeriod === 'weekly' && month) {
+                            const monthIndex = new Date(Date.parse(month + " 1, 2022")).getMonth() + 1;
+                            labels = getWeekRanges(monthIndex);
+                        } else {
+                            labels = Object.keys(data);
+                        }
+
+                        injuriesChart = new Chart(injuriesChartElement, {
+                            type: timePeriod === 'yearly' ? 'line' : 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: `Number of Injuries (${timePeriod})`,
+                                    data: Object.values(data),
+                                    backgroundColor: 'rgb(179, 0, 0)',
+                                    borderColor: 'rgb(77, 0, 0)',
+                                    borderWidth: 3
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    x: {
+                                        grid: { display: false }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            precision: 0
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching or processing data:', error);
+                    });
+            }
+        });
     </script>
 </body>
 </html>
