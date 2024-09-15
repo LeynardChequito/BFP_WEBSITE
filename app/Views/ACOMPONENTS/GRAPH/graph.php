@@ -106,16 +106,27 @@
             });
         }
 
-        // Function to calculate monthly damage costs
-        function calculateDamageCosts(reports) {
-            const monthlyCosts = Array.from({ length: 12 }, () => 0);
-            reports.forEach(report => {
-                const numericCost = parseInt(report.property_damage_cost.match(/\d+/)[0]);
+// Function to calculate monthly damage costs
+function calculateDamageCosts(reports) {
+    const monthlyCosts = Array.from({ length: 12 }, () => 0);
+    reports.forEach(report => {
+        if (report.property_damage_cost && typeof report.property_damage_cost === 'string') {
+            // Try to extract a numeric value from the cost string
+            const costMatch = report.property_damage_cost.match(/\d+/);
+            if (costMatch) {
+                const numericCost = parseInt(costMatch[0], 10); // Extract and parse the first number found
                 const month = new Date(report.report_date).getMonth();
                 monthlyCosts[month] += numericCost;
-            });
-            return { monthlyCosts: monthlyCosts };
+            } else {
+                console.warn(`No valid number found in property_damage_cost: ${report.property_damage_cost}`);
+            }
+        } else {
+            console.warn(`Invalid property_damage_cost format: ${report.property_damage_cost}`);
         }
+    });
+    return { monthlyCosts: monthlyCosts };
+}
+
 
         // Function to calculate cause percentages
         function calculateCausePercentages(reports) {
