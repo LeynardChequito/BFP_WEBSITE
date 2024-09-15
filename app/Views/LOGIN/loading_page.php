@@ -32,7 +32,6 @@
             font-size: 50px;
             color: white;
             margin-top: 10px;
-            margin-bottom: 50px;
             font-weight:bold;
         }
 
