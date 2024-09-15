@@ -114,8 +114,7 @@
         /* Media query for background image */
         @media screen and (max-width: 420px) {
             body {
-                background-image: none;
-                /* Remove background image */
+                background-image: url('/bfpcalapancity/public/images/bglog.jpg');
             }
         }
     </style>
