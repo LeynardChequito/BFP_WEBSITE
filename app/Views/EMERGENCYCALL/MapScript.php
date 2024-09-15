@@ -5,7 +5,7 @@
     }
 
     // Set interval to reload the site every 10 minutes (10minutes * 60 * 1000 milliseconds)
-    setInterval(reloadSite, 10 * 60 * 1000);
+    setInterval(reloadSite, 5 * 60 * 1000);
 
     // Function to update time display every second 
     function updateTime() {
@@ -363,120 +363,174 @@ function toRadians(degrees) {
     });
     
     // Function to track and remove submitted reports
-function markReportAsSubmitted(reportId) {
-    let submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
+// Function to add task to the DOM (For Task List)
+function addTaskToDOM(taskText, checked = false) {
+    const taskList = document.getElementById('task-list');
+    const newTask = document.createElement('li');
+    newTask.className = 'list-group-item d-flex justify-content-between align-items-center';
+    newTask.innerHTML = `
+        <span>${taskText}</span>
+        <div>
+            <label class="me-2" style="margin-left: 30px;">
+                <input type="checkbox" class="form-check-input me-2" ${checked ? 'checked' : ''}> On Process
+            </label>
+            <button class="btn btn-danger btn-sm" style="margin-left: 10px;" onclick="removeTask(this)">Done</button>
+        </div>
+    `;
+    taskList.appendChild(newTask);
+}
 
-    // Add the current report to the list of submitted reports
-    if (!submittedReports.includes(reportId)) {
-        submittedReports.push(reportId);
-        localStorage.setItem('submittedReports', JSON.stringify(submittedReports));
-        console.log("Report marked as submitted:", reportId);
+// Function to add a new task
+function addTask() {
+    const taskText = document.getElementById('new-task').value;
+    if (taskText === '') {
+        alert('Please enter a task');
+        return;
     }
+    addTaskToDOM(taskText);
+    saveTasks(); // Save tasks to localStorage
+    document.getElementById('new-task').value = ''; // Clear input field
+}
 
-    // Remove the report from the list on the page
-    const reportItem = document.getElementById(`report-${reportId}`);
-    if (reportItem) {
-        reportItem.remove();
-        console.log("Report removed from UI:", reportId);
+// Function to remove a task with confirmation
+function removeTask(button) {
+    const confirmation = confirm("Are you sure you want to mark this task as done?");
+    if (confirmation) {
+        const taskItem = button.closest('li');
+        taskItem.remove();
+        saveTasks(); // Save tasks to localStorage after removal
     }
 }
 
-// Function to check if a report has been submitted
-function isReportSubmitted(reportId) {
+// Function to save tasks to localStorage
+function saveTasks() {
+    const taskList = document.querySelectorAll('#task-list li');
+    const tasks = [];
+    taskList.forEach(task => {
+        tasks.push({
+            text: task.querySelector('span').textContent,
+            checked: task.querySelector('input').checked
+        });
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// Function to load tasks from localStorage
+function loadTasks() {
+    const savedTasks = localStorage.getItem('tasks');
+    if (savedTasks) {
+        const tasks = JSON.parse(savedTasks);
+        tasks.forEach(task => {
+            addTaskToDOM(task.text, task.checked);
+        });
+    }
+}
+
+// Listen for changes to checkboxes and save state
+document.addEventListener('change', function (e) {
+    if (e.target && e.target.type === 'checkbox') {
+        saveTasks(); // Save tasks to localStorage on checkbox toggle
+    }
+});
+
+// Load tasks when the page is loaded
+document.addEventListener('DOMContentLoaded', function () {
+    loadTasks();
+});
+
+// Function to remove a report notification with confirmation
+function removeNotification(reportId) {
+    const confirmation = confirm("Are you sure you want to remove this notification?");
+    if (confirmation) {
+        // Mark the report as removed (store the ID in localStorage)
+        markReportAsRemoved(reportId);
+
+        // Remove the report from the UI
+        const reportItem = document.getElementById(`report-${reportId}`);
+        if (reportItem) {
+            reportItem.remove();
+        }
+    }
+}
+
+// Function to check if a report has been submitted (already marked as handled)
+function isReportSubmitted(communityreport_id) {
     const submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
-    return submittedReports.includes(reportId);
+    return submittedReports.includes(communityreport_id);
+}
+// Function to check if a report has been removed
+function isReportRemoved(reportId) {
+    const removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
+    return removedReports.includes(reportId);
 }
 
-// Function to get recent reports and exclude already submitted ones
-async function getRecentReports() { 
-    try { 
-        const newReportsList = document.getElementById('newReportsList'); 
-        const sirenSound = document.getElementById('sirenSound'); 
+// Function to store removed reports in localStorage to avoid fetching them again
+function markReportAsRemoved(reportId) {
+    let removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
 
-        const response = await fetch('https://bfpcalapancity.online/reports-recent'); 
-        const data = await response.json(); 
+    if (!removedReports.includes(reportId)) {
+        removedReports.push(reportId);
+        localStorage.setItem('removedReports', JSON.stringify(removedReports));
+    }
+}
+// Function to get recent reports from the database and display them
+async function getRecentReports() {
+    try {
+        const newReportsList = document.getElementById('newReportsList');
+        const sirenSound = document.getElementById('sirenSound');
+        const response = await fetch('https://bfpcalapancity.online/reports-recent');
+        const data = await response.json();
 
-        if (response.ok && Array.isArray(data)) { 
-            let newReportsReceived = false; 
+        if (response.ok && Array.isArray(data)) {
+            let newReportsReceived = false;
 
-            // Clear previous content 
-            newReportsList.innerHTML = ''; 
+            newReportsList.innerHTML = ''; // Clear previous reports
 
-            data.forEach(report => { 
-                const reportId = report.id; 
-                if (!isReportSubmitted(reportId)) { 
-                    newReportsReceived = true; 
-                    const { latitude, longitude, fullName, fileproof, timestamp } = report; 
+            data.forEach(report => {
+                const reportId = report.id;
 
-                    let fileProofContent = ''; 
-                    const fullURL = `bfpcalapancity/public/community_report/${fileproof}`; 
-                    if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) { 
-                        fileProofContent = `<video src="${fullURL}" controls class="file-proof-video"></video>`; 
-                    } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) { 
-                        fileProofContent = `<img src="${fullURL}" alt="File Proof" class="file-proof-image">`; 
-                    } else { 
-                        fileProofContent = "Unsupported file type"; 
-                    } 
-
-                    const listItem = document.createElement('li'); 
-                    listItem.classList.add('list-group-item'); 
-                    listItem.id = `report-${reportId}`; 
-
-                    listItem.innerHTML = ` 
-                        <div style="padding: 10px; border-radius: 5px;"> 
-                            <h4>User in Need: ${fullName}</h4> 
-                            <p><strong>Timestamp:</strong> ${timestamp}</p> 
-                            <p style="margin-bottom: 5px;"><strong>File Proof:</strong></p> 
-                            <div class="fileProofContainer" style="margin-bottom: 10px;">${fileProofContent}</div> 
+                // Skip rendering if the report has been removed
+                if (!isReportRemoved(reportId)) {
+                    newReportsReceived = true;
+                    const { latitude, longitude, fullName, fileproof, timestamp } = report;
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('list-group-item');
+                    listItem.id = `report-${reportId}`;
+                    listItem.innerHTML = `
+                        <div style="padding: 10px; border-radius: 5px;">
+                            <h4>User in Need: ${fullName}</h4>
+                            <p><strong>Timestamp:</strong> ${timestamp}</p>
+                            <p><strong>File Proof:</strong></p>
+                            <div class="fileProofContainer" style="margin-bottom: 10px;">
+                                <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
+                            </div>
+                            <button class="btn btn-primary" onclick="removeNotification(${reportId})">Remove Notification</button>
                             <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
                             <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
-                        </div> 
-                    `; 
-                    newReportsList.appendChild(listItem); 
+                        </div>
+                    `;
+                    newReportsList.appendChild(listItem);
+                }
+            });
 
-                    const marker = L.marker([latitude, longitude], { 
-                        icon: userMarker 
-                    }).addTo(map); 
-                    const popupContent = ` 
-                        <div class="popup-content"> 
-                            <h4>User in Need: ${fullName}</h4> 
-                            <p><strong>Timestamp:</strong> ${timestamp}</p> 
-                        </div> 
-                    `; 
-                    marker.bindPopup(popupContent); 
-                } 
-            }); 
-
-            if (newReportsReceived) { 
-                // Play sound only after a user interaction (e.g., button click)
-                const playSound = () => {
-                    sirenSound.play().catch(error => {
-                        console.error('Siren sound failed to play:', error);
-                    });
-                };
-                
-                // Ensure sound only plays when user clicks or interacts
-                document.addEventListener('click', playSound, { once: true });
-            } else { 
-                console.log("No new reports found or all submitted reports are hidden."); 
-            } 
-        } else { 
-            console.error('Failed to fetch recent reports:', response.statusText); 
-        } 
-    } catch (error) { 
-        console.error('Error fetching recent reports:', error); 
-    } 
+            if (newReportsReceived) {
+                document.addEventListener('click', () => sirenSound.play(), { once: true });
+            }
+        } else {
+            console.error('Failed to fetch recent reports:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error fetching recent reports:', error);
+    }
 }
-
-
-// Function to simulate submitting the report and mark it as submitted
-function submitReportForm(lat, lng, reportId) {
+// Function to mark a report as submitted
+function submitReportForm(lat, lng, communityreport_id) {
     // Simulate the form submission (you can change the URL if needed)
-    console.log("Form submission for report:", reportId);
-    window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&reportId=${reportId}`;
+    console.log("Form submission for report:", communityreport_id);
+    window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
 
     // Mark this report as submitted
-    markReportAsSubmitted(reportId);
+    markReportAsSubmitted(communityreport_id);
 }
 
 
@@ -562,7 +616,6 @@ async function updateRoute() {
             alert("There was a problem calculating the route. Please try again.");
         }
     }
-
 
    document.addEventListener('DOMContentLoaded', function () {
     getRecentReports(); // Fetch new reports when the page loads
