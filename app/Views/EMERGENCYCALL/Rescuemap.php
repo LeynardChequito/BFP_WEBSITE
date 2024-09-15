@@ -870,6 +870,8 @@ async function getRecentReports() {
                                 <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
                             </div>
                             <button class="btn btn-primary" onclick="removeNotification(${reportId})">Remove Notification</button>
+                                                        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
+                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
                         </div>
                     `;
                     newReportsList.appendChild(listItem);
