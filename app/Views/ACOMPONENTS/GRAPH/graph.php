@@ -106,13 +106,12 @@
             });
         }
 
-        // Function to calculate monthly damage costs
- // Function to calculate monthly damage costs
+// Function to calculate monthly damage costs
 function calculateDamageCosts(reports) {
     const monthlyCosts = Array.from({ length: 12 }, () => 0);
     reports.forEach(report => {
         if (report.property_damage_cost && typeof report.property_damage_cost === 'string') {
-            // Try to extract a numeric value from the cost string
+            // Check if the cost is a valid number, ignore cases like 'UNKNOWN'
             const costMatch = report.property_damage_cost.match(/\d+/);
             if (costMatch) {
                 const numericCost = parseInt(costMatch[0], 10); // Extract and parse the first number found
@@ -154,22 +153,20 @@ function calculateMonthlyInjuries(reports) {
     reports.forEach(report => {
         const monthIndex = new Date(report.report_date).getMonth();
 
-        // If number_of_injuries is not null or undefined, attempt to parse it
+        // Check if the number_of_injuries is valid and parse it
         if (report.number_of_injuries !== null && report.number_of_injuries !== undefined) {
+            // Attempt to parse number_of_injuries if it's a string or use directly if it's already a number
             const injuries = parseInt(report.number_of_injuries, 10);
-
             if (!isNaN(injuries)) {
                 monthlyInjuries[monthIndex] += injuries;
             } else {
-                console.warn(`Invalid format for number_of_injuries: ${report.number_of_injuries}`);
+                console.warn(`Unexpected format for number_of_injuries: ${report.number_of_injuries}`);
             }
         }
     });
 
     return monthlyInjuries;
 }
-
-
 
         // Fetch data and render charts on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
