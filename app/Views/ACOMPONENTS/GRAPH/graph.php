@@ -159,42 +159,30 @@ function calculateMonthlyInjuries(reports) {
         }
     });
 
+    console.log("Monthly Injuries Data:", monthlyInjuries); // Debugging log
     return monthlyInjuries;
 }
 
         // Fetch data and render charts on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
             fetch('graph/getReports')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(reports => {
-                    console.log('Fetched reports:', reports);
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(reports => {
+        console.log('Fetched reports:', reports); // Check if reports have number_of_injuries data
 
-                    // Process data
-                    const monthlyIncidents = calculateMonthlyIncidents(reports);
-                    const damageCosts = calculateDamageCosts(reports);
-                    const causePercentages = calculateCausePercentages(reports);
-                    const monthlyInjuries = calculateMonthlyInjuries(reports); // Calculate injuries data
+        // Process and render chart data
+        const monthlyInjuries = calculateMonthlyInjuries(reports);
+        renderMonthlyInjuriesChart(monthlyInjuries);
+    })
+    .catch(error => {
+        console.error('Error fetching or processing data:', error);
+    });
 
-                    console.log('Monthly Incidents:', monthlyIncidents);
-                    console.log('Damage Costs:', damageCosts);
-                    console.log('Cause Percentages:', causePercentages);
-                    console.log('Monthly Injuries:', monthlyInjuries);
-
-                    // Render charts
-                    renderMonthlyBarChart(monthlyIncidents);
-                    renderDamageLineChart(damageCosts);
-                    renderCausePieChart(causePercentages);
-                    renderMonthlyInjuriesChart(monthlyInjuries); // Render injuries chart
-                })
-                .catch(error => {
-                    console.error('Error fetching or processing data:', error);
-                });
-        });
 
         // Function to render monthly incidents bar chart
         function renderMonthlyBarChart(monthlyIncidents) {
@@ -314,9 +302,10 @@ function calculateMonthlyInjuries(reports) {
             });
         }
 
-        // Function to render monthly injuries bar chart
-function renderMonthlyInjuriesChart(monthlyInjuries) {
+        function renderMonthlyInjuriesChart(monthlyInjuries) {
     const ctx = document.getElementById('monthlyInjuriesChart').getContext('2d');
+    console.log("Injuries Data for Chart:", monthlyInjuries); // Debugging log
+
     new Chart(ctx, {
         type: 'bar',
         data: {
@@ -352,6 +341,7 @@ function renderMonthlyInjuriesChart(monthlyInjuries) {
         }
     });
 }
+
     </script>
 </body>
 </html>
