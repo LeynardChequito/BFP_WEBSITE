@@ -377,7 +377,7 @@
     }
 
     // Set interval to reload the site every 10 minutes (10minutes * 60 * 1000 milliseconds)
-    setInterval(reloadSite, 10 * 60 * 1000);
+    setInterval(reloadSite, 5 * 60 * 1000);
 
     // Function to update time display every second 
     function updateTime() {
