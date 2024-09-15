@@ -367,7 +367,7 @@
     </div>
 </div>
 
-<audio id="sirenSound" src="bfpcalapancity/public/alarm.mp3" preload="auto"></audio>
+<audio id="sirenSound" src="bfpcalapancity/public/alarm.mp3" preload=""></audio>
 
     
 <script>
