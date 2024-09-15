@@ -147,31 +147,35 @@ function calculateDamageCosts(reports) {
             return causePercentages;
         }
 
-        // Function to calculate monthly injuries count
-        function calculateMonthlyInjuries(reports) {
-            const monthlyInjuries = Array.from({ length: 12 }, () => 0);
+// Function to calculate monthly injuries count
+function calculateMonthlyInjuries(reports) {
+    const monthlyInjuries = Array.from({ length: 12 }, () => 0);
 
-            reports.forEach(report => {
-                const monthIndex = new Date(report.report_date).getMonth();
+    reports.forEach(report => {
+        const monthIndex = new Date(report.report_date).getMonth();
 
-                if (report.number_of_injuries !== null && report.number_of_injuries !== undefined) {
-                    if (typeof report.number_of_injuries === 'number') {
-                        monthlyInjuries[monthIndex] += report.number_of_injuries;
-                    } else if (Array.isArray(report.number_of_injuries)) {
-                        if (report.number_of_injuries.every(item => typeof item === 'number')) {
-                            const totalInjuriesInReport = report.number_of_injuries.reduce((acc, val) => acc + val, 0);
-                            monthlyInjuries[monthIndex] += totalInjuriesInReport;
-                        } else {
-                            console.warn(`Unexpected array format for number_of_injuries: ${report.number_of_injuries}`);
-                        }
+        if (report.number_of_injuries !== null && report.number_of_injuries !== undefined) {
+            if (typeof report.number_of_injuries === 'number') {
+                monthlyInjuries[monthIndex] += report.number_of_injuries;
+            } else if (Array.isArray(report.number_of_injuries)) {
+                const totalInjuriesInReport = report.number_of_injuries.reduce((acc, val) => {
+                    if (typeof val === 'number') {
+                        return acc + val;
                     } else {
-                        console.warn(`Unexpected format for number_of_injuries: ${report.number_of_injuries}`);
+                        console.warn(`Invalid injury number: ${val}`);
+                        return acc;
                     }
-                }
-            });
-
-            return monthlyInjuries;
+                }, 0);
+                monthlyInjuries[monthIndex] += totalInjuriesInReport;
+            } else {
+                console.warn(`Unexpected format for number_of_injuries: ${report.number_of_injuries}`);
+            }
         }
+    });
+
+    return monthlyInjuries;
+}
+
 
         // Fetch data and render charts on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
@@ -326,43 +330,43 @@ function calculateDamageCosts(reports) {
         }
 
         // Function to render monthly injuries bar chart
-        function renderMonthlyInjuriesChart(monthlyInjuries) {
-            const ctx = document.getElementById('monthlyInjuriesChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                    datasets: [{
-                        label: 'Number of Injuries',
-                        data: monthlyInjuries,
-                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
-                    }]
+function renderMonthlyInjuriesChart(monthlyInjuries) {
+    const ctx = document.getElementById('monthlyInjuriesChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            datasets: [{
+                label: 'Number of Injuries',
+                data: monthlyInjuries,
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
                     }
                 }
-            });
+            }
         }
+    });
+}
     </script>
 </body>
 </html>
