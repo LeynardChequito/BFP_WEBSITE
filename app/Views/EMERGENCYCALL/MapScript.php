@@ -504,12 +504,22 @@ async function getRecentReports() {
                             <div class="fileProofContainer" style="margin-bottom: 10px;">
                                 <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
                             </div>
-                            <button class="btn btn-primary" onclick="removeNotification(${reportId})">Remove Notification</button>
+                            // <button class="btn btn-primary" onclick="removeNotification(${reportId})">Remove Notification</button>
                             <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
                             <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
                         </div>
                     `;
                     newReportsList.appendChild(listItem);
+                    const marker = L.marker([latitude, longitude], {
+                        icon: userMarker
+                    }).addTo(map);
+                    const popupContent = `
+                        <div class="popup-content">
+                            <h4>User in Need: ${fullName}</h4>
+                            <p><strong>Timestamp:</strong> ${timestamp}</p>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
                 }
             });
 
