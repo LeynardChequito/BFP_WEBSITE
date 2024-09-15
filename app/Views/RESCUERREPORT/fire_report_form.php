@@ -197,7 +197,7 @@
 </div><br>
 
         <label for="number_of_injuries">Number of Casualties:</label>
-        <input type="number" name="number_of_injuries" id="number_of_injuries" placeholder="Enter the Number of Casulaties><br>
+        <input type="number" name="number_of_injuries" id="number_of_injuries" placeholder="Enter the Number of Casulaties>
 
         <label for="additional_information">Additional Information (optional):</label>
         <textarea name="additional_information" id="additional_information"></textarea><br>
