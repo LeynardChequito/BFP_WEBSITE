@@ -33,16 +33,19 @@ class GraphController extends BaseController
             // Ensure it's a float value
             $report['property_damage_cost'] = (float) $report['property_damage_cost'];
         }
-
+    }
+    foreach ($reports as &$report) {
         // Sanitize number_of_injuries
         if (!is_numeric($report['number_of_injuries'])) {
             $report['number_of_injuries'] = 0;
         } else {
-            // Ensure it's an integer value
             $report['number_of_injuries'] = (int) $report['number_of_injuries'];
         }
+    
+        // Debugging log
+        logger()->info('Sanitized Report:', $report);
     }
-
+    
     return $this->response->setJSON($reports);
 }
 

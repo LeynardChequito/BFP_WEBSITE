@@ -147,7 +147,11 @@ function calculateMonthlyInjuries(reports) {
     const monthlyInjuries = Array.from({ length: 12 }, () => 0);
 
     reports.forEach(report => {
-        const monthIndex = new Date(report.report_date).getMonth();
+        const reportDate = new Date(report.report_date);
+        if (isNaN(reportDate)) {
+            console.warn(`Invalid report_date: ${report.report_date}`);
+        }
+        const monthIndex = reportDate.getMonth();
         const injuries = report.number_of_injuries;
 
         // Ensure injuries is a valid number
@@ -159,7 +163,7 @@ function calculateMonthlyInjuries(reports) {
         }
     });
 
-    console.log("Monthly Injuries Data:", monthlyInjuries); // Debugging log
+    console.log("Injuries Data for Chart:", monthlyInjuries);
     return monthlyInjuries;
 }
 
@@ -307,39 +311,30 @@ function calculateMonthlyInjuries(reports) {
     console.log("Injuries Data for Chart:", monthlyInjuries); // Debugging log
 
     new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            datasets: [{
-                label: 'Number of Injuries',
-                data: monthlyInjuries,
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
+    type: 'bar',
+    data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        datasets: [{
+            label: 'Number of Injuries',
+            data: monthlyInjuries, // This should be valid data
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0 // Ensure integer values
                 }
             }
         }
-    });
+    }
+});
+
 }
 
     </script>
