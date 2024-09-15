@@ -158,12 +158,15 @@
                                 </div>
                             </div>
                         </div>
+    
+                        <hr style="background-color: #ff6666; height: 2px; border: none;">
 
                         <ul class="list-group list-group-flush" id="task-list">
                             <!-- Tasks will be populated dynamically -->
                         </ul>
 
                         <div class="card-body">
+                            <h5 class="card-title">TO DO LISTS</h5>
                             <input type="text" id="new-task" class="form-control mb-2" placeholder="Add a new task">
                             <button class="btn btn-primary" onclick="addTask()">Add Task</button>
                         </div>
