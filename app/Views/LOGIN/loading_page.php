@@ -12,8 +12,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f3f4f6;
-            font-family: Arial, sans-serif;
+            background: linear-gradient(#1a0000, #4d0000,#990000, #cc0000,#ff1a1a, #ff6666,#ffb3b3);
+            font-family: Arial, Helvetica, sans-serif,
+            Papyrus, fantasy;
             flex-direction: column;
         }
 
@@ -29,19 +30,20 @@
 
         .bfp-name {
             font-size: 50px;
-            color: blue; /* Color for Bureau of Fire Protection */
+            color: white;
             margin-top: 10px;
-            font-weight:lighter;
+            margin-bottom: 50px;
+            font-weight:bold;
         }
 
         .spinner {
-            border: 16px solid #f3f4f6;
-            border-top: 16px solid #d72631;
+            border: 5px solid #f3f4f6;
+            border-top: 5px solid #d72631;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 2s linear infinite;
-            margin-top: 30px;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-top: 150px;
         }
 
         @keyframes spin {
@@ -52,7 +54,7 @@
         .loading-text {
             margin-top: 20px;
             font-size: 18px;
-            color: #333;
+            color: #595959;
             letter-spacing: 1px;
         }
     </style>
@@ -60,14 +62,14 @@
         // Redirect to the login route after 3 seconds
         setTimeout(function() {
             window.location.href = "/login";
-        }, 3000);
+        }, 5000);
     </script>
 </head>
 <body>
 
 <div class="logo-container">
     <img src="bfpcalapancity/public/design/logo.png" alt="Bureau of Fire Protection Logo">
-    <div class="bfp-name">Bureau of Fire Protection</div>
+    <div class="bfp-name">BUREAU OF FIRE PROTECTION</div>
 </div>
 
 <div class="spinner"></div>
