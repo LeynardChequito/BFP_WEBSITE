@@ -811,37 +811,39 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Function to remove a report notification with confirmation
-function removeNotification(communityreport_id) {
+function removeNotification(reportId) {
     const confirmation = confirm("Are you sure you want to remove this notification?");
     if (confirmation) {
         // Mark the report as removed (store the ID in localStorage)
-        markReportAsRemoved(communityreport_id);
+        markReportAsRemoved(reportId);
 
         // Remove the report from the UI
-        const reportItem = document.getElementById(`report-${communityreport_id}`);
+        const reportItem = document.getElementById(`report-${reportId}`);
         if (reportItem) {
             reportItem.remove();
         }
     }
 }
-// Function to store removed reports in localStorage to avoid fetching them again
-function markReportAsRemoved(communityreport_id) {
-    let removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
 
-    if (!removedReports.includes(communityreport_id)) {
-        removedReports.push(communityreport_id);
-        localStorage.setItem('removedReports', JSON.stringify(removedReports));
-    }
-}
 // Function to check if a report has been submitted (already marked as handled)
 function isReportSubmitted(communityreport_id) {
     const submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
     return submittedReports.includes(communityreport_id);
 }
 // Function to check if a report has been removed
-function isReportRemoved(communityreport_id) {
+function isReportRemoved(reportId) {
     const removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
-    return removedReports.includes(communityreport_id);
+    return removedReports.includes(reportId);
+}
+
+// Function to store removed reports in localStorage to avoid fetching them again
+function markReportAsRemoved(reportId) {
+    let removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
+
+    if (!removedReports.includes(reportId)) {
+        removedReports.push(reportId);
+        localStorage.setItem('removedReports', JSON.stringify(removedReports));
+    }
 }
 // Function to get recent reports from the database and display them
 async function getRecentReports() {
@@ -857,15 +859,15 @@ async function getRecentReports() {
             newReportsList.innerHTML = ''; // Clear previous reports
 
             data.forEach(report => {
-                const communityreport_id = report.id;
+                const reportId = report.id;
 
                 // Skip rendering if the report has been removed
-                if (!isReportRemoved(communityreport_id) && !isReportSubmitted(communityreport_id)) {
+                if (!isReportRemoved(reportId)) {
                     newReportsReceived = true;
                     const { latitude, longitude, fullName, fileproof, timestamp } = report;
                     const listItem = document.createElement('li');
                     listItem.classList.add('list-group-item');
-                    listItem.id = `report-${communityreport_id}`;
+                    listItem.id = `report-${reportId}`;
                     listItem.innerHTML = `
                         <div style="padding: 10px; border-radius: 5px;">
                             <h4>User in Need: ${fullName}</h4>
@@ -874,9 +876,9 @@ async function getRecentReports() {
                             <div class="fileProofContainer" style="margin-bottom: 10px;">
                                 <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
                             </div>
-                            <button class="btn btn-primary" onclick="removeNotification(${communityreport_id})">Remove Notification</button>
+                            <button class="btn btn-primary" onclick="removeNotification(${reportId})">Remove Notification</button>
                             <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
-                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">Submit Fire Report</button> 
+                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
                         </div>
                     `;
                     newReportsList.appendChild(listItem);
