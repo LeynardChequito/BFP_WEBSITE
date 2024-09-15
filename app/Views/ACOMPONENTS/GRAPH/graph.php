@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,26 +32,38 @@
         }
 
         .chart-container.standard-size {
-            height: 300px; /* Standard size for other charts */
+            height: 300px;
+            /* Standard size for other charts */
         }
 
         .chart-container.large-size {
-            height: 400px; /* Increased size for the pie chart */
+            height: 400px;
+            /* Increased size for the pie chart */
+        }
+        .chart-container.extralarge-size {
+            height: 550px;
+            /* Increased size for the pie chart */
         }
 
         .chart-container canvas {
             max-height: 100%;
-            max-width: 100%; /* Ensure the canvas fits within the container */
+            max-width: 100%;
+            /* Ensure the canvas fits within the container */
         }
 
         .chart-header {
-            font-size: 2rem; /* Increase font size */
-            font-weight: bold; /* Make the text bold */
-            text-align: center; /* Center the text */
-            margin-bottom: 40px; /* Add space below the header */
+            font-size: 2rem;
+            /* Increase font size */
+            font-weight: bold;
+            /* Make the text bold */
+            text-align: center;
+            /* Center the text */
+            margin-bottom: 40px;
+            /* Add space below the header */
         }
     </style>
 </head>
+
 <body>
     <!-- Include your header views -->
     <?= view('ACOMPONENTS/NEWS/adminnewsheader'); ?>
@@ -83,41 +96,43 @@
                         </div>
                     </div>
                     <div class="col-lg-6">
-            <div class="chart-header">Fire Reports - Number of Injuries</div>
+                        <div class="chart-container extralarge-size">
+                        <p>NUMBER OF CASUALTIES</p>
 
-            <!-- Time Period Selector -->
-            <div class="form-group">
-                <label for="timePeriod">Select Time Period:</label>
-                <select class="form-control" id="timePeriod">
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="monthSelector">Select Month:</label>
-                <select class="form-control" id="monthSelector">
-                    <option value="January">January</option>
-                    <option value="February">February</option>
-                    <option value="March">March</option>
-                    <option value="April">April</option>
-                    <option value="May">May</option>
-                    <option value="June">June</option>
-                    <option value="July">July</option>
-                    <option value="August">August</option>
-                    <option value="September">September</option>
-                    <option value="October">October</option>
-                    <option value="November">November</option>
-                    <option value="December">December</option>
-                </select>
-            </div>
+                        <!-- Time Period Selector -->
+                        <div class="form-group">
+                            <label for="timePeriod">Select Time Period:</label>
+                            <select class="form-control" id="timePeriod">
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="monthSelector">Select Month:</label>
+                            <select class="form-control" id="monthSelector">
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                        </div>
 
-            <!-- Chart Container -->
-            <div class="chart-container standard-size">
-                <p>Number of Injuries</p>
-                <canvas id="injuriesChart"></canvas>
-            </div>
-        </div>
+                        <!-- Chart Container -->
+                        <div class="chart-container standard-size">
+                            <p>Number of Injuries</p>
+                            <canvas id="injuriesChart"></canvas>
+                        </div>
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,39 +142,45 @@
 
     <script>
         // Function to calculate monthly incidents count
-        function calculateMonthlyIncidents(reports = []) { 
+        function calculateMonthlyIncidents(reports = []) {
             if (!Array.isArray(reports)) {
                 console.error('Invalid data format. Expected an array.');
                 return [];
             }
-            return Array.from({ length: 12 }, (_, monthIndex) => {
+            return Array.from({
+                length: 12
+            }, (_, monthIndex) => {
                 const monthReports = reports.filter(report => new Date(report.report_date).getMonth() === monthIndex);
                 return monthReports.length;
             });
         }
 
-// Function to calculate monthly damage costs
-function calculateDamageCosts(reports = []) {
-    const monthlyCosts = Array.from({ length: 12 }, () => 0); // Initialize with 12 months
+        // Function to calculate monthly damage costs
+        function calculateDamageCosts(reports = []) {
+            const monthlyCosts = Array.from({
+                length: 12
+            }, () => 0); // Initialize with 12 months
 
-    reports.forEach(report => {
-        // Check if property_damage_cost is a valid string and not "UNKNOWN"
-        if (report.property_damage_cost && typeof report.property_damage_cost === 'string' && report.property_damage_cost !== 'UNKNOWN') {
-            const matches = report.property_damage_cost.match(/\d+/g); // Extract all numeric values
-            if (matches) {
-                const totalCost = matches.map(Number).reduce((sum, num) => sum + num, 0); // Sum all numeric values
-                const month = new Date(report.report_date).getMonth(); // Get the month from report_date
-                monthlyCosts[month] += totalCost; // Add the total cost to the corresponding month
-            } else {
-                console.warn(`Could not extract number from property_damage_cost: ${report.property_damage_cost}`);
-            }
-        } else {
-            console.warn(`Invalid or missing property_damage_cost in report:`, report);
+            reports.forEach(report => {
+                // Check if property_damage_cost is a valid string and not "UNKNOWN"
+                if (report.property_damage_cost && typeof report.property_damage_cost === 'string' && report.property_damage_cost !== 'UNKNOWN') {
+                    const matches = report.property_damage_cost.match(/\d+/g); // Extract all numeric values
+                    if (matches) {
+                        const totalCost = matches.map(Number).reduce((sum, num) => sum + num, 0); // Sum all numeric values
+                        const month = new Date(report.report_date).getMonth(); // Get the month from report_date
+                        monthlyCosts[month] += totalCost; // Add the total cost to the corresponding month
+                    } else {
+                        console.warn(`Could not extract number from property_damage_cost: ${report.property_damage_cost}`);
+                    }
+                } else {
+                    console.warn(`Invalid or missing property_damage_cost in report:`, report);
+                }
+            });
+
+            return {
+                monthlyCosts: monthlyCosts
+            };
         }
-    });
-
-    return { monthlyCosts: monthlyCosts };
-}
 
         // Function to calculate cause percentages
         function calculateCausePercentages(reports) {
@@ -180,34 +201,34 @@ function calculateDamageCosts(reports = []) {
         }
 
         // Fetch data and render charts on DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             fetch('/graph/getReports')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(reports => {
-        console.log('Fetched reports:', reports); // Log the reports to see what data is coming in
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(reports => {
+                    console.log('Fetched reports:', reports); // Log the reports to see what data is coming in
 
-        if (!Array.isArray(reports)) {
-            throw new Error('Invalid data format. Expected an array.');
-        }
+                    if (!Array.isArray(reports)) {
+                        throw new Error('Invalid data format. Expected an array.');
+                    }
 
-        // Process data
-        const monthlyIncidents = calculateMonthlyIncidents(reports);
-        const damageCosts = calculateDamageCosts(reports);
-        const causePercentages = calculateCausePercentages(reports);
-        
-        // Render charts
-        renderMonthlyBarChart(monthlyIncidents);
-        renderDamageLineChart(damageCosts);
-        renderCausePieChart(causePercentages);
-    })
-    .catch(error => {
-        console.error('Error fetching or processing data:', error);
-    });
+                    // Process data
+                    const monthlyIncidents = calculateMonthlyIncidents(reports);
+                    const damageCosts = calculateDamageCosts(reports);
+                    const causePercentages = calculateCausePercentages(reports);
+
+                    // Render charts
+                    renderMonthlyBarChart(monthlyIncidents);
+                    renderDamageLineChart(damageCosts);
+                    renderCausePieChart(causePercentages);
+                })
+                .catch(error => {
+                    console.error('Error fetching or processing data:', error);
+                });
 
 
             function renderMonthlyBarChart(monthlyIncidents) {
@@ -219,8 +240,8 @@ function calculateDamageCosts(reports = []) {
                         datasets: [{
                             label: 'Number of Fire Incidents',
                             data: monthlyIncidents,
-                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgb(0, 123, 255)', // Dark Blue
+                            borderColor: 'rgb(0, 123, 255)', // Dark Blue Border
                             borderWidth: 1
                         }]
                     },
@@ -257,9 +278,9 @@ function calculateDamageCosts(reports = []) {
                         datasets: [{
                             label: 'Property Damage Cost',
                             data: damageCosts.monthlyCosts,
-                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            tension: 0.1
+                            backgroundColor: 'rgb(255, 69, 0)', // Dark Red
+                            borderColor: 'rgb(255, 69, 0)', // Dark Red Border
+                            tension: 0.001
                         }]
                     },
                     options: {
@@ -278,7 +299,7 @@ function calculateDamageCosts(reports = []) {
                             y: {
                                 beginAtZero: true,
                                 ticks: {
-                                    callback: function (value, index, values) {
+                                    callback: function(value, index, values) {
                                         return '₱' + value.toLocaleString();
                                     }
                                 }
@@ -298,18 +319,18 @@ function calculateDamageCosts(reports = []) {
                             label: 'Cause of Fire Incidents',
                             data: Object.values(causePercentages),
                             backgroundColor: [
-                                'rgba(255, 99, 132, 0.5)',
-                                'rgba(54, 162, 235, 0.5)',
-                                'rgba(255, 206, 86, 0.5)',
-                                'rgba(75, 192, 192, 0.5)',
-                                'rgba(153, 102, 255, 0.5)',
-                                'rgba(255, 159, 64, 0.5)',
-                                'rgba(255, 99, 132, 0.5)',
-                                'rgba(54, 162, 235, 0.5)',
-                                'rgba(255, 206, 86, 0.5)',
-                                'rgba(75, 192, 192, 0.5)',
-                                'rgba(153, 102, 255, 0.5)',
-                                'rgba(255, 159, 64, 0.5)'
+                                'rgb(255, 99, 132)', // Vibrant Red
+                                'rgb(54, 162, 235)', // Bright Blue
+                                'rgb(255, 206, 86)', // Bright Yellow
+                                'rgb(75, 192, 192)', // Bright Teal
+                                'rgb(153, 102, 255)', // Bright Purple
+                                'rgb(255, 159, 64)', // Bright Orange
+                                'rgb(255, 69, 0)', // Darker Red
+                                'rgb(0, 123, 255)', // Dark Blue
+                                'rgb(255, 193, 7)', // Dark Yellow
+                                'rgb(0, 206, 209)', // Darker Teal
+                                'rgb(138, 43, 226)', // Dark Purple
+                                'rgb(255, 140, 0)' // Dark Orange
                             ],
                             borderWidth: 2
                         }]
@@ -327,16 +348,16 @@ function calculateDamageCosts(reports = []) {
         });
 
         // Function for handling injuries chart with time period and month selectors
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const timePeriodSelector = document.getElementById('timePeriod');
-            const monthSelector = document.getElementById('monthSelector'); 
+            const monthSelector = document.getElementById('monthSelector');
             const injuriesChartElement = document.getElementById('injuriesChart').getContext('2d');
             let injuriesChart;
 
             // Initial fetch with the default 'weekly' time period and selected month
             fetchDataAndRenderChart('weekly', monthSelector.value);
 
-            timePeriodSelector.addEventListener('change', function () {
+            timePeriodSelector.addEventListener('change', function() {
                 const selectedTimePeriod = timePeriodSelector.value;
                 const selectedMonth = selectedTimePeriod === 'weekly' ? monthSelector.value : null;
 
@@ -349,7 +370,7 @@ function calculateDamageCosts(reports = []) {
                 fetchDataAndRenderChart(selectedTimePeriod, selectedMonth);
             });
 
-            monthSelector.addEventListener('change', function () {
+            monthSelector.addEventListener('change', function() {
                 const selectedTimePeriod = timePeriodSelector.value;
                 if (selectedTimePeriod === 'weekly') {
                     const selectedMonth = monthSelector.value;
@@ -401,14 +422,16 @@ function calculateDamageCosts(reports = []) {
                                     data: Object.values(data),
                                     backgroundColor: 'rgb(179, 0, 0)',
                                     borderColor: 'rgb(77, 0, 0)',
-                                    borderWidth: 3
+                                    borderWidth: 1
                                 }]
                             },
                             options: {
                                 responsive: true,
                                 scales: {
                                     x: {
-                                        grid: { display: false }
+                                        grid: {
+                                            display: false
+                                        }
                                     },
                                     y: {
                                         beginAtZero: true,
@@ -427,4 +450,5 @@ function calculateDamageCosts(reports = []) {
         });
     </script>
 </body>
+
 </html>
