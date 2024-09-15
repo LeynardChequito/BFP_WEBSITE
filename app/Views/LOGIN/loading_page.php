@@ -28,10 +28,10 @@
         }
 
         .bfp-name {
-            font-size: 75px;
-            color: #d72631; /* Color for Bureau of Fire Protection */
+            font-size: 50px;
+            color: blue; /* Color for Bureau of Fire Protection */
             margin-top: 10px;
-            font-weight: bold;
+            font-weight:lighter;
         }
 
         .spinner {
