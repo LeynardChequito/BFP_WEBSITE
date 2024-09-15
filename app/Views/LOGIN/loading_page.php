@@ -61,7 +61,7 @@
         // Redirect to the login route after 3 seconds
         setTimeout(function() {
             window.location.href = "/login";
-        }, 20000);
+        }, 5000);
     </script>
 </head>
 <body>
