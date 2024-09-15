@@ -154,27 +154,21 @@ function calculateMonthlyInjuries(reports) {
     reports.forEach(report => {
         const monthIndex = new Date(report.report_date).getMonth();
 
+        // If number_of_injuries is not null or undefined, attempt to parse it
         if (report.number_of_injuries !== null && report.number_of_injuries !== undefined) {
-            if (typeof report.number_of_injuries === 'number') {
-                monthlyInjuries[monthIndex] += report.number_of_injuries;
-            } else if (Array.isArray(report.number_of_injuries)) {
-                const totalInjuriesInReport = report.number_of_injuries.reduce((acc, val) => {
-                    if (typeof val === 'number') {
-                        return acc + val;
-                    } else {
-                        console.warn(`Invalid injury number: ${val}`);
-                        return acc;
-                    }
-                }, 0);
-                monthlyInjuries[monthIndex] += totalInjuriesInReport;
+            const injuries = parseInt(report.number_of_injuries, 10);
+
+            if (!isNaN(injuries)) {
+                monthlyInjuries[monthIndex] += injuries;
             } else {
-                console.warn(`Unexpected format for number_of_injuries: ${report.number_of_injuries}`);
+                console.warn(`Invalid format for number_of_injuries: ${report.number_of_injuries}`);
             }
         }
     });
 
     return monthlyInjuries;
 }
+
 
 
         // Fetch data and render charts on DOMContentLoaded
