@@ -55,9 +55,9 @@ class LoginController extends BaseController
     {
         return view('LOGIN/login');
     }
-    public function loginpage()
+    public function loadingpage()
     {
-        return view('LOGIN/login');
+        return view('LOGIN/loading_page');
     }
     public function processLogin()
     {

@@ -319,14 +319,13 @@ const messaging = firebase.messaging();
             }
 
             if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/public/firebase-messaging-sw.js')
+    navigator.serviceWorker.register('/public/firebase-messaging-sw')
         .then(function (registration) {
             console.log('Service Worker registered with scope:', registration.scope);
         }).catch(function (err) {
             console.log('Service Worker registration failed:', err);
         });
 }
-
 
             messaging.requestPermission()
   .then(() => messaging.getToken())
