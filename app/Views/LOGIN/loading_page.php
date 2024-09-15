@@ -12,7 +12,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(#1a0000, #4d0000,#990000, #cc0000,#ff1a1a, #ff6666,#ffb3b3);
+            background: linear-gradient(#1a0000, #4d0000,#990000, #cc0000,#ff1a1a, #ff6666, #d8a7ce);
             font-family: Arial, Helvetica, sans-serif,
             Papyrus, fantasy;
             flex-direction: column;
@@ -61,7 +61,7 @@
         // Redirect to the login route after 3 seconds
         setTimeout(function() {
             window.location.href = "/login";
-        }, 5000);
+        }, 20000);
     </script>
 </head>
 <body>
