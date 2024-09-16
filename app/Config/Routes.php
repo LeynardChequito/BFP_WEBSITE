@@ -38,6 +38,7 @@ $routes->get('inspection', 'HomeController::inspection', ['filter' => 'user']);
 
 // ADMIN DASHBOARD
 // ADMIN LOGIN
+$routes->get('admin', 'ALoginController::loadingpage');
 $routes->get('admin-login', 'ALoginController::adminlogin');
 $routes->get('admin/processlogin', 'ALoginController::adminprocessLogin');
 $routes->post('adddologin', 'ALoginController::adddologin');

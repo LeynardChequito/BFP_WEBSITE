@@ -13,7 +13,10 @@ class ALoginController extends BaseController
     {
         $this->session = \Config\Services::session();
     }
-
+    public function loadingpage()
+    {
+        return view('ALOGIN/aloading_page');
+    }
     public function adminlogin()
     {
         return view('ALOGIN/adminlogin');
