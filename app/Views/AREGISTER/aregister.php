@@ -147,7 +147,7 @@
 
                             <!-- Organization Details -->
                             <div class="form-group">
-                                <label for="organization_name" class="font-weight-bold">Organization/Department Name:</label>
+                                <label for="organization_name" class="font-weight-bold">Organization/Department/Station Name:</label>
                                 <input type="text" name="organization_name" class="form-control" value="<?= set_value('organization_name') ?>" required>
                                 <?php if (isset($validation) && $validation->getError('organization_name')) { ?>
                                     <div class="text-danger"><?= esc($validation->getError('organization_name')) ?></div>
