@@ -150,7 +150,79 @@ class ARegistrationController extends BaseController
             // Generate and send verification token
             $token = $adminModel->generateVerificationToken($adminId);
             $verificationLink = base_url("admin/verify?token={$token}");
-            $this->sendEmail($data['email_address'], 'Email Verification', "Please click the link to verify your email: <a href=\"{$verificationLink}\">Verify Email</a>");
+            $this->sendEmail($data['email_address'], 'Email Verification', "
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        background-color: #f4f4f4;
+                    }
+                    .email-container {
+                        max-width: 600px;
+                        margin: 20px auto;
+                        background-color: #fff;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    }
+                    .email-header {
+                        background-color: #ef3340;
+                        padding: 20px;
+                        color: #ffffff;
+                        text-align: center;
+                        font-size: 24px;
+                        font-weight: bold;
+                    }
+                    .email-body {
+                        padding: 20px;
+                        color: #333;
+                        line-height: 1.6;
+                    }
+                    .email-body p {
+                        margin-bottom: 20px;
+                    }
+                    .email-footer {
+                        background-color: #f4f4f4;
+                        padding: 10px;
+                        text-align: center;
+                        font-size: 12px;
+                        color: #666;
+                    }
+                    .email-button {
+                        background-color: #1a73e8;
+                        color: white;
+                        padding: 10px 20px;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        font-size: 16px;
+                    }
+                    .email-button:hover {
+                        background-color: #165dbb;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class='email-container'>
+                    <div class='email-header'>
+                        Bureau of Fire Protection
+                    </div>
+                    <div class='email-body'>
+                        <p>Dear {$data['first_name']},</p>
+                        <p>Thank you for registering as an administrator on the Bureau of Fire Protection website. To complete your registration, please verify your email address by clicking the button below:</p>
+                        <p style='text-align: center;'>
+                            <a href='{$verificationLink}' class='email-button'>Verify Email Address</a>
+                        </p>
+                        <p>If you did not register for an account, you can safely ignore this email.</p>
+                        <p>Best regards,<br>The BFP Team</p>
+                    </div>
+                    <div class='email-footer'>
+                        This email was sent from an unmonitored email address. Please do not reply directly to this email.
+                    </div>
+                </div>
+            </body>
+            </html>");
 
             $this->session->setFlashdata('success', 'Admin registration successful! They need to check their email for the verification link.');
 
