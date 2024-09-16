@@ -9,7 +9,7 @@
         body {
             margin: 0;
             font-family: 'Arial', sans-serif;
-            background-image: url('/images/bglog.jpg');
+            background-image: url('bfpcalapancity/public/images/bglog.jpg');
             background-size: cover;
             background-position: center;
         }
