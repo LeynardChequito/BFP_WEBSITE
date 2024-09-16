@@ -188,7 +188,14 @@
 
                             <div class="form-group">
                                 <label for="confirm_password" class="font-weight-bold">Confirm Password:</label>
+                                <div class="input-group">
                                 <input type="password" name="confirm_password" class="form-control" required>
+                                <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <input type="checkbox" id="showPassword"> Show
+                                        </span>
+                                    </div>
+                                </div>
                                 <?php if (isset($validation) && $validation->getError('confirm_password')) { ?>
                                     <div class="text-danger"><?= esc($validation->getError('confirm_password')) ?></div>
                                 <?php } ?>

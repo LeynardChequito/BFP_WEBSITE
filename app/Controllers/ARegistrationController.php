@@ -210,7 +210,7 @@ class ARegistrationController extends BaseController
                     </div>
                     <div class='email-body'>
                         <p>Dear {$data['username']},</p>
-                        <p>Thank you for registering as an administrator on the Bureau of Fire Protection website. To complete your registration, please verify your email address by clicking the button below:</p>
+                        <p>Thank you for registering as {$data['position_role']} on the Bureau of Fire Protection website. To complete your registration, please verify your email address by clicking the button below:</p>
                         <p style='text-align: center;'>
                             <a href='{$verificationLink}' class='email-button'>Verify Email Address</a>
                         </p>
