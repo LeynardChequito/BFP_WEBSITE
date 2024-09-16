@@ -43,7 +43,7 @@
             margin-top: 1px;
             margin-bottom: 5px;
             padding: 10px;
-            background-color: darkslategrey;
+            
         }
 
         .container-fluid h3 {
@@ -51,11 +51,13 @@
         }
 
         .content {
-            background-color: #fff;
+            max-width: 1200px;
+            margin: 20px auto;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            width: 100%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .footer {
