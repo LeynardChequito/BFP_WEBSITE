@@ -263,6 +263,8 @@
         document.getElementById('showPassword').addEventListener('change', function () {
             var passwordInput = document.getElementById('password');
             passwordInput.type = this.checked ? 'text' : 'password';
+            var passwordInput = document.getElementById('confirm_password');
+            passwordInput.type = this.checked ? 'text' : 'confirm_password';
         });
     </script>
 
