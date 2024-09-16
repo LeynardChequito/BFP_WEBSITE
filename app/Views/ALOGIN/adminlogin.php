@@ -139,7 +139,7 @@
             <br>
             <button id="btnLogin" type="submit" class="bfp-btn">Login</button>
         </form>
-        <p class="bfp-link" onclick="goToForgotPassword()">Forgot Password?</p>
+        <!-- <p class="bfp-link" onclick="goToForgotPassword()">Forgot Password?</p> -->
 
     </div>
 
