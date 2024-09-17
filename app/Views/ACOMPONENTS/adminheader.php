@@ -142,10 +142,11 @@
 
 <body>
 
-    <!-- Header section -->
-    <div class="header desktop-header">
+      <!-- Header section -->
+      <div class="header desktop-header">
         <img src="<?= base_url(); ?>/bfpcalapancity/public/images/Banner03_18Aug2018.png" alt="Logo" class="logo">
 
+        <!-- Notification dropdown -->
         <div class="notification-dropdown position-relative">
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill">
                 <i class="fas fa-bell notification-icon"></i>
@@ -156,6 +157,11 @@
                 <div class="dropdown-separator"></div>
                 <div id="notification-container"></div>
                 <a class="dropdown-item text-center small text-gray-500" href="#">Show all notifications</a>
+
+                <!-- New Button to Open Modal -->
+                <button class="btn btn-primary w-100 mt-2" data-bs-toggle="modal" data-bs-target="#newReportModal" onclick="getRecentReports()">
+                    View New Reports
+                </button>
             </div>
         </div>
 
@@ -166,6 +172,22 @@
         <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
+    <!-- Modal for New Reports -->
+    <div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newReportModalLabel">New Community Reports</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="newReportsList" class="list-group">
+                        <!-- New reports will be listed here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- External scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -225,11 +247,31 @@
                 console.error('Error fetching latest reports:', error);
             }
         }
-
         // Load notifications when the page loads
         document.addEventListener('DOMContentLoaded', function () {
             fetchLatestReports();
         });
+// Fetch recent reports when the modal is opened
+async function getRecentReports() {
+            const response = await fetch('/community-report/recent-reports'); // Adjust this route as needed
+            const reports = await response.json();
+            const newReportsList = document.getElementById('newReportsList');
+            newReportsList.innerHTML = ''; // Clear previous reports
+
+            // Add recent reports to the modal
+            reports.forEach(report => {
+                const reportHTML = `
+                    <li class="list-group-item">
+                        <h6>${report.fullName}</h6>
+                        <p>${report.timestamp}</p>
+                        <div class="fileProofContainer">
+                            <img src="/community_report/${report.fileproof}" alt="File Proof" class="img-fluid">
+                        </div>
+                    </li>
+                `;
+                newReportsList.insertAdjacentHTML('beforeend', reportHTML);
+            });
+        }
 
     </script>
 </body>
