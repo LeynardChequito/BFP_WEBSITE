@@ -146,21 +146,19 @@
     <div class="header desktop-header">
         <img src="<?= base_url(); ?>/bfpcalapancity/public/images/Banner03_18Aug2018.png" alt="Logo" class="logo">
 
-<!-- Notification dropdown -->
-<div class="notification-dropdown position-relative">
-    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill">
-        <i class="fas fa-bell notification-icon"></i>
-        <span id="notification-counter" class="badge badge-danger badge-counter">0</span>
-    </span>
-    <div class="dropdown-content">
-        <h6 class="dropdown-header">Community Emergency Message</h6>
-        <div class="dropdown-separator"></div>
-        <div id="notification-container"></div>
-        <a class="dropdown-item text-center small text-gray-500" href="#">Show all notifications</a>
-        <!-- Button to open the modal on the rescuemap page -->
-        <button class="dropdown-item text-center small" onclick="goToRescueMap()">View New Reports</button>
-    </div>
-</div>
+        <!-- Notification dropdown -->
+        <div class="notification-dropdown position-relative">
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill">
+                <i class="fas fa-bell notification-icon"></i>
+                <span id="notification-counter" class="badge badge-danger badge-counter">0</span>
+            </span>
+            <div class="dropdown-content">
+                <h6 class="dropdown-header">Community Emergency Message</h6>
+                <div class="dropdown-separator"></div>
+                <div id="notification-container"></div>
+                <a class="dropdown-item text-center small text-gray-500" href="#">Show all notifications</a>
+            </div>
+        </div>
 
         <!-- View Map button -->
         <a class="view-map-btn" href="<?= site_url('rescuemap') ?>">View Map</a>
@@ -175,6 +173,14 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+
+    <!-- Global Function Declaration -->
+    <script>
+        // Function to go to Rescue Map without passing coordinates
+        function goToRescueMap() {
+            window.location.href = '/rescuemap';
+        }
+    </script>
 
     <!-- JavaScript code for handling notifications and updating time -->
     <script type="module">
@@ -193,53 +199,47 @@
 
         // Function to fetch and display the latest reports in the notification dropdown
         async function fetchLatestReports() {
-        try {
-            const response = await fetch('/community-report/latest-reports'); // API endpoint from controller
-            const reports = await response.json(); // Convert the response to JSON
-            const notificationContainer = document.getElementById('notification-container');
-            const notificationCounter = document.getElementById('notification-counter');
+            try {
+                const response = await fetch('/community-report/latest-reports'); // API endpoint from controller
+                const reports = await response.json(); // Convert the response to JSON
+                const notificationContainer = document.getElementById('notification-container');
+                const notificationCounter = document.getElementById('notification-counter');
 
-            // Clear previous notifications
-            notificationContainer.innerHTML = '';
+                // Clear previous notifications
+                notificationContainer.innerHTML = '';
 
-            // Update the counter
-            notificationCounter.textContent = reports.length;
+                // Update the counter
+                notificationCounter.textContent = reports.length;
 
-            // Add new notifications
-            reports.forEach(report => {
-                const notificationHTML = `
-                    <div class="dropdown-separator"></div>
-                    <a class="dropdown-item d-flex align-items-center" href="#">
-                        <div class="mr-3 notification-item">
-                            <div class="icon-circle bg-primary">
-                                <i class="fas fa-file-alt text-white"></i>
+                // Add new notifications
+                reports.forEach(report => {
+                    const notificationHTML = `
+                        <div class="dropdown-separator"></div>
+                        <a class="dropdown-item d-flex align-items-center" href="#">
+                            <div class="mr-3 notification-item">
+                                <div class="icon-circle bg-primary">
+                                    <i class="fas fa-file-alt text-white"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="notification-details">
-                            <div class="small text-gray-500 notification-time">${new Date(report.timestamp).toLocaleString()}</div>
-                            <span class="font-weight-bold notification-title">${report.fullName}</span>
-                            <p>File Proof: <a href="/community_report/${report.fileproof}" target="_blank">${report.fileproof}</a></p>
-                            <button class="btn btn-primary" onclick="goToRescueMap(${report.latitude}, ${report.longitude})">View on Map</button>
-                        </div>
-                    </a>
-                `;
-                notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
-            });
-        } catch (error) {
-            console.error('Error fetching latest reports:', error);
+                            <div class="notification-details">
+                                <div class="small text-gray-500 notification-time">${new Date(report.timestamp).toLocaleString()}</div>
+                                <span class="font-weight-bold notification-title">${report.fullName}</span>
+                                <p>File Proof: <a href="/community_report/${report.fileproof}" target="_blank">${report.fileproof}</a></p>
+                                <button class="btn btn-primary" onclick="goToRescueMap()">View on Map</button>
+                            </div>
+                        </a>
+                    `;
+                    notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
+                });
+            } catch (error) {
+                console.error('Error fetching latest reports:', error);
+            }
         }
-    }
 
-
-// Load notifications when the page loads
-document.addEventListener('DOMContentLoaded', function () {
-        fetchLatestReports();
-    });
-        function goToRescueMap(lat, lng) {
-        // Redirect to the rescue map page and pass latitude and longitude in the URL
-        window.location.href = `/rescuemap?lat=${lat}&lng=${lng}`;
-    }
-
+        // Load notifications when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchLatestReports();
+        });
     </script>
 </body>
 

@@ -49,10 +49,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         });
     }
 
-    function goToRescueMap(lat, lng) {
-        // Redirect to the rescue map page and pass latitude and longitude in the URL
-        window.location.href = `/rescuemap?lat=${lat}&lng=${lng}`;
-    }
+    file://%20global%20function%20declarationfunction%20gotorescuemap()%20{%20%20%20%20window.location.href%20=%20'/rescuemap?openModal=true%27;}
 
     // Call populateReportList when the modal is shown
     document.addEventListener('DOMContentLoaded', function() {
