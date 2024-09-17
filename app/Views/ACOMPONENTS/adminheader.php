@@ -357,7 +357,7 @@ const messaging = firebase.messaging();
         // Function to fetch recent reports and update notifications in real-time
 async function fetchRecentReports() {
     try {
-        const response = await fetch('/getRecentReports'); // Use the correct route for your API
+        const response = await fetch('https://bfpcalapancity.online/reports-recent'); // Use the correct route for your API
         const reports = await response.json();
         const notificationContainer = document.getElementById('notification-container');
         const notificationCounter = document.getElementById('notification-counter');

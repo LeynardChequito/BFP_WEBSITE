@@ -350,8 +350,8 @@
     &#128276;
 </button>
 
-<!-- Modal for new reports -->
-<div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
+<!-- Modal for notifications -->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -366,6 +366,7 @@
         </div>
     </div>
 </div>
+
 
 
 <audio id="sirenSound" src="bfpcalapancity/public/45secs_alarm.mp3" preload=""></audio>
