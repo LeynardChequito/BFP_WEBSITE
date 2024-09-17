@@ -550,15 +550,15 @@ function removeNotification(reportId) {
         }
     }
 }
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    // Perform asynchronous operation
-    performTask().then(() => {
-        sendResponse({ success: true });
-    }).catch(error => {
-        sendResponse({ success: false, error: error });
-    });
-    return true; // Keeps the message channel open for async response
-});
+// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+//     // Perform asynchronous operation
+//     performTask().then(() => {
+//         sendResponse({ success: true });
+//     }).catch(error => {
+//         sendResponse({ success: false, error: error });
+//     });
+//     return true; // Keeps the message channel open for async response
+// });
 
 
 // Function to check if a report has been submitted (already marked as handled)
