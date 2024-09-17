@@ -334,8 +334,6 @@ const messaging = firebase.messaging();
   .catch((error) => {
       console.error('Error retrieving token:', error);
   });
-
-
             // Open modal on notification click
             $(".notification-dropdown").on("click", function() {
                 modal.style.display = "block";
@@ -360,23 +358,27 @@ const messaging = firebase.messaging();
     });
 });
         // Function to fetch recent reports and update notifications in real-time
-async function fetchRecentReports() {
+        async function fetchRecentReports() {
     try {
-        const response = await fetch('https://bfpcalapancity.online/reports-recent'); // Use the correct route for your API
+        const response = await fetch('https://bfpcalapancity.online/reports-recent'); // Replace with your correct API route
         const reports = await response.json();
         const notificationContainer = document.getElementById('notification-container');
         const notificationCounter = document.getElementById('notification-counter');
         const newReportsList = document.getElementById('newReportsList');
-        
-        // Clear the previous notifications and reports
+
+        if (!notificationContainer || !notificationCounter || !newReportsList) {
+            console.error("One or more DOM elements not found.");
+            return;
+        }
+
+        // Clear previous notifications and reports
         notificationContainer.innerHTML = '';
         newReportsList.innerHTML = '';
 
-        // Update counter
+        // Update notification count
         notificationCounter.textContent = reports.length;
 
         reports.forEach(report => {
-            // Calculate the time difference between the report's timestamp and now
             const reportTimestamp = new Date(report.timestamp);
             const timeElapsed = getTimeElapsed(reportTimestamp);
 
@@ -456,12 +458,24 @@ function getRecentReports() {
     fetchRecentReports();
 }
 
-// Call fetchRecentReports every 1 minute for real-time updates
-setInterval(fetchRecentReports, 60000);
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('newReportModal');
+    const newReportsList = document.getElementById('newReportsList');
 
-// Initially load the recent reports when the page is loaded
-document.addEventListener('DOMContentLoaded', function () {
-    fetchRecentReports();
+    if (modal && newReportsList) {
+        // Fetch reports when the modal is shown
+        modal.addEventListener('shown.bs.modal', function () {
+            fetchRecentReports();
+        });
+
+        // Fetch reports every minute for real-time updates
+        setInterval(fetchRecentReports, 60000);
+
+        // Initially load reports when the page loads
+        fetchRecentReports();
+    } else {
+        console.error('Modal or newReportsList not found in the DOM.');
+    }
 });
 
     </script>
