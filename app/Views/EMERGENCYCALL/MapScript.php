@@ -12,12 +12,16 @@
         document.getElementById("philippineTime").textContent = "Philippine Standard Time: " + getCurrentTimeInPhilippines();
         setTimeout(updateTime, 1000); // Update time every second
     }
+// Extract the latitude and longitude from the URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+    const lat = urlParams.get('lat');
+    const lng = urlParams.get('lng');
 
     // const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs"; //old api-key
     const apiKey = "AAPKac6c1269609841b2a00dd16b90f0ccb8iFjQh8pTb7aadJWaETJip3ISvXcpq_5cB296OQurtGW79gpbXuMKZPe9kx-6mGWl";
     const basemapEnum = "arcgis/navigation";
     const map = L.map("map", {
-        zoom: 14
+        zoom: 19
     });
 // Use OpenStreetMap tiles (no CORS issues)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -29,7 +33,31 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     L.esri.Vector.vectorBasemapLayer(basemapEnum, {
         apiKey: apiKey
     }, 'Streets').addTo(map);
+    function populateReportList() {
+        const newReportsList = document.getElementById('newReportsList');
+        newReportsList.innerHTML = ''; // Clear any existing reports
 
+        reports.forEach((report, index) => {
+            const reportHTML = `
+                <li class="list-group-item">
+                    <h6>${report.fullName}</h6>
+                    <p>File: <a href="/community_report/${report.fileproof}" target="_blank">${report.fileproof}</a></p>
+                    <button class="btn btn-primary" onclick="goToRescueMap(${report.latitude}, ${report.longitude})">View on Map</button>
+                </li>
+            `;
+            newReportsList.insertAdjacentHTML('beforeend', reportHTML);
+        });
+    }
+
+    function goToRescueMap(lat, lng) {
+        // Redirect to the rescue map page and pass latitude and longitude in the URL
+        window.location.href = `/rescuemap?lat=${lat}&lng=${lng}`;
+    }
+
+    // Call populateReportList when the modal is shown
+    document.addEventListener('DOMContentLoaded', function() {
+        populateReportList();
+    });
     // Directions container
     const directions = document.createElement("div");
     directions.id = "directions";
