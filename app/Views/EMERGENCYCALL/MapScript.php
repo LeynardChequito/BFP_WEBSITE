@@ -243,37 +243,108 @@ let rescuerMarker; // Declare rescuerMarker globally so it can be updated later
 function showRescuerLocation(position) {
     const rescuerLatitude = position.coords.latitude;
     const rescuerLongitude = position.coords.longitude;
-    startCoords = [rescuerLongitude, rescuerLatitude]; // Set rescuer's location
+    startCoords = [rescuerLongitude, rescuerLatitude];
 
-    map.setView([rescuerLatitude, rescuerLongitude], 16); // Center map on rescuer's location
-
+    // Update rescuer's marker position
     if (!rescuerMarker) {
-        // Create rescuer marker if it doesn't exist
         rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], { icon: rescuerIcon }).addTo(map);
     } else {
-        // Update marker's position if it already exists
         rescuerMarker.setLatLng([rescuerLatitude, rescuerLongitude]);
     }
 
     rescuerMarker.bindPopup("'You are here.' - Rescuer").openPopup();
 
+    // Update route to adjust to the rescuer's current position
+    if (endCoords) {
+        updateRoute();  // Continuously update route to destination
+    }
+
+    // Save current position
+    saveRescuerPositionToLocalStorage(position);
+
     suggestNearestHydrants({ lat: rescuerLatitude, lng: rescuerLongitude });
 }
-
-// Function to get and set the rescuer's location and continuously track movement
-function trackRescuerLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(showRescuerLocation, error => {
-            console.error('Error tracking rescuer location:', error);
-        }, {
-            enableHighAccuracy: true, // Use high accuracy for precise tracking
-            maximumAge: 1000, // Cache the position for 1 second
-            timeout: 5000 // Timeout after 5 seconds if no position is acquired
-        });
-    } else {
-        alert("Geolocation is not supported by this browser.");
+function saveCurrentRouteToLocalStorage() {
+    if (startCoords && endCoords) {
+        localStorage.setItem('startCoords', JSON.stringify(startCoords));
+        localStorage.setItem('endCoords', JSON.stringify(endCoords));
     }
 }
+
+function saveRescuerPositionToLocalStorage(position) {
+    localStorage.setItem('rescuerCoords', JSON.stringify({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+    }));
+}
+
+// Call this function whenever the route is updated or rescuer moves
+
+function restoreRouteAndPosition() {
+    const savedStartCoords = JSON.parse(localStorage.getItem('startCoords'));
+    const savedEndCoords = JSON.parse(localStorage.getItem('endCoords'));
+    const savedRescuerCoords = JSON.parse(localStorage.getItem('rescuerCoords'));
+
+    if (savedStartCoords && savedEndCoords) {
+        startCoords = savedStartCoords;
+        endCoords = savedEndCoords;
+        updateRoute();  // Redraw the route on the map
+    }
+
+    if (savedRescuerCoords) {
+        showRescuerLocation({
+            coords: {
+                latitude: savedRescuerCoords.lat,
+                longitude: savedRescuerCoords.lng
+            }
+        });
+    }
+}
+
+// Call this function on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', restoreRouteAndPosition);
+
+
+// Function to get and set the rescuer's location and continuously track movement
+navigator.geolocation.watchPosition(
+    position => {
+        // Ensure this operation completes
+        showRescuerLocation(position);
+    },
+    error => {
+        console.error('Error tracking rescuer location:', error);
+    },
+    {
+        enableHighAccuracy: true,
+        maximumAge: 500,
+        timeout: 1000
+    }
+);
+   
+function restoreRouteAndPosition() {
+    const savedStartCoords = JSON.parse(localStorage.getItem('startCoords'));
+    const savedEndCoords = JSON.parse(localStorage.getItem('endCoords'));
+    const savedRescuerCoords = JSON.parse(localStorage.getItem('rescuerCoords'));
+
+    if (savedStartCoords && savedEndCoords) {
+        startCoords = savedStartCoords;
+        endCoords = savedEndCoords;
+        updateRoute();  // Redraw the route on the map
+    }
+
+    if (savedRescuerCoords) {
+        showRescuerLocation({
+            coords: {
+                latitude: savedRescuerCoords.lat,
+                longitude: savedRescuerCoords.lng
+            }
+        });
+    }
+}
+
+// Call this function on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', restoreRouteAndPosition);
+
 
 // Ensure rescuer's location is tracked on page load
 document.addEventListener('DOMContentLoaded', function () {
@@ -479,6 +550,16 @@ function removeNotification(reportId) {
         }
     }
 }
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    // Perform asynchronous operation
+    performTask().then(() => {
+        sendResponse({ success: true });
+    }).catch(error => {
+        sendResponse({ success: false, error: error });
+    });
+    return true; // Keeps the message channel open for async response
+});
+
 
 // Function to check if a report has been submitted (already marked as handled)
 function isReportSubmitted(communityreport_id) {
@@ -531,7 +612,6 @@ async function getRecentReports() {
                             <div class="fileProofContainer" style="margin-bottom: 10px;">
                                 <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
                             </div>
-                            // <button class="btn btn-primary" onclick="removeNotification(${reportId})">Remove Notification</button>
                             <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
                             <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
                         </div>
