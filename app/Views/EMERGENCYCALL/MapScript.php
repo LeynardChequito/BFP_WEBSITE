@@ -747,6 +747,15 @@ async function updateRoute() {
 
    document.addEventListener('DOMContentLoaded', function () {
     getRecentReports(); // Fetch new reports when the page loads
+
+     // Open the modal if the page loads with the hash #newReportModal
+     document.addEventListener('DOMContentLoaded', function() {
+            if (window.location.hash === '#newReportModal') {
+                var newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
+                newReportModal.show();
+                getRecentReports(); // Load the recent reports when the modal opens
+            }
+        });
 });
     
 </script>
