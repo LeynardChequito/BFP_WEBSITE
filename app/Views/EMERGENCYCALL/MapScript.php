@@ -746,7 +746,8 @@ async function updateRoute() {
     }
 
    document.addEventListener('DOMContentLoaded', function () {
-    getRecentReports(); // Fetch new reports when the page loads
+    getRecentReports();
+    fetchRecentReports();// Fetch new reports when the page loads
 });
     
 </script>

@@ -353,7 +353,12 @@ const messaging = firebase.messaging();
         } else {
             console.error("Modal not found in the DOM.");
         }
-
+        document.addEventListener('DOMContentLoaded', function() {
+    // Fetch reports only when the modal is shown
+    document.querySelector('#newReportModal').addEventListener('shown.bs.modal', function () {
+        fetchRecentReports();
+    });
+});
         // Function to fetch recent reports and update notifications in real-time
 async function fetchRecentReports() {
     try {
