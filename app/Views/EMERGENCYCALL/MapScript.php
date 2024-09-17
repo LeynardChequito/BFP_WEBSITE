@@ -237,21 +237,48 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         popupAnchor: [1, -34],
         shadowSize: [41, 41]
     });
-    // Function to show rescuer's geolocation
-   function showRescuerLocation(position) {
-        const rescuerLatitude = position.coords.latitude;
-        const rescuerLongitude = position.coords.longitude;
-        startCoords = [rescuerLongitude, rescuerLatitude]; // Set rescuer's location
+// Function to show rescuer's geolocation
+let rescuerMarker; // Declare rescuerMarker globally so it can be updated later
 
-        map.setView([rescuerLatitude, rescuerLongitude], 16); // Center map on rescuer's location
+function showRescuerLocation(position) {
+    const rescuerLatitude = position.coords.latitude;
+    const rescuerLongitude = position.coords.longitude;
+    startCoords = [rescuerLongitude, rescuerLatitude]; // Set rescuer's location
 
-        const rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], { icon: rescuerIcon }).addTo(map);
-        rescuerMarker.bindPopup("'You are here.' - Rescuer").openPopup();
+    map.setView([rescuerLatitude, rescuerLongitude], 16); // Center map on rescuer's location
 
-        suggestNearestHydrants({ lat: rescuerLatitude, lng: rescuerLongitude });
+    if (!rescuerMarker) {
+        // Create rescuer marker if it doesn't exist
+        rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], { icon: rescuerIcon }).addTo(map);
+    } else {
+        // Update marker's position if it already exists
+        rescuerMarker.setLatLng([rescuerLatitude, rescuerLongitude]);
     }
 
+    rescuerMarker.bindPopup("'You are here.' - Rescuer").openPopup();
 
+    suggestNearestHydrants({ lat: rescuerLatitude, lng: rescuerLongitude });
+}
+
+// Function to get and set the rescuer's location and continuously track movement
+function trackRescuerLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(showRescuerLocation, error => {
+            console.error('Error tracking rescuer location:', error);
+        }, {
+            enableHighAccuracy: true, // Use high accuracy for precise tracking
+            maximumAge: 1000, // Cache the position for 1 second
+            timeout: 5000 // Timeout after 5 seconds if no position is acquired
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+// Ensure rescuer's location is tracked on page load
+document.addEventListener('DOMContentLoaded', function () {
+    trackRescuerLocation(); // Start tracking rescuer's current location when the page loads
+});
     
 
     let startCoords = null;
