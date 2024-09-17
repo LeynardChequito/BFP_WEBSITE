@@ -124,6 +124,24 @@ public function sendPushNotificationToUser($token, $title, $body)
         }
     }
 
+    public function getLatestReports()
+    {
+        $model = new CommunityReportModel();
+    
+        // Get the most recent 5 reports (or adjust the number as needed)
+        $reports = $model->orderBy('timestamp', 'DESC')->findAll(5);
+    
+        // Convert timestamps to 'Asia/Manila' timezone before returning the JSON response
+        foreach ($reports as &$report) {
+            $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
+                ->setTimezone(new \DateTimeZone('Asia/Manila'))
+                ->format('Y-m-d H:i:s');
+        }
+    
+        return $this->response->setJSON($reports);
+    }
+    
+
     public function getRecentReports()
 {
     $model = new CommunityReportModel();

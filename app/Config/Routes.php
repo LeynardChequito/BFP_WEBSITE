@@ -86,6 +86,8 @@ $routes->get('submitcall', 'CommunityReportController::submitcall', ['filter' =>
 $routes->post('communityreport/submit', 'CommunityReportController::submitCommunityReport', ['filter' => 'user']);
 $routes->post('getEmergencyCallCoordinates', 'CommunityReportController::getEmergencyCallCoordinates', ['filter' => 'admin']);
 $routes->get('reports-recent', 'CommunityReportController::getRecentReports', ['filter' => 'admin']);
+$routes->get('/community-report/latest-reports', 'CommunityReportController::getLatestReports');
+
 
 // RESCUER REPORT
 $routes->get('fire-report/create', 'RescuerReportController::firereportform',);
