@@ -125,29 +125,30 @@ public function sendPushNotificationToUser($token, $title, $body)
     }
 
     public function getRecentReports()
-    {
-        $model = new CommunityReportModel();
+{
+    $model = new CommunityReportModel();
 
-        // Get the current timestamp in Manila timezone
-        $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
-        $eightHoursAgo = $manilaTime->modify('-8 hours')->format('Y-m-d H:i');
+    // Get the current timestamp in Manila timezone
+    $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
+    $threeHoursAgo = $manilaTime->modify('-3 hours')->format('Y-m-d H:i');
 
-        // Adjust the query to get reports newer than 8 hours ago in MySQL-compatible timezone format
-        $eightHoursAgoUTC = (new \DateTime($eightHoursAgo, new \DateTimeZone('Asia/Manila')))
-            ->setTimezone(new \DateTimeZone('UTC'))
-            ->format('Y-m-d H:i');
+    // Adjust the query to get reports newer than 3 hours ago
+    $threeHoursAgoUTC = (new \DateTime($threeHoursAgo, new \DateTimeZone('Asia/Manila')))
+        ->setTimezone(new \DateTimeZone('UTC'))
+        ->format('Y-m-d H:i');
 
-        $reports = $model->where('timestamp >=', $eightHoursAgoUTC)
-            ->orderBy('timestamp', 'DESC')
-            ->findAll();
+    $reports = $model->where('timestamp >=', $threeHoursAgoUTC)
+        ->orderBy('timestamp', 'DESC')
+        ->findAll();
 
-        // Convert timestamps to 'Asia/Manila' timezone before returning the JSON response
-        foreach ($reports as &$report) {
-            $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
-                ->setTimezone(new \DateTimeZone('Asia/Manila'))
-                ->format('Y-m-d (h:i a)');
-        }
-
-        return $this->response->setJSON($reports);
+    // Convert timestamps to 'Asia/Manila' timezone before returning the JSON response
+    foreach ($reports as &$report) {
+        $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
+            ->setTimezone(new \DateTimeZone('Asia/Manila'))
+            ->format('Y-m-d H:i:s');
     }
+
+    return $this->response->setJSON($reports);
+}
+
 }

@@ -213,15 +213,6 @@
         <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
-    <!-- Modal for notifications -->
-    <div id="notificationModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Notifications</h2>
-            <div id="notificationContent"></div>
-        </div>
-    </div>
-
     <!-- External scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -362,6 +353,112 @@ const messaging = firebase.messaging();
         } else {
             console.error("Modal not found in the DOM.");
         }
+
+        // Function to fetch recent reports and update notifications in real-time
+async function fetchRecentReports() {
+    try {
+        const response = await fetch('/getRecentReports'); // Use the correct route for your API
+        const reports = await response.json();
+        const notificationContainer = document.getElementById('notification-container');
+        const notificationCounter = document.getElementById('notification-counter');
+        const newReportsList = document.getElementById('newReportsList');
+        
+        // Clear the previous notifications and reports
+        notificationContainer.innerHTML = '';
+        newReportsList.innerHTML = '';
+
+        // Update counter
+        notificationCounter.textContent = reports.length;
+
+        reports.forEach(report => {
+            // Calculate the time difference between the report's timestamp and now
+            const reportTimestamp = new Date(report.timestamp);
+            const timeElapsed = getTimeElapsed(reportTimestamp);
+
+            // Add notification to the dropdown
+            const notificationHTML = `
+                <div class="dropdown-separator"></div>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3 notification-item">
+                        <div class="icon-circle bg-primary">
+                            <i class="fas fa-file-alt text-white"></i>
+                        </div>
+                    </div>
+                    <div class="notification-details">
+                        <div class="small text-gray-500 notification-time">${timeElapsed}</div>
+                        <span class="font-weight-bold notification-title">New Emergency Report: ${report.fullName}</span>
+                        <p>Click to view the file proof</p>
+                    </div>
+                </a>
+            `;
+            notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
+
+            // Add report to the modal list
+            const reportHTML = `
+                <li class="list-group-item">
+                    <h6>${report.fullName}</h6>
+                    <p>${timeElapsed}</p>
+                    <div class="fileProofContainer">
+                        ${getFileProofElement(report.fileproof)}
+                    </div>
+                </li>
+            `;
+            newReportsList.insertAdjacentHTML('beforeend', reportHTML);
+        });
+    } catch (error) {
+        console.error('Error fetching recent reports:', error);
+    }
+}
+
+// Helper function to get the time elapsed since the report was submitted
+function getTimeElapsed(reportTimestamp) {
+    const now = new Date();
+    const seconds = Math.floor((now - reportTimestamp) / 1000);
+
+    const intervals = [
+        { label: 'year', seconds: 31536000 },
+        { label: 'month', seconds: 2592000 },
+        { label: 'day', seconds: 86400 },
+        { label: 'hour', seconds: 3600 },
+        { label: 'minute', seconds: 60 },
+        { label: 'second', seconds: 1 }
+    ];
+
+    for (const interval of intervals) {
+        const count = Math.floor(seconds / interval.seconds);
+        if (count > 0) {
+            return `${count} ${interval.label}${count !== 1 ? 's' : ''} ago`;
+        }
+    }
+
+    return 'Just now';
+}
+
+// Helper function to get the correct file proof element (image or video)
+function getFileProofElement(fileproof) {
+    const fileExtension = fileproof.split('.').pop().toLowerCase();
+    if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
+        return `<img src="/bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">`;
+    } else if (['mp4', 'mov', 'avi'].includes(fileExtension)) {
+        return `<video src="/bfpcalapancity/public/community_report/${fileproof}" controls class="file-proof-video"></video>`;
+    } else {
+        return `<p>Unsupported file type</p>`;
+    }
+}
+
+// Function to fetch reports when modal is opened
+function getRecentReports() {
+    fetchRecentReports();
+}
+
+// Call fetchRecentReports every 1 minute for real-time updates
+setInterval(fetchRecentReports, 60000);
+
+// Initially load the recent reports when the page is loaded
+document.addEventListener('DOMContentLoaded', function () {
+    fetchRecentReports();
+});
+
     </script>
 </body>
 
