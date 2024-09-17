@@ -305,21 +305,32 @@ function restoreRouteAndPosition() {
 document.addEventListener('DOMContentLoaded', restoreRouteAndPosition);
 
 
-// Function to get and set the rescuer's location and continuously track movement
-navigator.geolocation.watchPosition(
-    position => {
-        // Ensure this operation completes
-        showRescuerLocation(position);
-    },
-    error => {
-        console.error('Error tracking rescuer location:', error);
-    },
-    {
-        enableHighAccuracy: true,
-        maximumAge: 500,
-        timeout: 1000
+// Function to track the rescuer's location
+function trackRescuerLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+            position => {
+                showRescuerLocation(position); // Calls the function to update the location
+            },
+            error => {
+                console.error('Error tracking rescuer location:', error);
+            },
+            {
+                enableHighAccuracy: true,
+                maximumAge: 500,
+                timeout: 1000
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by this browser.");
     }
-);
+}
+
+// Ensure rescuer's location is tracked on page load
+document.addEventListener('DOMContentLoaded', function () {
+    trackRescuerLocation(); // Start tracking rescuer's current location when the page loads
+});
+
    
 function restoreRouteAndPosition() {
     const savedStartCoords = JSON.parse(localStorage.getItem('startCoords'));
