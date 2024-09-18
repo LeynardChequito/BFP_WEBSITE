@@ -253,10 +253,15 @@ function timeAgo(timeStamp) {
         }
 
         function playAlarm() {
-            const alarmSound = document.getElementById('alarmSound');
-            alarmSound.play();
+        const alarmSound = document.getElementById('alarmSound');
+        if (alarmSound) {
+            alarmSound.play().catch(error => {
+                console.error('Error playing sound:', error);
+            });
+        } else {
+            console.error('Audio element not found.');
         }
-
+    }
         function getRelativeTime(timestamp) {
             const now = new Date();
             const timeDifference = Math.floor((now - new Date(timestamp)) / 1000);

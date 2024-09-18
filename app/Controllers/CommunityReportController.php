@@ -12,7 +12,6 @@ use Kreait\Firebase\Messaging\CloudMessage;
 class CommunityReportController extends BaseController
 {
     protected $session;
-    protected $firebaseServerKey = 'AAAAMdjqKPk:APA91bH4dQbOlZJbcnrviv8Cak23oGKjVbzs3O0V9s1jEo_SLynqGa-XqxLa4rXtXAWn7eSeeyuqjf9fexjsxzJJVPXmU3GzY8sjddKyRqiFoZdr14ryMhvpGD2I-KmfRjL2rVWVVPnV';
 
     public function __construct()
     {
@@ -80,7 +79,7 @@ public function sendPushNotificationToUser($token, $reportData)
     {
         $url = 'https://fcm.googleapis.com/fcm/send';
         $headers = [
-            'Authorization: key=' . $this->firebaseServerKey,
+            'Authorization: key='aaaamdjqkpk:APA91bH4dQbOlZJbcnrviv8Cak23oGKjVbzs3O0V9s1jEo_SLynqGa-XqxLa4rXtXAWn7eSeeyuqjf9fexjsxzJJVPXmU3GzY8sjddKyRqiFoZdr14ryMhvpGD2I-KmfRjL2rVWVVPnV';,
             'Content-Type: application/json'
         ];
 
