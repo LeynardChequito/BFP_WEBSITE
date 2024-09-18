@@ -339,7 +339,12 @@
             <div id="map"></div>
         </div>
 
-        <!-- BFP Header and other content -->
+        <div class="bfp-header">
+    <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
+    <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
+    <div id="directions" style="display: none;">Click on the map to create a start and end for the route.</div>
+<button id="directions" onclick="toggleDirections()">Show Steps</button>
+</div>
 
         <!-- Push Notification Button to open the New Reports modal -->
         <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal" onclick="getRecentReports()">
