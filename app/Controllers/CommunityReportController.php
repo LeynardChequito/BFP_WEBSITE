@@ -26,83 +26,88 @@ class CommunityReportController extends BaseController
     }
 
     public function submitCommunityReport()
-{
-    helper(['form', 'url', 'session']);
+    {
+        helper(['form', 'url', 'session']);
 
-    $rules = [
-        'fullName' => 'required|max_length[255]',
-        'latitude' => 'required|decimal',
-        'longitude' => 'required|decimal',
-        'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
-    ];
+        $rules = [
+            'fullName' => 'required|max_length[255]',
+            'latitude' => 'required|decimal',
+            'longitude' => 'required|decimal',
+            'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
+        ];
 
-    if ($this->validate($rules)) {
-        $communityReportModel = new CommunityReportModel();
-        $fileproof = $this->request->getFile('fileproof');
+        if ($this->validate($rules)) {
+            $communityReportModel = new CommunityReportModel();
+            $fileproof = $this->request->getFile('fileproof');
 
-        if ($fileproof->isValid() && !$fileproof->hasMoved()) {
-            $fileproofName = $fileproof->getRandomName();
-            $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
+            if ($fileproof->isValid() && !$fileproof->hasMoved()) {
+                $fileproofName = $fileproof->getRandomName();
+                $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
 
-            $data = [
-                'fullName' => $this->request->getVar('fullName'),
-                'latitude' => $this->request->getVar('latitude'),
-                'longitude' => $this->request->getVar('longitude'),
-                'fileproof' => $fileproofName,
-            ];
+                $data = [
+                    'fullName' => $this->request->getVar('fullName'),
+                    'latitude' => $this->request->getVar('latitude'),
+                    'longitude' => $this->request->getVar('longitude'),
+                    'fileproof' => $fileproofName,
+                    'timestamp' => date('Y-m-d H:i:s')
+                ];
 
-            $communityReportModel->insert($data);
+                $communityReportModel->insert($data);
 
-            // Notify admins of the new emergency call
-            $this->notifyAllAdmins('New Emergency Call', 'A new emergency call has been submitted.');
+                // Notify admins of the new report
+                $this->notifyAllAdmins($data);
 
-            return $this->response->setJSON(['success' => true, 'message' => 'Emergency call successfully submitted!']);
+                return $this->response->setJSON(['success' => true, 'message' => 'Emergency call successfully submitted!']);
+            } else {
+                return $this->response->setJSON(['success' => false, 'message' => 'Failed to upload file proof.']);
+            }
         } else {
-            return $this->response->setJSON(['success' => false, 'message' => 'Failed to upload file proof.']);
+            return $this->response->setJSON(['success' => false, 'message' => 'Validation errors', 'errors' => $this->validator->getErrors()]);
         }
-    } else {
-        return $this->response->setJSON(['success' => false, 'message' => 'Validation errors', 'errors' => $this->validator->getErrors()]);
+    }
+
+private function notifyAllAdmins($reportData)
+{
+    $adminModel = new AdminModel();
+    $admins = $adminModel->where('token IS NOT NULL')->findAll();
+
+    foreach ($admins as $admin) {
+        $this->sendPushNotificationToUser($admin['token'], $reportData);
     }
 }
 
-public function sendPushNotificationToUser($token, $title, $body)
-{
-    $url = 'https://fcm.googleapis.com/fcm/send';
-    $headers = [
-        'Authorization: key=' . $this->firebaseServerKey,
-        'Content-Type: application/json'
-    ];
-
-    $notification = [
-        'title' => $title,
-        'body' => $body,
-        'click_action' => 'FLUTTER_NOTIFICATION_CLICK'
-    ];
-
-    $fields = [
-        'to' => $token,
-        'notification' => $notification
-    ];
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-    $result = curl_exec($ch);
-    curl_close($ch);
-
-    return json_decode($result, true);
-}    private function notifyAllAdmins($title, $body)
+public function sendPushNotificationToUser($token, $reportData)
     {
-        $adminModel = new AdminModel();
-        $admins = $adminModel->where('token IS NOT NULL')->findAll();
-    
-        foreach ($admins as $admin) {
-            $this->sendPushNotificationToUser($admin['token'], $title, $body);
-        }
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $headers = [
+            'Authorization: key=' . $this->firebaseServerKey,
+            'Content-Type: application/json'
+        ];
+
+        $notification = [
+            'title' => 'New Community Report',
+            'body' => 'Full Name: ' . $reportData['fullName'] . '\nFile Proof: ' . $reportData['fileproof'] . '\nSubmitted: just now',
+            'image' => '/community_report/' . $reportData['fileproof'],
+            'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
+        ];
+
+        $fields = [
+            'to' => $token,
+            'notification' => $notification
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return json_decode($result, true);
     }
+
 
     public function getEmergencyCallCoordinates()
     {
@@ -127,38 +132,56 @@ public function sendPushNotificationToUser($token, $title, $body)
     public function getLatestReports()
     {
         $model = new CommunityReportModel();
-        // Fetch the latest reports from the database
         $reports = $model->orderBy('timestamp', 'DESC')->findAll();
-        
+
+        // Convert timestamps to 'Asia/Manila' timezone
+        foreach ($reports as &$report) {
+            $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
+                ->setTimezone(new \DateTimeZone('Asia/Manila'))
+                ->format('Y-m-d H:i:s');
+        }
+
         return $this->response->setJSON($reports);
     }
     
-
     public function getRecentReports()
-{
-    $model = new CommunityReportModel();
-
-    // Get the current timestamp in Manila timezone
-    $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
-    $threeHoursAgo = $manilaTime->modify('-3 hours')->format('Y-m-d H:i');
-
-    // Adjust the query to get reports newer than 3 hours ago
-    $threeHoursAgoUTC = (new \DateTime($threeHoursAgo, new \DateTimeZone('Asia/Manila')))
-        ->setTimezone(new \DateTimeZone('UTC'))
-        ->format('Y-m-d H:i');
-
-    $reports = $model->where('timestamp >=', $threeHoursAgoUTC)
-        ->orderBy('timestamp', 'DESC')
-        ->findAll();
-
-    // Convert timestamps to 'Asia/Manila' timezone before returning the JSON response
-    foreach ($reports as &$report) {
-        $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
-            ->setTimezone(new \DateTimeZone('Asia/Manila'))
+    {
+        $model = new CommunityReportModel();
+    
+        // Get the current timestamp in Manila timezone
+        $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
+        $threeHoursAgo = $manilaTime->modify('-3 hours')->format('Y-m-d H:i:s');
+    
+        // Adjust the query to get reports newer than 3 hours ago (converted to UTC)
+        $threeHoursAgoUTC = (new \DateTime($threeHoursAgo, new \DateTimeZone('Asia/Manila')))
+            ->setTimezone(new \DateTimeZone('UTC'))
             ->format('Y-m-d H:i:s');
+    
+        // Fetch reports newer than 3 hours ago
+        $reports = $model->where('timestamp >=', $threeHoursAgoUTC)
+            ->orderBy('timestamp', 'DESC')
+            ->findAll();
+    
+        // Convert timestamps back to 'Asia/Manila' timezone before returning the JSON response
+        foreach ($reports as &$report) {
+            $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
+                ->setTimezone(new \DateTimeZone('Asia/Manila'))
+                ->format('Y-m-d H:i:s');
+        }
+    
+        return $this->response->setJSON($reports);
     }
-
-    return $this->response->setJSON($reports);
-}
+    public function saveToken()
+    {
+        $token = $this->request->getVar('token');
+    
+        // Assuming you have a model to store tokens in the database
+        $adminModel = new AdminModel();
+        
+        // Store or update the token for the current user
+        $adminModel->updateTokenForUser($token); // You need to implement this function in your AdminModel
+    
+        return $this->response->setJSON(['success' => true, 'message' => 'Token saved successfully']);
+    }
 
 }

@@ -1,47 +1,35 @@
 <?php
 
-function sendNotification($title, $body, $tokens) {
-    $headers = [
-        'Authorization: key=your-server-key',
-        'Content-Type: application/json',
-    ];
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
 
-    $request = [
-        'notification' => [
+function initializeFirebase()
+{
+    // Update the path to your Firebase service account JSON file
+    $firebase = (new Factory)
+        ->withServiceAccount('bfpcalapancity/pushnotifbfp-c11343df49d3.json') // Update this path
+        ->create();
+
+    return $firebase;
+}
+
+function sendNotification($title, $body, $tokens)
+{
+    $firebase = initializeFirebase();
+    $messaging = $firebase->getMessaging();
+
+    $message = CloudMessage::new()
+        ->withNotification([
             'title' => $title,
             'body' => $body,
-            'sound' => 'default',
-            'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
-        ],
-        'data' => [
-            'title' => $title,
-            'body' => $body,
-        ],
-        'registration_ids' => $tokens,
-    ];
+            'image' => 'image.jpg', // Optional: You can add an image here
+        ])
+        ->withData(['click_action' => 'FLUTTER_NOTIFICATION_CLICK']);
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request));
-
-    $response = curl_exec($ch);
-
-    if (curl_errno($ch)) {
-        $error_msg = curl_error($ch);
-        curl_close($ch);
-        return 'cURL error: ' . $error_msg;
+    try {
+        $messaging->sendMulticast($message, $tokens); // Send the message to multiple tokens
+        return 'Notification sent successfully!';
+    } catch (\Kreait\Firebase\Exception\MessagingException $e) {
+        return 'Error sending notification: ' . $e->getMessage();
     }
-
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    if ($http_code != 200) {
-        return 'FCM Error: HTTP status code ' . $http_code . ' - Response: ' . $response;
-    }
-
-    return $response;
 }

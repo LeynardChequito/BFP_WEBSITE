@@ -166,8 +166,10 @@
         <!-- Philippine time -->
         <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
-    <!-- Audio for alerting -->
+
+    <!-- Audio element for the alarm sound -->
     <audio id="sirenSound" src="bfpcalapancity/public/45secs_alarm.mp3" preload="auto"></audio>
+
     <!-- External scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -175,18 +177,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
-    <!-- Global Function Declaration -->
-    <script>
-        // Function to go to Rescue Map without passing coordinates
-        function goToRescueMap() {
-            window.location.href = '/rescuemap';
-        }
-    </script>
-
     <!-- JavaScript code for handling notifications and updating time -->
-    <script type="module">
-        // Firebase Configuration
-        const firebaseConfig = {
+<script type="module">
+      const firebaseConfig = {
             apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
             authDomain: "pushnotifbfp.firebaseapp.com",
             projectId: "pushnotifbfp",
@@ -195,71 +188,110 @@
             appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
             measurementId: "G-XMBH6JJ3M6"
         };
+
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
-// Variable to store the current notification count
-let currentReportCount = 0;
 
-async function fetchLatestReports() {
-    try {
-        const response = await fetch('/community-report/latest-reports'); // API endpoint from controller
-        const reports = await response.json(); // Convert the response to JSON
-        const notificationContainer = document.getElementById('notification-container');
-        const notificationCounter = document.getElementById('notification-counter');
+        // Request permission for notifications
+        messaging.requestPermission().then(function () {
+            console.log('Notification permission granted.');
+            return messaging.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfo' }); // Replace 'YOUR_VAPID_KEY' with the VAPID key
+        }).then(function (token) {
+            console.log('FCM Token:', token);
+            
+            // Send token to the server
+            fetch('/save-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: token })
+            });
+        }).catch(function (err) {
+            console.log('Unable to get permission to notify.', err);
+        });
 
-        // Check if the number of reports has increased
-        if (reports.length > currentReportCount) {
-            playAlarm(); // Play alarm if there are new reports
+        // Handle incoming messages when the page is open
+        messaging.onMessage(function(payload) {
+            console.log('Message received. ', payload);
+            const notificationOptions = {
+                body: payload.notification.body,
+                icon: payload.notification.icon || '/firebase-logo.png',
+                image: payload.notification.image || '/firebase-logo.png',
+            };
+            displayNotification(payload.notification.title, payload.notification.body, payload.data.timestamp);
+        })
+// Helper function to calculate 'time ago'
+function timeAgo(timeStamp) {
+            const now = new Date();
+            const secondsPast = (now.getTime() - new Date(timeStamp).getTime()) / 1000;
+
+            if (secondsPast < 60) {
+                return Math.floor(secondsPast) + ' seconds ago';
+            } else if (secondsPast < 3600) {
+                return Math.floor(secondsPast / 60) + ' minutes ago';
+            } else if (secondsPast < 86400) {
+                return Math.floor(secondsPast / 3600) + ' hours ago';
+            } else {
+                return Math.floor(secondsPast / 86400) + ' days ago';
+            }
+        }
+        let currentReportCount = 0;
+
+        async function fetchLatestReports() {
+            try {
+                const response = await fetch('/community-report/latest-reports');
+                const reports = await response.json();
+
+                if (reports.length > currentReportCount) {
+                    playAlarm(); // Play alarm if there are new reports
+                }
+
+                currentReportCount = reports.length;
+                displayNotifications(reports);
+            } catch (error) {
+                console.error('Error fetching latest reports:', error);
+            }
         }
 
-        // Update the current report count
-        currentReportCount = reports.length;
+        function playAlarm() {
+            const alarmSound = document.getElementById('alarmSound');
+            alarmSound.play();
+        }
 
-        // Clear previous notifications
-        notificationContainer.innerHTML = '';
+        function getRelativeTime(timestamp) {
+            const now = new Date();
+            const timeDifference = Math.floor((now - new Date(timestamp)) / 1000);
 
-        // Update the counter
-        notificationCounter.textContent = reports.length;
+            if (timeDifference < 60) return `${timeDifference} seconds ago`;
+            if (timeDifference < 3600) return `${Math.floor(timeDifference / 60)} minutes ago`;
+            if (timeDifference < 86400) return `${Math.floor(timeDifference / 3600)} hours ago`;
+            return `${Math.floor(timeDifference / 86400)} days ago`;
+        }
 
-        // Add new notifications
-        reports.forEach(report => {
+        // Display notification
+        function displayNotification(fullName, fileproof, timestamp) {
+            const notificationTime = timeAgo(timestamp);
             const notificationHTML = `
-                <div class="dropdown-separator"></div>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="mr-3 notification-item">
-                        <div class="icon-circle bg-primary">
-                            <i class="fas fa-file-alt text-white"></i>
-                        </div>
-                    </div>
-                    <div class="notification-details">
-                        <div class="small text-gray-500 notification-time">${new Date(report.timestamp).toLocaleString()}</div>
-                        <span class="font-weight-bold notification-title">${report.fullName}</span>
-                        <p>File Proof: <a href="/community_report/${report.fileproof}" target="_blank">${report.fileproof}</a></p>
-                        <button class="btn btn-primary" onclick="goToRescueMap()">View on Map</button>
-                    </div>
-                </a>
+                <div class="notification">
+                    <strong>${fullName}</strong> submitted a report. 
+                    <br>Proof: <a href="/community_report/${fileproof}" target="_blank">${fileproof}</a>
+                    <br><em>${notificationTime}</em>
+                </div>
             `;
-            notificationContainer.insertAdjacentHTML('beforeend', notificationHTML);
+            document.getElementById('notification-container').insertAdjacentHTML('beforeend', notificationHTML);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchLatestReports();
+            setInterval(fetchLatestReports, 60000); // Check every minute
         });
-    } catch (error) {
-        console.error('Error fetching latest reports:', error);
-    }
-}
 
-// Function to play the alarm sound
-function playAlarm() {
-    const alarmSound = document.getElementById('alarmSound');
-    if (alarmSound) {
-        alarmSound.play();
-    }
-}
-
-// Load notifications when the page loads
-document.addEventListener('DOMContentLoaded', function () {
-    fetchLatestReports();
-    setInterval(fetchLatestReports, 60000); // Fetch new reports every minute
-});
-
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                console.log("Notification permission granted.");
+            } else {
+                console.log("Notification permission denied.");
+            }
+        });
     </script>
 </body>
 
