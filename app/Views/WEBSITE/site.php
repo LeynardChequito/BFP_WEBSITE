@@ -402,31 +402,51 @@ document.addEventListener('DOMContentLoaded', function() {
             // Other form submission logic, Firebase initialization, etc.
 
             // Make openModal globally accessible
-            window.openModal = function() {
-                document.getElementById("myModal").style.display = "block";
-                getLocation(); // Get the user's current location
-            };
+           
+    // Function to show the modal and get the user's location
+    function openModal() {
+        document.getElementById("myModal").style.display = "block";
+        getLocation(); // Get the user's current location
+    }
 
-            // Make closeModal globally accessible
-            window.closeModal = function() {
-                document.getElementById("myModal").style.display = "none";
-            };
-        });
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+    }
 
+    // Function to update the Philippine time
+    function updatePhilippineTime() {
+        const options = {
+            timeZone: 'Asia/Manila',
+            hour12: true,
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric'
+        };
+        document.getElementById('philippineTime').innerText = new Date().toLocaleString('en-US', options);
+    }
 
-        // Update Philippine time
-        function updatePhilippineTime() {
-            const options = {
-                timeZone: 'Asia/Manila',
-                hour12: true,
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric'
-            };
-            document.getElementById('philippineTime').innerText = new Date().toLocaleString('en-US', options);
+    // Function to get the user's location
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            alert("Geolocation is not supported by this browser.");
         }
+    }
 
+    // Function to display the user's position in the form
+    function showPosition(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Update time every second
         setInterval(updatePhilippineTime, 1000);
+    });
     </script>
 
     <!-- Your other scripts -->
