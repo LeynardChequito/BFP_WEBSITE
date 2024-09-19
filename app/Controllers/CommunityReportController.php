@@ -25,17 +25,19 @@ class CommunityReportController extends BaseController
         return view('WEBSITE/site');
     }
 
-    public function submitCommunityReport()
+    public function submitCommunityForm()
     {
         helper(['form', 'url', 'session']);
-
+    
+        // Define validation rules
         $rules = [
             'fullName' => 'required|max_length[255]',
             'latitude' => 'required|decimal',
             'longitude' => 'required|decimal',
             'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
         ];
-
+    
+        // Define custom validation messages
         $messages = [
             'fullName' => [
                 'required' => 'Full Name is required.',
@@ -55,47 +57,53 @@ class CommunityReportController extends BaseController
                 'ext_in' => 'File proof must be an image (jpg, jpeg, png) or video (mp4, mov, avi).',
             ],
         ];
-
+    
+        // Validate form input
         if ($this->validate($rules, $messages)) {
             $communityReportModel = new CommunityReportModel();
-
+    
+            // Handle file upload
             $fileproof = $this->request->getFile('fileproof');
             if ($fileproof->isValid() && !$fileproof->hasMoved()) {
                 $fileproofName = $fileproof->getRandomName();
                 $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
-
+    
+                // Prepare data for insertion
                 $data = [
                     'fullName' => $this->request->getVar('fullName'),
                     'latitude' => $this->request->getVar('latitude'),
                     'longitude' => $this->request->getVar('longitude'),
                     'fileproof' => $fileproofName,
                 ];
-
-                $communityReportModel->insert($data);
-
-                // Construct the image URL
-                $imageUrl = base_url('public/community_report/' . $fileproofName);
-
-                // Prepare notification details
-                $title = 'New Emergency Call';
-                $body = "A new emergency call has been submitted by {$data['fullName']} at coordinates ({$data['latitude']}, {$data['longitude']}).";
-
-                // Send notifications to all admins with tokens
-                $this->notifyAllAdmins($title, $body, $imageUrl);
-
-                $this->session->setFlashdata('success', 'Emergency Call successfully submitted!');
-
-                return redirect()->to('home');
+    
+                // Insert data into the database
+                if ($communityReportModel->insert($data)) {
+                    // Notify admins
+                    $this->notifyAdmins($data['fullName'], $data['latitude'], $data['longitude'], base_url('public/community_report/' . $fileproofName));
+    
+                    $this->session->setFlashdata('success', 'Emergency Call successfully submitted!');
+                    return redirect()->to('home');
+                } else {
+                    $this->session->setFlashdata('failed', 'Failed to save the report.');
+                    return redirect()->back()->withInput();
+                }
             } else {
                 $this->session->setFlashdata('failed', 'Failed to upload file proof.');
                 return redirect()->back()->withInput();
             }
         } else {
-            $data['validation'] = $this->validator;
-            $this->session->setFlashdata('failed', 'Failed! Emergency Call unsent. Please Try Again.');
+            $this->session->setFlashdata('failed', 'Validation failed! Please check the form.');
             return redirect()->back()->withInput()->with('validation', $this->validator);
         }
     }
+    
+    private function notifyAdmins($fullName, $latitude, $longitude, $imageUrl)
+    {
+        $title = 'New Emergency Call';
+        $body = "A new emergency call has been submitted by {$fullName} at coordinates ({$latitude}, {$longitude}).";
+        $this->notifyAllAdmins($title, $body, $imageUrl);
+    }
+    
 
     public function sendPushNotificationToUser($token, $title, $body, $imageUrl = null)
     {
