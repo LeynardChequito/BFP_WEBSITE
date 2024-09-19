@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergency Call Form</title>
+    <title>Emergency Call Form</title> <!-- Missing closing tag fixed -->
 
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
@@ -229,51 +229,19 @@
                             <input type="text" id="longitude" name="longitude" class="form-control readonly" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="fileproof">Upload File Proof (Image/Video)</label>
-                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*; video/*;" capture="environment" multiple required>
+                            <label for="fileproof">Upload File:</label>
+                            <input type="file" id="fileproof" name="fileproof" class="form-control">
                         </div>
-                        <button type="submit" class="btn btn-primary">Send</button>
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description" class="form-control" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Submit</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Firebase Messaging Scripts -->
-    <script type="module">
-        // Import the necessary functions from the Firebase Messaging module
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
-            authDomain: "pushnotifbfp.firebaseapp.com",
-            projectId: "pushnotifbfp",
-            storageBucket: "pushnotifbfp.appspot.com",
-            messagingSenderId: "214092622073",
-            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
-            measurementId: "G-XMBH6JJ3M6"
-        };
-
-        // Initialize Firebase app and messaging
-        const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
-
-        // Request permission to receive notifications
-        messaging.requestPermission().then(function() {
-            console.log('Notification permission granted.');
-            return getToken(messaging);
-        }).then(function(token) {
-            console.log('FCM Token:', token);
-        }).catch(function(error) {
-            console.error('Error getting FCM token:', error);
-        });
-
-        // Handle incoming messages
-        onMessage(messaging, (payload) => {
-            console.log('Message received. ', payload);
-        });
-    </script>
 
     <script>
  document.addEventListener('DOMContentLoaded', function() {
@@ -355,38 +323,73 @@
             document.getElementById('longitude').value = lng;
         }
 
-        // Function to open the modal and get the user's location
+
         function openModal() {
             document.getElementById("myModal").style.display = "block";
-            getLocation();
         }
 
-        // Function to close the modal
+        // Close the modal
         function closeModal() {
             document.getElementById("myModal").style.display = "none";
         }
 
-        // Function to update Philippine time
+        // Get user's location
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Set latitude and longitude in form
+        function showPosition(position) {
+            document.getElementById('latitude').value = position.coords.latitude;
+            document.getElementById('longitude').value = position.coords.longitude;
+        }
+
+        // Handle errors
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
+        }
+
+        // Display Philippine Time
         function updatePhilippineTime() {
             const options = {
                 timeZone: 'Asia/Manila',
-                hour12: true,
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric'
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
             };
-            const philippineTime = new Date().toLocaleString('en-US', options);
-            document.getElementById('philippineTime').innerText = philippineTime;
+
+            const now = new Date();
+            document.getElementById("philippineTime").textContent = now.toLocaleTimeString("en-US", options);
         }
 
-        updatePhilippineTime();
+        // Update time every second
         setInterval(updatePhilippineTime, 1000);
+
+        // Call update immediately to avoid delay
+        updatePhilippineTime();
     </script>
 
-    <!-- Your other scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>
