@@ -10,16 +10,39 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@3.0.12/dist/esri-leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet-vector@4.2.3/dist/esri-leaflet-vector.js"></script>
+
+    <!-- Load ArcGIS REST JS from CDN -->
+    <script src="https://unpkg.com/@esri/arcgis-rest-request@4.0.0/dist/bundled/request.umd.js"></script>
+    <script src="https://unpkg.com/@esri/arcgis-rest-routing@4.0.0/dist/bundled/routing.umd.js"></script>
+
+    <!-- Load Esri Leaflet Routing from CDN -->
+    <script src="https://unpkg.com/esri-leaflet-routing@3.1.1/dist/esri-leaflet-routing.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="manifest" href="app/Views/manifest.json">
     <style>
-        body {
-            font-family: "Arial", sans-serif;
-            background-color: #f4f4f9;
+        .bureau-of-fire-protection {
+            font-family: "Bebas Neue", sans-serif;
+            font-weight: 400;
+            font-size: 60px;
+            font-style: normal;
+            color: #f5f5f5;
+            margin-top: 0;
+            margin-bottom: 0;
         }
 
-        /* Modal styles */
+        #map {
+            height: 400px;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -29,93 +52,67 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5); /* Dark background */
-            animation: fadeIn 0.5s; /* Smooth fade-in animation */
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        .modal-footer {
+            border-top: none;
+            justify-content: center;
         }
 
         .modal-content {
-            background-color: #fff;
+            background-color: #fefefe;
             margin: 5% auto;
             padding: 20px;
-            border-radius: 10px;
+            border: 1px solid #888;
             width: 80%;
-            max-width: 500px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            animation: scaleIn 0.3s ease; /* Smooth scale animation */
-        }
-
-        @keyframes scaleIn {
-            from {
-                transform: scale(0.8);
-            }
-            to {
-                transform: scale(1);
-            }
+            max-width: 600px;
+            border-radius: 10px;
         }
 
         .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e5e5e5;
-            padding-bottom: 10px;
+            border-bottom: none;
         }
 
         .modal-header .close {
-            font-size: 24px;
+            margin: -1rem -1rem -1rem auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
             font-weight: bold;
-            color: #333;
             cursor: pointer;
-            transition: color 0.3s ease;
         }
 
-        .modal-header .close:hover {
-            color: #ff4d4d;
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
         }
 
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        /* Form styling */
+        /* Form styles */
         form {
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
 
         label {
-            font-weight: bold;
+            display: block;
             margin-bottom: 5px;
+            font-weight: bold;
         }
 
         input[type="text"],
-        input[type="file"] {
+        input[type="number"],
+        select,
+        textarea {
             width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            padding: 8px;
             margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
             box-sizing: border-box;
-            transition: border 0.3s ease;
-        }
-
-        input[type="text"]:focus,
-        input[type="file"]:focus {
-            border-color: #4CAF50;
-            outline: none;
-        }
-
-        .readonly {
-            background-color: #f5f5f5;
         }
 
         button {
@@ -123,25 +120,51 @@
             color: white;
             padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
         }
 
         button:hover {
             background-color: #45a049;
         }
 
-        /* Close button animation */
-        .close:hover {
-            color: #ff3333;
+        .readonly {
+            border: none;
+            background-color: #f5f5f5;
+            padding: 8px;
+        }
+
+        .navbar-dark .navbar-nav .nav-link {
+            font-size: 16px;
+        }
+
+        .navbar-brand img {
+            width: 90px;
+            height: 90px;
+        }
+
+        .navbar-brand p {
+            font-family: "Bebas Neue", sans-serif;
+            font-size: 24px;
+            margin: 0;
+        }
+
+        #map {
+            height: 400px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+        }
+
+        .form-control[readonly] {
+            background-color: #e9ecef;
+            opacity: 1;
         }
     </style>
 </head>
 
-<body>
+<body onload="getLocation();">
     <!-- First Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-image: linear-gradient(150deg, black, red);">
         <a class="navbar-brand" href="#">
@@ -160,17 +183,39 @@
         </div>
     </nav>
 
-    <!-- Modal for Emergency Form -->
+    <!-- Second Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item <?php echo (current_url() == site_url('/home')) ? 'active' : ''; ?>">
+                    <a href="<?= site_url('/home') ?>" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item <?php echo (current_url() == site_url('/activities')) ? 'active' : ''; ?>">
+                    <a href="<?= site_url('/activities') ?>" class="nav-link">Activities</a>
+                </li>
+                <li class="nav-item <?php echo (current_url() == site_url('/achievements')) ? 'active' : ''; ?>">
+                    <a href="<?= site_url('/achievements') ?>" class="nav-link">Achievements</a>
+                </li>
+                <li class="nav-item <?php echo (current_url() == site_url('/contacts')) ? 'active' : ''; ?>">
+                    <a href="<?= site_url('/contacts') ?>" class="nav-link">Contact Us</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Modal -->
     <div id="myModal" class="modal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Emergency Call Form</h5>
-                    <span class="close" onclick="closeModal()">&times;</span>
+                    <button type="button" class="close" onclick="closeModal()">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
-                        <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
                         <div class="form-group">
                             <label for="fullName">Your Name:</label>
                             <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
@@ -185,7 +230,7 @@
                         </div>
                         <div class="form-group">
                             <label for="fileproof">Upload File Proof (Image/Video)</label>
-                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*, video/*" capture="environment" required>
+                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*;capture=camera,video/*;capture=camcorder" multiple required>
                         </div>
                         <button type="submit" class="btn btn-primary">Send</button>
                     </form>
@@ -194,65 +239,151 @@
         </div>
     </div>
 
+    <!-- Firebase Messaging Scripts -->
     <script type="module">
-        document.addEventListener('DOMContentLoaded', function () {
-            // Get location when the DOM is fully loaded
-            getLocation();
+        // Import the necessary functions from the Firebase Messaging module
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
-            const emergencyForm = document.getElementById('emergencyForm');
+        const firebaseConfig = {
+            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+            authDomain: "pushnotifbfp.firebaseapp.com",
+            projectId: "pushnotifbfp",
+            storageBucket: "pushnotifbfp.appspot.com",
+            messagingSenderId: "214092622073",
+            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+            measurementId: "G-XMBH6JJ3M6"
+        };
+
+        // Initialize Firebase app and messaging
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        // Request permission to receive notifications
+        messaging.requestPermission().then(function() {
+            console.log('Notification permission granted.');
+            return getToken(messaging);
+        }).then(function(token) {
+            console.log('FCM Token:', token);
+        }).catch(function(error) {
+            console.error('Error getting FCM token:', error);
+        });
+
+        // Handle incoming messages
+        onMessage(messaging, (payload) => {
+            console.log('Message received. ', payload);
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var emergencyForm = document.getElementById('emergencyForm');
             if (emergencyForm) {
-                emergencyForm.addEventListener('submit', function (event) {
+                emergencyForm.addEventListener('submit', function(event) {
                     event.preventDefault();
-                    const formData = new FormData(this);
-                    const xhr = new XMLHttpRequest();
+
+                    var formData = new FormData(this);
+                    var xhr = new XMLHttpRequest();
                     xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
 
-                    xhr.onload = function () {
+                    xhr.onload = function() {
                         if (xhr.status === 200) {
-                            alert("Form submitted successfully!");
-                            closeModal();
-                        } else {
-                            alert("Error submitting the form. Please try again.");
-                        }
-                    };
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                alert("Form submitted successfully!");
+                                // Call the function to send the notification
+                                submitEmergencyCall(formData);
 
-                    xhr.onerror = function () {
-                        alert("An error occurred while submitting the form. Please check your connection.");
+                                window.parent.postMessage({
+                                    action: 'updateMap',
+                                    data: {
+                                        latitude: formData.get('latitude'),
+                                        longitude: formData.get('longitude'),
+                                        fullName: formData.get('fullName')
+                                    }
+                                }, '*');
+                                closeModal();
+                            } else {
+                                alert("Form submission failed: " + response.message);
+                            }
+                        }
                     };
 
                     xhr.send(formData);
                 });
             }
-
-            // Function to show modal
-            window.openModal = function () {
-                document.getElementById("myModal").style.display = "block";
-                getLocation();
-            }
-
-            // Function to close modal
-            window.closeModal = function () {
-                document.getElementById("myModal").style.display = "none";
-            }
-
-            // Function to get user's location
-            function getLocation() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(showPosition);
-                } else {
-                    alert("Geolocation is not supported by this browser.");
-                }
-            }
-
-            // Function to display user's position in the form
-            function showPosition(position) {
-                document.getElementById('latitude').value = position.coords.latitude;
-                document.getElementById('longitude').value = position.coords.longitude;
-            }
         });
+
+        // Function to send notification payload
+        function submitEmergencyCall(formData) {
+            var fireType = formData.get('fireType');  // Adjust according to the actual form field name
+            var notificationPayload = {
+                notification: {
+                    title: 'Emergency Call',
+                    body: 'A new emergency call has been submitted.',
+                    data: {
+                        fireType: fireType,
+                        latitude: formData.get('latitude'),
+                        longitude: formData.get('longitude')
+                    }
+                },
+                topic: 'admin_notifications'
+            };
+
+            if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage(notificationPayload);
+            } else {
+                console.error('Service worker not available.');
+            }
+        }
+
+        // Function to get the user's current location
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Function to display user's current position on the modal form
+        function showPosition(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+        }
+
+        // Function to open the modal and get the user's location
+        function openModal() {
+            document.getElementById("myModal").style.display = "block";
+            getLocation();
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        // Function to update Philippine time
+        function updatePhilippineTime() {
+            const options = {
+                timeZone: 'Asia/Manila',
+                hour12: true,
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric'
+            };
+            const philippineTime = new Date().toLocaleString('en-US', options);
+            document.getElementById('philippineTime').innerText = philippineTime;
+        }
+
+        updatePhilippineTime();
+        setInterval(updatePhilippineTime, 1000);
     </script>
 
-    <!-- Bootstrap scripts -->
+    <!-- Your other scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

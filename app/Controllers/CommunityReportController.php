@@ -4,11 +4,15 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CommunityReportModel;
+use App\Models\AdminModel; // Ensure you have this model
 use Config\Services;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
 
 class CommunityReportController extends BaseController
 {
     protected $session;
+    protected $firebaseServerKey = 'AAAAMdjqKPk:APA91bH4dQbOlZJbcnrviv8Cak23oGKjVbzs3O0V9s1jEo_SLynqGa-XqxLa4rXtXAWn7eSeeyuqjf9fexjsxzJJVPXmU3GzY8sjddKyRqiFoZdr14ryMhvpGD2I-KmfRjL2rVWVVPnV';
 
     public function __construct()
     {
@@ -24,52 +28,124 @@ class CommunityReportController extends BaseController
     public function submitCommunityReport()
     {
         helper(['form', 'url', 'session']);
-        
+
         $rules = [
             'fullName' => 'required|max_length[255]',
             'latitude' => 'required|decimal',
             'longitude' => 'required|decimal',
             'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
         ];
-        
-        if (!$this->validate($rules)) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Validation errors',
-                'errors' => $this->validator->getErrors()
-            ]);
+
+        $messages = [
+            'fullName' => [
+                'required' => 'Full Name is required.',
+                'max_length' => 'Full Name should not exceed 255 characters.',
+            ],
+            'latitude' => [
+                'required' => 'Latitude is required.',
+                'decimal' => 'Latitude must be a valid decimal number.',
+            ],
+            'longitude' => [
+                'required' => 'Longitude is required.',
+                'decimal' => 'Longitude must be a valid decimal number.',
+            ],
+            'fileproof' => [
+                'uploaded' => 'File proof is required.',
+                'max_size' => 'File proof must not exceed 50MB.',
+                'ext_in' => 'File proof must be an image (jpg, jpeg, png) or video (mp4, mov, avi).',
+            ],
+        ];
+
+        if ($this->validate($rules, $messages)) {
+            $communityReportModel = new CommunityReportModel();
+
+            $fileproof = $this->request->getFile('fileproof');
+            if ($fileproof->isValid() && !$fileproof->hasMoved()) {
+                $fileproofName = $fileproof->getRandomName();
+                $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
+
+                $data = [
+                    'fullName' => $this->request->getVar('fullName'),
+                    'latitude' => $this->request->getVar('latitude'),
+                    'longitude' => $this->request->getVar('longitude'),
+                    'fileproof' => $fileproofName,
+                ];
+
+                $communityReportModel->insert($data);
+
+                // Construct the image URL
+                $imageUrl = base_url('public/community_report/' . $fileproofName);
+
+                // Prepare notification details
+                $title = 'New Emergency Call';
+                $body = "A new emergency call has been submitted by {$data['fullName']} at coordinates ({$data['latitude']}, {$data['longitude']}).";
+
+                // Send notifications to all admins with tokens
+                $this->notifyAllAdmins($title, $body, $imageUrl);
+
+                $this->session->setFlashdata('success', 'Emergency Call successfully submitted!');
+
+                return redirect()->to('home');
+            } else {
+                $this->session->setFlashdata('failed', 'Failed to upload file proof.');
+                return redirect()->back()->withInput();
+            }
+        } else {
+            $data['validation'] = $this->validator;
+            $this->session->setFlashdata('failed', 'Failed! Emergency Call unsent. Please Try Again.');
+            return redirect()->back()->withInput()->with('validation', $this->validator);
+        }
+    }
+
+    public function sendPushNotificationToUser($token, $title, $body, $imageUrl = null)
+    {
+        // Prepare the payload for the push notification
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $headers = [
+            'Authorization: key=' . $this->firebaseServerKey,
+            'Content-Type: application/json'
+        ];
+
+        $notification = [
+            'title' => $title,
+            'body' => $body,
+        ];
+
+        if ($imageUrl) {
+            $notification['image'] = $imageUrl;
         }
 
-        $communityReportModel = new CommunityReportModel();
-        $fileproof = $this->request->getFile('fileproof');
-        
-        if (!$fileproof->isValid()) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'File upload error: ' . $fileproof->getErrorString()
-            ]);
-        }
+        $fields = [
+            'to' => $token,
+            'notification' => $notification,
+            'data' => [
+                'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
+                'title' => $title,
+                'body' => $body,
+                'image' => $imageUrl
+            ]
+        ];
 
-        try {
-            $fileproofName = $fileproof->getRandomName();
-            $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
-            
-            $data = [
-                'fullName' => $this->request->getVar('fullName'),
-                'latitude' => $this->request->getVar('latitude'),
-                'longitude' => $this->request->getVar('longitude'),
-                'fileproof' => $fileproofName,
-                'timestamp' => date('Y-m-d H:i:s')
-            ];
+        // Initialize cURL and send the notification
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
 
-            $communityReportModel->insert($data);
+        return json_decode($result, true);
+    }
 
-            return $this->response->setJSON(['success' => true, 'message' => 'Emergency call successfully submitted!']);
-        } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'An error occurred: ' . $e->getMessage()
-            ]);
+    private function notifyAllAdmins($title, $body, $imageUrl = null)
+    {
+        $adminModel = new AdminModel();
+        $admins = $adminModel->where('token IS NOT NULL')->findAll();
+
+        foreach ($admins as $admin) {
+            $this->sendPushNotificationToUser($admin['token'], $title, $body, $imageUrl);
         }
     }
 
@@ -93,46 +169,30 @@ class CommunityReportController extends BaseController
         }
     }
 
-    public function getLatestReports()
-    {
-        $model = new CommunityReportModel();
-        $reports = $model->orderBy('timestamp', 'DESC')->findAll();
-
-        // Convert timestamps to 'Asia/Manila' timezone
-        foreach ($reports as &$report) {
-            $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
-                ->setTimezone(new \DateTimeZone('Asia/Manila'))
-                ->format('Y-m-d H:i:s');
-        }
-
-        return $this->response->setJSON($reports);
-    }
-
     public function getRecentReports()
     {
         $model = new CommunityReportModel();
-    
+
         // Get the current timestamp in Manila timezone
         $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
-        $threeHoursAgo = $manilaTime->modify('-3 hours')->format('Y-m-d H:i:s');
-    
-        // Adjust the query to get reports newer than 3 hours ago (converted to UTC)
-        $threeHoursAgoUTC = (new \DateTime($threeHoursAgo, new \DateTimeZone('Asia/Manila')))
+        $eightHoursAgo = $manilaTime->modify('-8 hours')->format('Y-m-d H:i');
+
+        // Adjust the query to get reports newer than 8 hours ago in MySQL-compatible timezone format
+        $eightHoursAgoUTC = (new \DateTime($eightHoursAgo, new \DateTimeZone('Asia/Manila')))
             ->setTimezone(new \DateTimeZone('UTC'))
-            ->format('Y-m-d H:i:s');
-    
-        // Fetch reports newer than 3 hours ago
-        $reports = $model->where('timestamp >=', $threeHoursAgoUTC)
+            ->format('Y-m-d H:i');
+
+        $reports = $model->where('timestamp >=', $eightHoursAgoUTC)
             ->orderBy('timestamp', 'DESC')
             ->findAll();
-    
-        // Convert timestamps back to 'Asia/Manila' timezone before returning the JSON response
+
+        // Convert timestamps to 'Asia/Manila' timezone before returning the JSON response
         foreach ($reports as &$report) {
             $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
                 ->setTimezone(new \DateTimeZone('Asia/Manila'))
-                ->format('Y-m-d H:i:s');
+                ->format('Y-m-d (h:i a)');
         }
-    
+
         return $this->response->setJSON($reports);
     }
 }
