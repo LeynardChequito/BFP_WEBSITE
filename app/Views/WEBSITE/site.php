@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergency Call Form</title> <!-- Missing closing tag fixed -->
+    <title>Emergency Call Form</title>
 
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="manifest" href="app/Views/manifest.json">
+
     <style>
         .bureau-of-fire-protection {
             font-family: "Bebas Neue", sans-serif;
@@ -68,6 +69,7 @@
             width: 80%;
             max-width: 600px;
             border-radius: 10px;
+
         }
 
         .modal-header {
@@ -164,7 +166,7 @@
     </style>
 </head>
 
-<body onload="getLocation();">
+<body>
     <!-- First Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-image: linear-gradient(150deg, black, red);">
         <a class="navbar-brand" href="#">
@@ -182,6 +184,7 @@
             <a class="btn btn-danger" href="<?= site_url('/logout') ?>">Logout</a>
         </div>
     </nav>
+
 
     <!-- Second Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
@@ -206,7 +209,7 @@
         </div>
     </nav>
 
-    <!-- Modal -->
+    <!-- Modal for Emergency Form -->
     <div id="myModal" class="modal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -215,8 +218,10 @@
                     <button type="button" class="close" onclick="closeModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
-                        <div class="form-group">
+                <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
+
+                <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />   
+                    <div class="form-group">
                             <label for="fullName">Your Name:</label>
                             <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
                         </div>
@@ -229,74 +234,105 @@
                             <input type="text" id="longitude" name="longitude" class="form-control readonly" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="fileproof">Upload File:</label>
-                            <input type="file" id="fileproof" name="fileproof" class="form-control">
+                            <label for="fileproof">Upload File Proof (Image/Video)</label>
+                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*, video/*" required>
                         </div>
-                        <div class="form-group">
-                            <label for="description">Description:</label>
-                            <textarea id="description" name="description" class="form-control" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-danger">Submit</button>
+                        <button type="submit" class="btn btn-primary">Send</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
- document.addEventListener('DOMContentLoaded', function() {
-    var emergencyForm = document.getElementById('emergencyForm');
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+
+    <script type="module">
+document.addEventListener('DOMContentLoaded', function() {
+        // Ensure the location is obtained after DOM is fully loaded
+        getLocation();
+    });
+
+
+
+
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
+            authDomain: "pushnotifbfp.firebaseapp.com",
+            projectId: "pushnotifbfp",
+            storageBucket: "pushnotifbfp.appspot.com",
+            messagingSenderId: "214092622073",
+            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
+            measurementId: "G-XMBH6JJ3M6"
+        };
+
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+        let mToken;
+
+        // Retrieve FCM token for the current device
+        messaging.getToken({
+                vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+            })
+            .then((currentToken) => {
+                if (currentToken) {
+                    console.log('Token retrieved:', currentToken);
+                    mToken = currentToken;
+                } else {
+                    console.log('No registration token available.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error retrieving token:', error);
+            });
+
+        // Handle incoming messages (while the app is in the foreground)
+        messaging.onMessage((payload) => {
+            console.log('Message received:', payload);
+            displayNotification(payload.notification);
+        });
+
+        // Form submission logic
+        document.addEventListener('DOMContentLoaded', function() {
+    const emergencyForm = document.getElementById('emergencyForm');
+
     if (emergencyForm) {
         emergencyForm.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            var formData = new FormData(this);
-            var xhr = new XMLHttpRequest();
+            const formData = new FormData(this);
+            const xhr = new XMLHttpRequest();
             xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
 
             xhr.onload = function() {
-                if (xhr.status === 200) {
-                    try {
-                        var response = JSON.parse(xhr.responseText);
+                try {
+                    const contentType = xhr.getResponseHeader("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        const response = JSON.parse(xhr.responseText);
                         if (response.success) {
                             alert("Form submitted successfully!");
-
-                            // Extract necessary data from formData
-                            var latitude = formData.get('latitude');
-                            var longitude = formData.get('longitude');
-                            var fullName = formData.get('fullName');
-
-                            // Call the function to send the notification
-                            submitEmergencyCall({
-                                latitude: latitude,
-                                longitude: longitude,
-                                fullName: fullName
-                            });
-
-                            // Send message to parent window to update the map
-                            window.parent.postMessage({
-                                action: 'updateMap',
-                                data: {
-                                    latitude: latitude,
-                                    longitude: longitude,
-                                    fullName: fullName
-                                }
-                            }, '*');
-
+                            triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
                             closeModal();
                         } else {
                             alert("Form submission failed: " + response.message);
                         }
-                    } catch (e) {
-                        alert("Error parsing server response: " + e.message);
+                    } else {
+                        console.error("Unexpected response:", xhr.responseText);
+                        alert("An unexpected error occurred. Please try again later.");
                     }
-                } else {
-                    alert("Form submission failed with status: " + xhr.status);
+                } catch (error) {
+                    console.error("Error parsing the response as JSON:", error);
+                    alert("An unexpected error occurred. Please try again later.");
                 }
             };
 
             xhr.onerror = function() {
-                alert("Request error. Please check your network connection.");
+                console.error("Request failed");
+                alert("An error occurred while submitting the form. Please check your connection and try again.");
             };
 
             xhr.send(formData);
@@ -305,91 +341,101 @@
 });
 
 
-        // Function to get the user's current location
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Trigger a notification
+        function triggerNotification(title, body) {
+            if (Notification.permission === "granted") {
+                new Notification(title, {
+                    body: body
+                });
             } else {
-                alert("Geolocation is not supported by this browser.");
+                Notification.requestPermission().then((permission) => {
+                    if (permission === "granted") {
+                        new Notification(title, {
+                            body: body
+                        });
+                    }
+                });
             }
         }
 
-        // Function to display user's current position on the modal form
-        function showPosition(position) {
-            var lat = position.coords.latitude;
-            var lng = position.coords.longitude;
-
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
-        }
-
-
-        function openModal() {
-            document.getElementById("myModal").style.display = "block";
-        }
-
-        // Close the modal
-        function closeModal() {
-            document.getElementById("myModal").style.display = "none";
-        }
-
-        // Get user's location
         function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            alert("Geolocation is not supported by this browser.");
         }
+    }
 
-        // Set latitude and longitude in form
-        function showPosition(position) {
-            document.getElementById('latitude').value = position.coords.latitude;
-            document.getElementById('longitude').value = position.coords.longitude;
-        }
+    function showPosition(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+    }
 
-        // Handle errors
-        function showError(error) {
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("User denied the request for Geolocation.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("Location information is unavailable.");
-                    break;
-                case error.TIMEOUT:
-                    alert("The request to get user location timed out.");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert("An unknown error occurred.");
-                    break;
-            }
-        }
 
-        // Display Philippine Time
+        document.addEventListener('DOMContentLoaded', function() {
+            // Other form submission logic, Firebase initialization, etc.
+
+            // Make openModal globally accessible
+            window.openModal = function() {
+                document.getElementById("myModal").style.display = "block";
+                getLocation(); // Get the user's current location
+            };
+
+            // Make closeModal globally accessible
+            window.closeModal = function() {
+                document.getElementById("myModal").style.display = "none";
+            };
+        });
+
+
+        // Update Philippine time
         function updatePhilippineTime() {
             const options = {
                 timeZone: 'Asia/Manila',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false,
+                hour12: true,
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric'
             };
-
-            const now = new Date();
-            document.getElementById("philippineTime").textContent = now.toLocaleTimeString("en-US", options);
+            document.getElementById('philippineTime').innerText = new Date().toLocaleString('en-US', options);
         }
 
-        // Update time every second
         setInterval(updatePhilippineTime, 1000);
-
-        // Call update immediately to avoid delay
-        updatePhilippineTime();
     </script>
 
+    <!-- Your other scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
