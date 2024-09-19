@@ -174,19 +174,19 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js"></script>
 
     <!-- JavaScript code for handling notifications and updating time -->
     <script type="module">
         import {
             initializeApp
-        } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js";
+        } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
         import {
             getMessaging,
             getToken,
             onMessage
-        } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js";
+        } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js";
         const firebaseConfig = {
             apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
             authDomain: "pushnotifbfp.firebaseapp.com",
