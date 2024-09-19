@@ -25,7 +25,7 @@ class CommunityReportController extends BaseController
         return view('WEBSITE/site');
     }
 
-    public function submitCommunityForm()
+    public function submitCommunityReport()
     {
         helper(['form', 'url', 'session']);
     
