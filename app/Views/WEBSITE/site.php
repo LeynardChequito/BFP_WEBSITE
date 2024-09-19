@@ -251,9 +251,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
             // Import the necessary functions from the Firebase Messaging module
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-            import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-analytics.js";
-            import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js";
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js";
+            import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",

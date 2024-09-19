@@ -162,8 +162,8 @@
     </script>
 
 
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <script type="module">
         const firebaseConfig = {
