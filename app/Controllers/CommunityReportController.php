@@ -4,10 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CommunityReportModel;
-use App\Models\AdminModel; // Ensure you have this model
 use Config\Services;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Messaging\CloudMessage;
 
 class CommunityReportController extends BaseController
 {
@@ -25,99 +22,56 @@ class CommunityReportController extends BaseController
     }
 
     public function submitCommunityReport()
-{
-    helper(['form', 'url', 'session']);
-    
-    $rules = [
-        'fullName' => 'required|max_length[255]',
-        'latitude' => 'required|decimal',
-        'longitude' => 'required|decimal',
-        'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
-    ];
-    
-    if (!$this->validate($rules)) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Validation errors',
-            'errors' => $this->validator->getErrors()
-        ]);
-    }
-
-    $communityReportModel = new CommunityReportModel();
-    $fileproof = $this->request->getFile('fileproof');
-    
-    if (!$fileproof->isValid()) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'File upload error: ' . $fileproof->getErrorString()
-        ]);
-    }
-
-    try {
-        $fileproofName = $fileproof->getRandomName();
-        $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
-        
-        $data = [
-            'fullName' => $this->request->getVar('fullName'),
-            'latitude' => $this->request->getVar('latitude'),
-            'longitude' => $this->request->getVar('longitude'),
-            'fileproof' => $fileproofName,
-            'timestamp' => date('Y-m-d H:i:s')
-        ];
-
-        $communityReportModel->insert($data);
-        $this->notifyAllAdmins($data);
-
-        return $this->response->setJSON(['success' => true, 'message' => 'Emergency call successfully submitted!']);
-    } catch (\Exception $e) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'An error occurred: ' . $e->getMessage()
-        ]);
-    }
-}
-
-private function notifyAllAdmins($reportData)
-{
-    $adminModel = new AdminModel();
-    $admins = $adminModel->where('token IS NOT NULL')->findAll();
-
-    foreach ($admins as $admin) {
-        $this->sendPushNotificationToUser($admin['token'], $reportData);
-    }
-}
-
-public function sendPushNotificationToUser($mtoken, $reportData)
     {
-        $headers = [
-            'Authorization: key=' . $this->firebaseServerKey,
-            'Content-Type: application/json'
+        helper(['form', 'url', 'session']);
+        
+        $rules = [
+            'fullName' => 'required|max_length[255]',
+            'latitude' => 'required|decimal',
+            'longitude' => 'required|decimal',
+            'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
         ];
+        
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => $this->validator->getErrors()
+            ]);
+        }
 
-        $notification = [
-            'title' => 'New Community Report',
-            'body' => 'Full Name: ' . $reportData['fullName'] . '\nFile Proof: ' . $reportData['fileproof'] . '\nSubmitted: just now',
-            'image' => '/community_report/' . $reportData['fileproof'],
-            'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
-        ];
+        $communityReportModel = new CommunityReportModel();
+        $fileproof = $this->request->getFile('fileproof');
+        
+        if (!$fileproof->isValid()) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'File upload error: ' . $fileproof->getErrorString()
+            ]);
+        }
 
-        $fields = [
-            'to' => $mtoken,
-            'notification' => $notification
-        ];
+        try {
+            $fileproofName = $fileproof->getRandomName();
+            $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
+            
+            $data = [
+                'fullName' => $this->request->getVar('fullName'),
+                'latitude' => $this->request->getVar('latitude'),
+                'longitude' => $this->request->getVar('longitude'),
+                'fileproof' => $fileproofName,
+                'timestamp' => date('Y-m-d H:i:s')
+            ];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-        $result = curl_exec($ch);
-        curl_close($ch);
+            $communityReportModel->insert($data);
 
-        return json_decode($result, true);
+            return $this->response->setJSON(['success' => true, 'message' => 'Emergency call successfully submitted!']);
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ]);
+        }
     }
-
 
     public function getEmergencyCallCoordinates()
     {
@@ -153,7 +107,7 @@ public function sendPushNotificationToUser($mtoken, $reportData)
 
         return $this->response->setJSON($reports);
     }
-    
+
     public function getRecentReports()
     {
         $model = new CommunityReportModel();
@@ -181,17 +135,4 @@ public function sendPushNotificationToUser($mtoken, $reportData)
     
         return $this->response->setJSON($reports);
     }
-    public function saveToken()
-    {
-        $mtoken = $this->request->getVar('token');
-    
-        // Assuming you have a model to store tokens in the database
-        $adminModel = new AdminModel();
-        
-        // Store or update the token for the current user
-        $adminModel->updateTokenForUser($mtoken); // You need to implement this function in your AdminModel
-    
-        return $this->response->setJSON(['success' => true, 'message' => 'Token saved successfully']);
-    }
-
 }

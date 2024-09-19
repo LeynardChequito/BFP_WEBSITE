@@ -210,7 +210,6 @@
                     xhr.onload = function () {
                         if (xhr.status === 200) {
                             alert("Form submitted successfully!");
-                            triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
                             closeModal();
                         } else {
                             alert("Error submitting the form. Please try again.");
@@ -249,19 +248,6 @@
             function showPosition(position) {
                 document.getElementById('latitude').value = position.coords.latitude;
                 document.getElementById('longitude').value = position.coords.longitude;
-            }
-
-            // Function to trigger notification
-            function triggerNotification(title, body) {
-                if (Notification.permission === "granted") {
-                    new Notification(title, { body: body });
-                } else {
-                    Notification.requestPermission().then((permission) => {
-                        if (permission === "granted") {
-                            new Notification(title, { body: body });
-                        }
-                    });
-                }
             }
         });
     </script>
