@@ -28,75 +28,61 @@ class CommunityReportController extends BaseController
     public function submitCommunityReport()
     {
         helper(['form', 'url', 'session']);
-
+    
         $rules = [
             'fullName' => 'required|max_length[255]',
             'latitude' => 'required|decimal',
             'longitude' => 'required|decimal',
             'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
         ];
-
-        $messages = [
-            'fullName' => [
-                'required' => 'Full Name is required.',
-                'max_length' => 'Full Name should not exceed 255 characters.',
-            ],
-            'latitude' => [
-                'required' => 'Latitude is required.',
-                'decimal' => 'Latitude must be a valid decimal number.',
-            ],
-            'longitude' => [
-                'required' => 'Longitude is required.',
-                'decimal' => 'Longitude must be a valid decimal number.',
-            ],
-            'fileproof' => [
-                'uploaded' => 'File proof is required.',
-                'max_size' => 'File proof must not exceed 50MB.',
-                'ext_in' => 'File proof must be an image (jpg, jpeg, png) or video (mp4, mov, avi).',
-            ],
-        ];
-
-        if ($this->validate($rules, $messages)) {
+    
+        if ($this->validate($rules)) {
             $communityReportModel = new CommunityReportModel();
-
+    
             $fileproof = $this->request->getFile('fileproof');
             if ($fileproof->isValid() && !$fileproof->hasMoved()) {
                 $fileproofName = $fileproof->getRandomName();
                 $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
-
+    
                 $data = [
                     'fullName' => $this->request->getVar('fullName'),
                     'latitude' => $this->request->getVar('latitude'),
                     'longitude' => $this->request->getVar('longitude'),
                     'fileproof' => $fileproofName,
                 ];
-
+    
                 $communityReportModel->insert($data);
-
-                // Construct the image URL
-                $imageUrl = base_url('public/community_report/' . $fileproofName);
-
+    
                 // Prepare notification details
                 $title = 'New Emergency Call';
                 $body = "A new emergency call has been submitted by {$data['fullName']} at coordinates ({$data['latitude']}, {$data['longitude']}).";
-
-                // Send notifications to all admins with tokens
+                $imageUrl = base_url('public/community_report/' . $fileproofName);
+    
+                // Notify all admins
                 $this->notifyAllAdmins($title, $body, $imageUrl);
-
-                $this->session->setFlashdata('success', 'Emergency Call successfully submitted!');
-
-                return redirect()->to('home');
+    
+                // Return success response as JSON
+                return $this->response->setStatusCode(200)->setJSON([
+                    'success' => true,
+                    'message' => 'Emergency Call successfully submitted!',
+                ]);
+                
             } else {
-                $this->session->setFlashdata('failed', 'Failed to upload file proof.');
-                return redirect()->back()->withInput();
+                // Fileproof upload failed
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Failed to upload file proof.',
+                ]);
             }
         } else {
-            $data['validation'] = $this->validator;
-            $this->session->setFlashdata('failed', 'Failed! Emergency Call unsent. Please Try Again.');
-            return redirect()->back()->withInput()->with('validation', $this->validator);
+            // Validation failed
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => $this->validator->getErrors(),
+            ]);
         }
     }
-
+    
     public function sendPushNotificationToUser($token, $title, $body, $imageUrl = null)
     {
         // Prepare the payload for the push notification

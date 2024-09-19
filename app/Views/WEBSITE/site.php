@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -255,9 +256,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
-
-
         const firebaseConfig = {
             apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
             authDomain: "pushnotifbfp.firebaseapp.com",
@@ -306,67 +304,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const formData = new FormData(this);
             const xhr = new XMLHttpRequest();
-            xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
+xhr.open("POST", "https://bfpcalapancity.online/communityreport/submit", true);
 
-            xhr.onload = function() {
-                try {
-                    const contentType = xhr.getResponseHeader("content-type");
-                    if (contentType && contentType.includes("application/json")) {
-                        const response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            alert("Form submitted successfully!");
-                            triggerNotification("New Emergency Call", "Emergency call submitted successfully.");
-                            closeModal();
-                        } else {
-                            alert("Form submission failed: " + response.message);
-                        }
-                    } else {
-                        console.error("Unexpected response:", xhr.responseText);
-                        alert("An unexpected error occurred. Please try again later.");
-                    }
-                } catch (error) {
-                    console.error("Error parsing the response as JSON:", error);
-                    alert("An unexpected error occurred. Please try again later.");
-                }
-            };
+xhr.onload = function() {
+    try {
+        const contentType = xhr.getResponseHeader("content-type");
 
-            xhr.onerror = function() {
-                console.error("Request failed");
-                alert("An error occurred while submitting the form. Please check your connection and try again.");
-            };
+        if (contentType && contentType.includes("application/json")) {
+            const response = JSON.parse(xhr.responseText);
 
-            xhr.send(formData);
+            if (response.success) {
+                alert(response.message);
+                triggerNotification("New Emergency Call", response.message);
+                closeModal();
+            } else {
+                alert("Form submission failed: " + response.message);
+            }
+        } else {
+            console.error("Unexpected response type:", xhr.responseText);
+            alert("Unexpected response from server. Please check logs.");
+        }
+    } catch (error) {
+        console.error("Error parsing the response as JSON:", error);
+        alert("An error occurred. Please try again.");
+    }
+};
+
+xhr.onerror = function() {
+    console.error("Request failed");
+    alert("An error occurred while submitting the form. Please check your connection and try again.");
+};
+
+xhr.send(formData);
+
         });
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         // Trigger a notification
         function triggerNotification(title, body) {
