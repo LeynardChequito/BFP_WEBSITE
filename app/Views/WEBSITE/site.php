@@ -337,33 +337,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-        // Function to handle form submission and send notification
-        function submitCommunityReport() {
-            var fullname = document.getElementById('fullName').value;
-            var fileproof = document.getElementById('fileproof').files[0];
-            // Construct the notification message
-            var notificationPayload = {
-                notification: {
-                    title: 'Emergency Call',
-                    body: 'A new emergency call has been submitted.',
-                    data: {
-                       fullname :fullname,
-                       fileproof : fileproof
-                        // Add other form field data here
-                    }
-                },
-                topic: 'admin_notifications'
-            };
+        // // Function to handle form submission and send notification
+        // function submitCommunityReport() {
+        //     var fullname = document.getElementById('fullName').value;
+        //     var fileproof = document.getElementById('fileproof').files[0];
+        //     // Construct the notification message
+        //     var notificationPayload = {
+        //         notification: {
+        //             title: 'Emergency Call',
+        //             body: 'A new emergency call has been submitted.',
+        //             data: {
+        //                fullname :fullname,
+        //                fileproof : fileproof
+        //                 // Add other form field data here
+        //             }
+        //         },
+        //         topic: 'admin_notifications'
+        //     };
 
-            navigator.serviceWorker.controller.postMessage(notificationPayload);
-        }
-        // Function to handle form submission and face detection
-        async function submitCommunityReport() {
-            var fullname = document.getElementById('fullName').value;
-            var fileproof = document.getElementById('fileproof').files[0];
+        //     navigator.serviceWorker.controller.postMessage(notificationPayload);
+        // }
+        // // Function to handle form submission and face detection
+        // async function submitCommunityReport() {
+        //     var fullname = document.getElementById('fullName').value;
+        //     var fileproof = document.getElementById('fileproof').files[0];
             
-                document.getElementById('emergencyForm').submit();
-        }
+        //         document.getElementById('emergencyForm').submit();
+        // }
 
         // Trigger a notification
         function triggerNotification(title, body) {
