@@ -230,7 +230,7 @@
                         </div>
                         <div class="form-group">
                             <label for="fileproof">Upload File Proof (Image/Video)</label>
-                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*;capture=camera,video/*;capture=camcorder" multiple required>
+                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*; video/*;" capture="environment" multiple required>
                         </div>
                         <button type="submit" class="btn btn-primary">Send</button>
                     </form>
@@ -276,66 +276,66 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var emergencyForm = document.getElementById('emergencyForm');
-            if (emergencyForm) {
-                emergencyForm.addEventListener('submit', function(event) {
-                    event.preventDefault();
+ document.addEventListener('DOMContentLoaded', function() {
+    var emergencyForm = document.getElementById('emergencyForm');
+    if (emergencyForm) {
+        emergencyForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-                    var formData = new FormData(this);
-                    var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
+            var formData = new FormData(this);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "<?= site_url('communityreport/submit') ?>", true);
 
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.success) {
-                                alert("Form submitted successfully!");
-                                // Call the function to send the notification
-                                submitEmergencyCall(formData);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            alert("Form submitted successfully!");
 
-                                window.parent.postMessage({
-                                    action: 'updateMap',
-                                    data: {
-                                        latitude: formData.get('latitude'),
-                                        longitude: formData.get('longitude'),
-                                        fullName: formData.get('fullName')
-                                    }
-                                }, '*');
-                                closeModal();
-                            } else {
-                                alert("Form submission failed: " + response.message);
-                            }
+                            // Extract necessary data from formData
+                            var latitude = formData.get('latitude');
+                            var longitude = formData.get('longitude');
+                            var fullName = formData.get('fullName');
+
+                            // Call the function to send the notification
+                            submitEmergencyCall({
+                                latitude: latitude,
+                                longitude: longitude,
+                                fullName: fullName
+                            });
+
+                            // Send message to parent window to update the map
+                            window.parent.postMessage({
+                                action: 'updateMap',
+                                data: {
+                                    latitude: latitude,
+                                    longitude: longitude,
+                                    fullName: fullName
+                                }
+                            }, '*');
+
+                            closeModal();
+                        } else {
+                            alert("Form submission failed: " + response.message);
                         }
-                    };
-
-                    xhr.send(formData);
-                });
-            }
-        });
-
-        // Function to send notification payload
-        function submitEmergencyCall(formData) {
-            var fireType = formData.get('fireType');  // Adjust according to the actual form field name
-            var notificationPayload = {
-                notification: {
-                    title: 'Emergency Call',
-                    body: 'A new emergency call has been submitted.',
-                    data: {
-                        fireType: fireType,
-                        latitude: formData.get('latitude'),
-                        longitude: formData.get('longitude')
+                    } catch (e) {
+                        alert("Error parsing server response: " + e.message);
                     }
-                },
-                topic: 'admin_notifications'
+                } else {
+                    alert("Form submission failed with status: " + xhr.status);
+                }
             };
 
-            if (navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage(notificationPayload);
-            } else {
-                console.error('Service worker not available.');
-            }
-        }
+            xhr.onerror = function() {
+                alert("Request error. Please check your network connection.");
+            };
+
+            xhr.send(formData);
+        });
+    }
+});
+
 
         // Function to get the user's current location
         function getLocation() {
