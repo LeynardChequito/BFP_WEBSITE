@@ -104,7 +104,7 @@ $imageSources = $carouselModel->findAll();
                             <?php endforeach; ?>
                         <?php else: ?>
                             <div class="carousel-item active">
-                                <img class="d-block w-100" src="<?= base_url('/path/to/default/image.jpg') ?>" alt="Default Image">
+                                <img class="d-block w-100" src="<?= base_url('bfpcalapancity/public/images') ?>" alt="Default Image">
                             </div>
                         <?php endif; ?>
                     </div>
