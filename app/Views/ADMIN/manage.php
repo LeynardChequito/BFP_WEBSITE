@@ -122,6 +122,7 @@
         <div class="row">
 
             <?= view('ACOMPONENTS/amanagesidebar'); ?>
+
             <?php if (session()->has('success')) : ?>
                 <div class="alert">
                     <?= session('success') ?>
@@ -133,6 +134,7 @@
                     <?= session('error') ?>
                 </div>
             <?php endif; ?>
+            
             <!------------- MAIN CONTENT ---------------------->
             <div class="col-md-9">
                 <div class="content">

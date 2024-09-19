@@ -267,16 +267,6 @@
  async function submitEmergencyCall() {
             var fireType = document.getElementById('fire_type').value;
             var photoUpload = document.getElementById('photo_upload').files[0];
-            
-            // Detect faces in the photo
-            const faces = await detectFaces(photoUpload);
-            
-            // If faces are detected, proceed with form submission
-            if (faces && faces.length > 0) {
-                document.getElementById('emergencyCallForm').submit();
-            } else {
-                alert('No faces detected. Please upload a photo with a clear face for security verification.');
-            }
         }
         
         // Function to detect faces using Firebase ML Kit

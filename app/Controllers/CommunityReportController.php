@@ -75,11 +75,10 @@ private function notifyAllAdmins($reportData)
     }
 }
 
-public function sendPushNotificationToUser($token, $reportData)
+public function sendPushNotificationToUser($mtoken, $reportData)
     {
-        $url = 'https://fcm.googleapis.com/fcm/send';
         $headers = [
-            'Authorization: key='aaaamdjqkpk:APA91bH4dQbOlZJbcnrviv8Cak23oGKjVbzs3O0V9s1jEo_SLynqGa-XqxLa4rXtXAWn7eSeeyuqjf9fexjsxzJJVPXmU3GzY8sjddKyRqiFoZdr14ryMhvpGD2I-KmfRjL2rVWVVPnV';,
+            'Authorization: key=' . $this->firebaseServerKey,
             'Content-Type: application/json'
         ];
 
@@ -91,7 +90,7 @@ public function sendPushNotificationToUser($token, $reportData)
         ];
 
         $fields = [
-            'to' => $token,
+            'to' => $mtoken,
             'notification' => $notification
         ];
 
@@ -172,13 +171,13 @@ public function sendPushNotificationToUser($token, $reportData)
     }
     public function saveToken()
     {
-        $token = $this->request->getVar('token');
+        $mtoken = $this->request->getVar('token');
     
         // Assuming you have a model to store tokens in the database
         $adminModel = new AdminModel();
         
         // Store or update the token for the current user
-        $adminModel->updateTokenForUser($token); // You need to implement this function in your AdminModel
+        $adminModel->updateTokenForUser($mtoken); // You need to implement this function in your AdminModel
     
         return $this->response->setJSON(['success' => true, 'message' => 'Token saved successfully']);
     }

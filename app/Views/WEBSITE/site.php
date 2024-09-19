@@ -244,14 +244,16 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
-
     <script type="module">
 document.addEventListener('DOMContentLoaded', function() {
         // Ensure the location is obtained after DOM is fully loaded
         getLocation();
     });
+
+            // Import the necessary functions from the Firebase Messaging module
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-analytics.js";
+            import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
@@ -262,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
             appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
             measurementId: "G-XMBH6JJ3M6"
         };
+
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -334,6 +337,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+        // Function to handle form submission and send notification
+        function submitCommunityReport() {
+            var fullname = document.getElementById('fullName').value;
+            var fileproof = document.getElementById('fileproof').files[0];
+            // Construct the notification message
+            var notificationPayload = {
+                notification: {
+                    title: 'Emergency Call',
+                    body: 'A new emergency call has been submitted.',
+                    data: {
+                       fullname :fullname,
+                       fileproof : fileproof
+                        // Add other form field data here
+                    }
+                },
+                topic: 'admin_notifications'
+            };
+
+            navigator.serviceWorker.controller.postMessage(notificationPayload);
+        }
+        // Function to handle form submission and face detection
+        async function submitCommunityReport() {
+            var fullname = document.getElementById('fullName').value;
+            var fileproof = document.getElementById('fileproof').files[0];
+            
+                document.getElementById('emergencyForm').submit();
+        }
 
         // Trigger a notification
         function triggerNotification(title, body) {

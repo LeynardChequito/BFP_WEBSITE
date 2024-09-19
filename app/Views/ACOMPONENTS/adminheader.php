@@ -174,12 +174,20 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js"></script>
 
     <!-- JavaScript code for handling notifications and updating time -->
-<script type="module">
-      const firebaseConfig = {
+    <script type="module">
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import {
+            getMessaging,
+            getToken,
+            onMessage
+        } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js";
+        const firebaseConfig = {
             apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
             authDomain: "pushnotifbfp.firebaseapp.com",
             projectId: "pushnotifbfp",
@@ -189,36 +197,52 @@
             measurementId: "G-XMBH6JJ3M6"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const messaging = firebase.messaging();
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
 
-        // Request permission for notifications
-        messaging.requestPermission().then(function () {
-            console.log('Notification permission granted.');
-            return messaging.getToken({ vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfo' }); // Replace 'YOUR_VAPID_KEY' with the VAPID key
-        }).then(function (token) {
-            console.log('FCM Token:', token);
-            
-            // Send token to the server
-            fetch('/save-token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token: token })
-            });
-        }).catch(function (err) {
-            console.log('Unable to get permission to notify.', err);
+        Notification.requestPermission().then((permission) => {
+            if (permission === 'granted') {
+                console.log('Notification permission granted.');
+
+                getToken(messaging, {
+                    vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+                }).then((currentToken) => {
+                    if (currentToken) {
+                        console.log('Token retrieved:', currentToken);
+                    } else {
+                        console.log('No registration token available. Request permission to generate one.');
+                    }
+                }).catch((err) => {
+                    console.error('An error occurred while retrieving token. ', err);
+                });
+
+            } else {
+                console.log('Unable to get permission to notify.');
+            }
         });
 
-        // Handle incoming messages when the page is open
-        messaging.onMessage(function(payload) {
-            console.log('Message received. ', payload);
-            const notificationOptions = {
-                body: payload.notification.body,
-                icon: payload.notification.icon || '/firebase-logo.png',
-                image: payload.notification.image || '/firebase-logo.png',
-            };
-            displayNotification(payload.notification.title, payload.notification.body, payload.data.timestamp);
-        })
+        // Handle incoming messages
+        onMessage((payload) => {
+            console.log('Message received: ', payload);
+            try {
+                // Check if the notification payload contains the 'notification' object and its 'title' property
+                if (payload && payload.notification && payload.notification.title) {
+                    // Display the received message as a notification
+                    const notificationContainer = document.getElementById('notification-container');
+                    const notification = document.createElement('div');
+                    notification.classList.add('notification');
+                    notification.innerHTML = `
+                <h2>${payload.notification.title}</h2>
+                <p>${payload.notification.body}</p>
+            `;
+                    notificationContainer.appendChild(notification);
+                } else {
+                    console.error('Notification payload does not contain title property.');
+                }
+            } catch (error) {
+                console.error('An error occurred while processing the notification:', error);
+            }
+        });
 // Helper function to calculate 'time ago'
 function timeAgo(timeStamp) {
             const now = new Date();
