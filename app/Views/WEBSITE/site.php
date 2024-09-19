@@ -230,7 +230,7 @@
                         </div>
                         <div class="form-group">
                             <label for="fileproof">Upload File Proof (Image/Video)</label>
-                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*; video/*" multiple required>
+                            <input type="file" name="fileproof" id="fileproof" class="form-control" accept="image/*;capture=camera,video/*;capture=camcorder" multiple required>
                         </div>
                         <button type="submit" class="btn btn-primary">Send</button>
                     </form>
