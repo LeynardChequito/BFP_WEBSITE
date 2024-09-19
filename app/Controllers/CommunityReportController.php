@@ -25,45 +25,57 @@ class CommunityReportController extends BaseController
     }
 
     public function submitCommunityReport()
-    {
-        helper(['form', 'url', 'session']);
+{
+    helper(['form', 'url', 'session']);
+    
+    $rules = [
+        'fullName' => 'required|max_length[255]',
+        'latitude' => 'required|decimal',
+        'longitude' => 'required|decimal',
+        'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
+    ];
+    
+    if (!$this->validate($rules)) {
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Validation errors',
+            'errors' => $this->validator->getErrors()
+        ]);
+    }
 
-        $rules = [
-            'fullName' => 'required|max_length[255]',
-            'latitude' => 'required|decimal',
-            'longitude' => 'required|decimal',
-            'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
+    $communityReportModel = new CommunityReportModel();
+    $fileproof = $this->request->getFile('fileproof');
+    
+    if (!$fileproof->isValid()) {
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'File upload error: ' . $fileproof->getErrorString()
+        ]);
+    }
+
+    try {
+        $fileproofName = $fileproof->getRandomName();
+        $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
+        
+        $data = [
+            'fullName' => $this->request->getVar('fullName'),
+            'latitude' => $this->request->getVar('latitude'),
+            'longitude' => $this->request->getVar('longitude'),
+            'fileproof' => $fileproofName,
+            'timestamp' => date('Y-m-d H:i:s')
         ];
 
-        if ($this->validate($rules)) {
-            $communityReportModel = new CommunityReportModel();
-            $fileproof = $this->request->getFile('fileproof');
+        $communityReportModel->insert($data);
+        $this->notifyAllAdmins($data);
 
-            if ($fileproof->isValid() && !$fileproof->hasMoved()) {
-                $fileproofName = $fileproof->getRandomName();
-                $fileproof->move(ROOTPATH . 'public/community_report', $fileproofName);
-
-                $data = [
-                    'fullName' => $this->request->getVar('fullName'),
-                    'latitude' => $this->request->getVar('latitude'),
-                    'longitude' => $this->request->getVar('longitude'),
-                    'fileproof' => $fileproofName,
-                    'timestamp' => date('Y-m-d H:i:s')
-                ];
-
-                $communityReportModel->insert($data);
-
-                // Notify admins of the new report
-                $this->notifyAllAdmins($data);
-
-                return $this->response->setJSON(['success' => true, 'message' => 'Emergency call successfully submitted!']);
-            } else {
-                return $this->response->setJSON(['success' => false, 'message' => 'Failed to upload file proof.']);
-            }
-        } else {
-            return $this->response->setJSON(['success' => false, 'message' => 'Validation errors', 'errors' => $this->validator->getErrors()]);
-        }
+        return $this->response->setJSON(['success' => true, 'message' => 'Emergency call successfully submitted!']);
+    } catch (\Exception $e) {
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'An error occurred: ' . $e->getMessage()
+        ]);
     }
+}
 
 private function notifyAllAdmins($reportData)
 {
