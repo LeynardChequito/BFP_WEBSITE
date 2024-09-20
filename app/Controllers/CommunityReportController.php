@@ -56,7 +56,7 @@ class CommunityReportController extends BaseController
                 // Prepare notification details
                 $title = 'New Emergency Call';
                 $body = "A new emergency call has been submitted by {$data['fullName']} at coordinates ({$data['latitude']}, {$data['longitude']}).";
-                $imageUrl = base_url('public/community_report/' . $fileproofName);
+                $imageUrl = base_url('bfpcalapancity/public/community_report/' . $fileproofName);
     
                 // Notify all admins
                 $this->notifyAllAdmins($title, $body, $imageUrl);
