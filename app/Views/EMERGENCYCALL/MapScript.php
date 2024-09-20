@@ -50,20 +50,22 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         if (!isReportRemoved(reportId)) {
             const { latitude, longitude, fullName, fileproof, timestamp } = report;
             const listItem = document.createElement('li');
+            const baseUrl = "<?= base_url() ?>";
             listItem.classList.add('list-group-item');
             listItem.id = `report-${reportId}`;
             listItem.innerHTML = `
-                <div style="padding: 10px; border-radius: 5px;">
-                    <h4>User in Need: ${fullName}</h4>
-                    <p><strong>Timestamp:</strong> ${timestamp}</p>
-                    <p><strong>File Proof:</strong></p>
-                    <div class="fileProofContainer" style="margin-bottom: 10px;">
-                        <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
-                    </div>
-                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
-                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
-                </div>
-            `;
+    <div style="padding: 10px; border-radius: 5px;">
+        <h4>User in Need: ${fullName}</h4>
+        <p><strong>Timestamp:</strong> ${timestamp}</p>
+        <p><strong>File Proof:</strong></p>
+        <div class="fileProofContainer" style="margin-bottom: 10px;">
+            <img src="${baseUrl}/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
+        </div>
+        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
+        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
+    </div>
+`;
+
             newReportsList.appendChild(listItem);
 
             const marker = L.marker([latitude, longitude], { icon: userMarker }).addTo(map);

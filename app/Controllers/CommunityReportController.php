@@ -42,13 +42,13 @@ class CommunityReportController extends BaseController
             $fileproof = $this->request->getFile('fileproof');
             if ($fileproof->isValid() && !$fileproof->hasMoved()) {
                 $fileproofName = $fileproof->getRandomName();
-                $fileproof->move(ROOTPATH . 'bfpcalapancity/public/community_report', $fileproofName);
+                $fileproof->move(ROOTPATH . 'bfpcalapancity/public/community_report/', $fileproofName);
     
                 $data = [
                     'fullName' => $this->request->getVar('fullName'),
                     'latitude' => $this->request->getVar('latitude'),
                     'longitude' => $this->request->getVar('longitude'),
-                    'fileproof' => $fileproofName,
+                    'fileproof' => $fileproofName, // Just store the filename
                 ];
     
                 $communityReportModel->insert($data);
