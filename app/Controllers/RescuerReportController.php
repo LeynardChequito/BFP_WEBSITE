@@ -23,8 +23,8 @@ class RescuerReportController extends BaseController
         $file = $this->request->getFile('photo');
         if ($file->isValid() && !$file->hasMoved()) {
             $newName = $file->getRandomName();
-            $file->move(WRITEPATH . 'public/rescuer_report/', $newName);
-            $photoPath = WRITEPATH . 'public/rescuer_report/' . $newName;
+            $file->move(WRITEPATH . 'bfpcalapancity/public/rescuer_report/', $newName);
+            $photoPath = WRITEPATH . 'bfpcalapancity/public/rescuer_report/' . $newName;
         } else {
             $photoPath = null;
         }
@@ -55,8 +55,8 @@ class RescuerReportController extends BaseController
     $file = $this->request->getFile('photo');
     if ($file && $file->isValid() && !$file->hasMoved()) {
         $newName = $file->getRandomName();
-        $file->move(WRITEPATH . 'public/rescuer_report/', $newName);
-        $photoPath = WRITEPATH . 'public/rescuer_report/' . $newName;
+        $file->move(WRITEPATH . 'bfpcalapancity/public/rescuer_report/', $newName);
+        $photoPath = WRITEPATH . 'bfpcalapancity/public/rescuer_report/' . $newName;
     } else {
         $photoPath = null; 
     }
