@@ -59,7 +59,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         <p><strong>Timestamp:</strong> ${timestamp}</p>
         <p><strong>File Proof:</strong></p>
         <div class="fileProofContainer" style="margin-bottom: 10px;">
-            <img src="${baseUrl}/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
+            <img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
         </div>
         <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
         <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
