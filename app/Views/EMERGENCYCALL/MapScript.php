@@ -33,13 +33,20 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     L.esri.Vector.vectorBasemapLayer(basemapEnum, {
         apiKey: apiKey
     }, 'Streets').addTo(map);
+    
+    
     function populateReportList(data) {
+    if (!Array.isArray(data) || data.length === 0) {
+        console.error('No valid report data available');
+        return; // Exit the function if data is not valid
+    }
+
     const newReportsList = document.getElementById('newReportsList');
     newReportsList.innerHTML = ''; // Clear any existing reports
 
     data.forEach(report => {
         const reportId = report.id;
-        
+
         if (!isReportRemoved(reportId)) {
             const { latitude, longitude, fullName, fileproof, timestamp } = report;
             const listItem = document.createElement('li');
@@ -58,7 +65,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 </div>
             `;
             newReportsList.appendChild(listItem);
-            
+
             const marker = L.marker([latitude, longitude], { icon: userMarker }).addTo(map);
             const popupContent = `
                 <div class="popup-content">
@@ -70,7 +77,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         }
     });
 }
-
 
     file://%20global%20function%20declarationfunction%20gotorescuemap()%20{%20%20%20%20window.location.href%20=%20'/rescuemap?openModal=true%27;}
 
@@ -646,7 +652,7 @@ async function getRecentReports() {
         const response = await fetch('https://bfpcalapancity.online/reports-recent');
         const data = await response.json();
 
-        if (response.ok && Array.isArray(data)) {
+        if (response.ok && Array.isArray(data) && data.length > 0) {
             let newReportsReceived = false;
 
             // Populate the report list using the modular populateReportList function
@@ -663,7 +669,7 @@ async function getRecentReports() {
                 document.addEventListener('click', () => sirenSound.play(), { once: true });
             }
         } else {
-            console.error('Failed to fetch recent reports:', response.statusText);
+            console.error('Failed to fetch recent reports or no reports available');
         }
     } catch (error) {
         console.error('Error fetching recent reports:', error);
