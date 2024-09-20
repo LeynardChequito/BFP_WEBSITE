@@ -33,21 +33,44 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     L.esri.Vector.vectorBasemapLayer(basemapEnum, {
         apiKey: apiKey
     }, 'Streets').addTo(map);
-    function populateReportList() {
-        const newReportsList = document.getElementById('newReportsList');
-        newReportsList.innerHTML = ''; // Clear any existing reports
+    function populateReportList(data) {
+    const newReportsList = document.getElementById('newReportsList');
+    newReportsList.innerHTML = ''; // Clear any existing reports
 
-        reports.forEach((report, index) => {
-            const reportHTML = `
-                <li class="list-group-item">
-                    <h6>${report.fullName}</h6>
-                    <p>File: <a href="/community_report/${report.fileproof}" target="_blank">${report.fileproof}</a></p>
-                    <button class="btn btn-primary" onclick="goToRescueMap(${report.latitude}, ${report.longitude})">View on Map</button>
-                </li>
+    data.forEach(report => {
+        const reportId = report.id;
+        
+        if (!isReportRemoved(reportId)) {
+            const { latitude, longitude, fullName, fileproof, timestamp } = report;
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            listItem.id = `report-${reportId}`;
+            listItem.innerHTML = `
+                <div style="padding: 10px; border-radius: 5px;">
+                    <h4>User in Need: ${fullName}</h4>
+                    <p><strong>Timestamp:</strong> ${timestamp}</p>
+                    <p><strong>File Proof:</strong></p>
+                    <div class="fileProofContainer" style="margin-bottom: 10px;">
+                        <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
+                    </div>
+                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
+                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
+                </div>
             `;
-            newReportsList.insertAdjacentHTML('beforeend', reportHTML);
-        });
-    }
+            newReportsList.appendChild(listItem);
+            
+            const marker = L.marker([latitude, longitude], { icon: userMarker }).addTo(map);
+            const popupContent = `
+                <div class="popup-content">
+                    <h4>User in Need: ${fullName}</h4>
+                    <p><strong>Timestamp:</strong> ${timestamp}</p>
+                </div>
+            `;
+            marker.bindPopup(popupContent);
+        }
+    });
+}
+
 
     file://%20global%20function%20declarationfunction%20gotorescuemap()%20{%20%20%20%20window.location.href%20=%20'/rescuemap?openModal=true%27;}
 
@@ -620,53 +643,23 @@ function markReportAsRemoved(reportId) {
 // Function to get recent reports from the database and display them
 async function getRecentReports() {
     try {
-        const newReportsList = document.getElementById('newReportsList');
-        const sirenSound = document.getElementById('sirenSound');
         const response = await fetch('https://bfpcalapancity.online/reports-recent');
         const data = await response.json();
 
         if (response.ok && Array.isArray(data)) {
             let newReportsReceived = false;
 
-            newReportsList.innerHTML = ''; // Clear previous reports
+            // Populate the report list using the modular populateReportList function
+            populateReportList(data);
 
             data.forEach(report => {
-                const reportId = report.id;
-
-                // Skip rendering if the report has been removed
-                if (!isReportRemoved(reportId)) {
+                if (!isReportRemoved(report.id)) {
                     newReportsReceived = true;
-                    const { latitude, longitude, fullName, fileproof, timestamp } = report;
-                    const listItem = document.createElement('li');
-                    listItem.classList.add('list-group-item');
-                    listItem.id = `report-${reportId}`;
-                    listItem.innerHTML = `
-                        <div style="padding: 10px; border-radius: 5px;">
-                            <h4>User in Need: ${fullName}</h4>
-                            <p><strong>Timestamp:</strong> ${timestamp}</p>
-                            <p><strong>File Proof:</strong></p>
-                            <div class="fileProofContainer" style="margin-bottom: 10px;">
-                                <img src="bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
-                            </div>
-                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
-                            <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
-                        </div>
-                    `;
-                    newReportsList.appendChild(listItem);
-                    const marker = L.marker([latitude, longitude], {
-                        icon: userMarker
-                    }).addTo(map);
-                    const popupContent = `
-                        <div class="popup-content">
-                            <h4>User in Need: ${fullName}</h4>
-                            <p><strong>Timestamp:</strong> ${timestamp}</p>
-                        </div>
-                    `;
-                    marker.bindPopup(popupContent);
                 }
             });
 
             if (newReportsReceived) {
+                const sirenSound = document.getElementById('sirenSound');
                 document.addEventListener('click', () => sirenSound.play(), { once: true });
             }
         } else {
@@ -676,6 +669,12 @@ async function getRecentReports() {
         console.error('Error fetching recent reports:', error);
     }
 }
+
+// Ensure reports are fetched when the DOM is ready
+document.addEventListener('DOMContentLoaded', function () {
+    getRecentReports();
+});
+
 // Function to mark a report as submitted
 function submitReportForm(lat, lng, communityreport_id) {
     // Simulate the form submission (you can change the URL if needed)
