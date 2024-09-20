@@ -29,7 +29,7 @@ class RescuerReportController extends BaseController
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $originalName = $file->getClientName(); // Use the actual name
             $file->move(ROOTPATH . 'public/rescuer_report/', $originalName); // Move the file to public directory
-            $photoPath = 'public/rescuer_report/' . $originalName; // Save relative path
+            $photoPath = $originalName; // Save relative path
         }
 
         // Save the data including the path to the file
@@ -64,7 +64,7 @@ class RescuerReportController extends BaseController
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $originalName = $file->getClientName(); // Use the actual name
             $file->move(ROOTPATH . 'public/rescuer_report/', $originalName); // Move the file to public directory
-            $photoPath = 'public/rescuer_report/' . $originalName; // Save relative path
+            $photoPath =  $originalName; // Save relative path
         }
 
         // Save the data including the path to the file
