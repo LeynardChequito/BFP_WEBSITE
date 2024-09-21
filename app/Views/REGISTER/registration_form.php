@@ -32,12 +32,11 @@
         }
 
         .card-header {
-            background-color: rgba(255, 255, 255, 0.1);
             color: #ffffff;
             text-align: center;
             padding: 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px 15px 0 0;
+            border-radius: 15px 15px 50px 50px;
             font-weight: bold;
             letter-spacing: 1px;
             font-size: 1.8em;
@@ -159,6 +158,7 @@
 
             .card-body {
                 padding: 20px;
+                border-radius: 15px;
             }
         }
     </style>
