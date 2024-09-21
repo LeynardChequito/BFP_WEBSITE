@@ -7,7 +7,6 @@
     <title>BFP Community Login Form</title>
     <style>
         /* Default styles */
-
         body {
             margin: 0;
             background-image: url('/bfpcalapancity/public/images/bglog.jpg');
@@ -149,7 +148,8 @@
             <br>
             <button id="btnLogin" type="submit" class="bfp-btn">Login</button>
         </form>
-        <p class="bfp-link" onclick="goToForgotPassword()">Forgot Password?</p>
+        <!-- Updated forgot password redirection -->
+        <a href="<?= site_url('/forgot-password') ?>" class="bfp-link">Forgot Password?</a>
         <a href="<?= site_url('/registration') ?>" class="create-account-btn">Create an Account</a>
     </div>
 
@@ -163,91 +163,8 @@
             var passwordInput = document.querySelector('input[name="password"]');
             passwordInput.type = this.checked ? 'text' : 'password';
         });
-
-        // Function to handle forgot password link
-        function goToForgotPassword() {
-            // Add your logic to redirect or handle the forgot password action
-            console.log('Redirect to forgot password page');
-        }
     </script>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
-
-    <script type="module">
-        const firebaseConfig = {
-            apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
-            authDomain: "pushnotifbfp.firebaseapp.com",
-            projectId: "pushnotifbfp",
-            storageBucket: "pushnotifbfp.appspot.com",
-            messagingSenderId: "214092622073",
-            appId: "1:214092622073:web:fbcbcb035161f7110c1a28",
-            measurementId: "G-XMBH6JJ3M6"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const fcm = firebase.messaging()
-        let mToken;
-
-        fcm.getToken({
-            vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
-        }).then((currentToken) => {
-            console.log('Token retrieved:', currentToken);
-            mToken = currentToken;
-        });
-
-        fcm.onMessage((data) => {
-            console.log('onMessage: ', data)
-
-            Notification.requestPermission((status) => {
-                console.log('requestPermission:', status);
-                if (status === 'granted') {
-                    let title = data['data']['title'];
-                    let body = data['data']['body'];
-                    new Notification(title, {
-                        body: body
-                    });
-                }
-            });
-        });
-
-        document.getElementById('btnLogin').addEventListener('click', function(event) {
-            event.preventDefault();
-
-            let email = document.getElementById('email').value;
-            let password = document.getElementById('password').value;
-
-            fetch('dologin', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password,
-                        token: mToken
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    if (data.status === '1') {
-                        window.location.href = 'home';
-                    } else {
-                        alert(data.message);
-                        // Optionally, you can reload the page to show flash data set in the session
-                        window.location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Login error:', error);
-                });
-        });
-
-        function goToForgotPassword() {
-            console.log('Redirect to forgot password page');
-        }
-    </script>
 </body>
 
 </html>

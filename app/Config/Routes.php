@@ -12,6 +12,11 @@ $routes->get('/', 'LoginController::loadingpage');
 $routes->get('login', 'LoginController::login');
 $routes->post('login/processLogin', 'LoginController::processLogin');
 $routes->post('dologin', 'LoginController::dologin');
+$routes->get('forgot-password', 'LoginController::forgotPassword');
+$routes->post('forgot-password', 'LoginController::sendResetLink');
+$routes->get('reset-password', 'LoginController::resetPassword');
+$routes->post('reset-password', 'LoginController::processResetPassword');
+
 
 // REGISTRATION
 $routes->get('registration', 'RegistrationController::register');
