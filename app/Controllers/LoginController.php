@@ -199,8 +199,8 @@ class LoginController extends BaseController
         $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
         $accountModel->update($user['user_id'], [
             'password' => $hashedPassword,
-            'verification_token' => null,
-            'verification_expiration' => null,
+            'verification_token' => null,             // Reset the verification token
+            'verification_expiration' => null,        // Reset the expiration time
         ]);
 
         session()->setFlashdata('success', 'Password successfully reset. You can now log in.');
