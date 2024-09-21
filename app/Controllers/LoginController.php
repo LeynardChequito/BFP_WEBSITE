@@ -125,51 +125,70 @@ class LoginController extends BaseController
         }
     }
     public function dologin()
-    {
-        $accountModel = new AccountModel();
-        $email = $this->request->getVar('email');
-        $password = $this->request->getVar('password');
-        $token = $this->request->getVar('token');
+{
+    helper(['url', 'session']);
+    
+    $accountModel = new AccountModel();
+    $email = $this->request->getVar('email');
+    $password = $this->request->getVar('password');
+    $token = $this->request->getVar('token');
 
-        // Ensure that email is provided
-        if (!$email || !$password) {
+    // Ensure that email and password are provided
+    if (!$email || !$password) {
+        $res['status'] = '0';
+        $res['message'] = 'Email or password missing.';
+        return $this->response->setJSON($res);
+    }
+
+    // Fetch the user data from the account model using email
+    $data = $accountModel->where('email', $email)->first();
+
+    // Check if the user exists
+    if (!$data) {
+        $res['status'] = '0';
+        $res['message'] = 'Email does not exist.';
+        return $this->response->setJSON($res);
+    }
+
+    // Check if the email is verified
+    if (!$data['verified']) {
+        $res['status'] = '0';
+        $res['message'] = 'Your email is not verified. Please check your email for the verification link.';
+        return $this->response->setJSON($res);
+    }
+
+    // Verify the provided password
+    if (!password_verify($password, $data['password'])) {
+        $res['status'] = '0';
+        $res['message'] = 'Password is incorrect.';
+        return $this->response->setJSON($res);
+    }
+
+    // Check if a token is provided, and update the user's token
+    if ($token) {
+        $updateToken = $accountModel->update($data['user_id'], ['token' => $token]);
+        if (!$updateToken) {
             $res['status'] = '0';
-            $res['message'] = 'Email or password missing';
+            $res['message'] = 'Failed to update token.';
             return $this->response->setJSON($res);
         }
-
-        // Fetch the user data from the account model using email
-        $data = $accountModel->where('email', $email)->first();
-
-
-
-        // Check if user exists
-        if ($data) {
-            // Check if the email is verified
-            if (!$data['verified']) {
-                $res['status'] = '0';
-                $res['message'] = 'Your email is not verified. Please check your email for the verification link.';
-                return $this->response->setJSON($res);
-            }
-
-            // Verify the provided password
-            if (password_verify($password, $data['password'])) {
-                log_message('debug', 'User data: ' . print_r($data, true));
-
-                // Check if token is provided
-                if ($token) {
-                    // Update token in the account model for the user
-                    $updateToken = $accountModel->update($data['user_id'], ['token' => $token]);
-                    if (!$updateToken) {
-                        log_message('error', 'Failed to update token for user_id: ' . $data['user_id']);
-                        $res['status'] = '0';
-                        $res['message'] = 'Failed to update token.';
-                        return $this->response->setJSON($res);
-                    }
-                }
-            }
-        }
     }
+
+    // Set session data
+    $ses_data = [
+        'user_id' => $data['user_id'],
+        'email' => $data['email'],
+        'fullName' => $data['fullName'],  // Add any other relevant user info
+        'isLoggedIn' => TRUE
+    ];
+    session()->set($ses_data);
+
+    // Successful login response
+    $res['status'] = '1';
+    $res['message'] = 'Login successful!';
+    return $this->response->setJSON($res);
+}
+
     public function forgotPassword()
     {
         return view('LOGIN/forgotpassword');
