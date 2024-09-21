@@ -44,6 +44,7 @@
             width: 90%;
             padding: 12px;
             margin-top: 15px;
+            margin-bottom: 10px;
             border: none;
             border-radius: 12px;
             box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.1), inset -5px -5px 10px rgba(255, 255, 255, 0.7);
@@ -69,7 +70,9 @@
             background: linear-gradient(135deg, #c9302c, #d9534f);
             transform: translateY(-3px);
         }
-
+        .form-label {
+            margin-top: 15px;
+        }
         .bfp-link {
             color: #fff;
             cursor: pointer;

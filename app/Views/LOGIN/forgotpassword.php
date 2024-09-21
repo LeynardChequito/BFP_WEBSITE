@@ -70,6 +70,23 @@
             transform: translateY(-3px);
         }
 
+        .cancel-btn {
+            background-color: #6c757d;
+            color: #fff;
+            margin-top: 10px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .cancel-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-3px);
+        }
+
         .alert,
         .alert-danger {
             background-color: rgba(255, 255, 255, 0.2);
@@ -122,6 +139,7 @@
             <label for="email" class="form-label">Email:</label>
             <input id="email" type="email" name="email" class="v-text-field" required placeholder="Enter your email address">
             <button type="submit" class="bfp-btn">Submit</button>
+            <button type="button" class="cancel-btn" onclick="window.location.href='<?= site_url('/login') ?>'">Cancel</button>
         </form>
     </div>
 </body>
