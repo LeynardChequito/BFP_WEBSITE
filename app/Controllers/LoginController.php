@@ -16,7 +16,10 @@ class LoginController extends BaseController
     {
         $this->session = \Config\Services::session();
     }
-
+    public function loadingpage()
+    {
+        return view('LOGIN/loading_page');
+    }
     // Verify the email token for account verification
     public function verify()
     {
@@ -121,7 +124,78 @@ class LoginController extends BaseController
             return view('LOGIN/login', $data);
         }
     }
-
+    public function dologin()
+    {
+        $accountModel = new AccountModel();
+        $email = $this->request->getVar('email');
+        $password = $this->request->getVar('password');
+        $token = $this->request->getVar('token');
+    
+        // Ensure that email is provided
+        if (!$email || !$password) {
+            $res['status'] = '0';
+            $res['message'] = 'Email or password missing';
+            return $this->response->setJSON($res);
+        }
+    
+        // Fetch the user data from the account model using email
+        $data = $accountModel->where('email', $email)->first();
+    
+        // Check if user exists
+        if ($data) {
+            // Check if the email is verified
+            if (!$data['verified']) {
+                $res['status'] = '0';
+                $res['message'] = 'Your email is not verified. Please check your email for the verification link.';
+                return $this->response->setJSON($res);
+            }
+    
+            // Verify the provided password
+            if (password_verify($password, $data['password'])) {
+                log_message('debug', 'User data: ' . print_r($data, true));
+    
+                // Check if token is provided
+                if ($token) {
+                    // Update token in the account model for the user
+                    $updateToken = $accountModel->update($data['user_id'], ['token' => $token]);
+                    if (!$updateToken) {
+                        log_message('error', 'Failed to update token for user_id: ' . $data['user_id']);
+                        $res['status'] = '0';
+                        $res['message'] = 'Failed to update token.';
+                        return $this->response->setJSON($res);
+                    }
+                } else {
+                    log_message('error', 'No token provided for update.');
+                    $res['status'] = '0';
+                    $res['message'] = 'Token is missing.';
+                    return $this->response->setJSON($res);
+                }
+    
+                // Set session data
+                $ses_data = [
+                    'user_id' => $data['user_id'],
+                    'fullName' => $data['fullName'],
+                    'email' => $data['email'],
+                    'isLoggedIn' => TRUE // Corrected session key
+                ];
+                session()->set($ses_data);
+    
+                $res['status'] = '1';
+                $res['message'] = 'Login successful';
+            } else {
+                log_message('error', 'Password is incorrect for email: ' . $email);
+                $res['status'] = '0';
+                $res['message'] = 'Password is incorrect';
+            }
+        } else {
+            log_message('error', 'Email does not exist: ' . $email);
+            $res['status'] = '0';
+            $res['message'] = 'Email does not exist';
+        }
+    
+        log_message('debug', 'Login response: ' . json_encode($res));
+        return $this->response->setJSON($res);
+    }
     public function forgotPassword()
     {
         return view('LOGIN/forgotpassword');
