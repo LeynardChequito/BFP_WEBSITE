@@ -14,19 +14,17 @@ trait EmailTrait
 
             $mail = new PHPMailer(true);
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com'; // Use your SMTP host
+            $mail->Host = 'smtp.gmail.com'; // Gmail SMTP
             $mail->SMTPAuth = true;
-            $mail->Username = 'bfpcalapancity@gmail.com';
-            $mail->Password = 'ggtw yfhn kxqj bvut';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Encryption - ssl or tls
-            $mail->Port = 587; // TCP port to connect to
+            $mail->Username = 'bfpcalapancity@gmail.com'; // Your email address
+            $mail->Password = 'ggtw yfhn kxqj bvut'; // App password for Gmail
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // TLS encryption
+            $mail->Port = 587; // TLS port
 
             // Recipients
             $mail->setFrom('bfpcalapancity@gmail.com', 'Admin_BFP_Calapan');
-            $mail->addAddress($to); // Add a recipient, passed via method parameter
-            log_message('debug', 'Recipient added: ' . $to);
+            $mail->addAddress($to); // Add recipient
 
-            // Add attachment if exists
             if ($attachmentPath && file_exists($attachmentPath)) {
                 $cid = $mail->addEmbeddedImage($attachmentPath, 'qr-code-cid', 'QRCode.png');
                 $message .= '<br><img src="cid:qr-code-cid">';
@@ -35,18 +33,17 @@ trait EmailTrait
                 log_message('error', "Attachment file does not exist: $attachmentPath");
                 throw new Exception("Attachment file does not exist: $attachmentPath");
             }
-
-            // Content
+            // Email content
             $mail->isHTML(true); // Set email format to HTML
-            $mail->Subject = $subject; // Use the $subject parameter
-            $mail->Body = $message; // Use the $message parameter
+            $mail->Subject = $subject;
+            $mail->Body = $message;
 
             $mail->send();
-            log_message('debug', 'Email sent successfully');
-            return true; // Return true on success
+            log_message('debug', 'Email sent successfully.');
+            return true;
         } catch (Exception $e) {
-            log_message('error', 'Mailer Error: ' . $mail->ErrorInfo); // Log error instead of printing
-            return false; // Return false on error
+            log_message('error', 'Mailer Error: ' . $mail->ErrorInfo);
+            return false;
         }
     }
 }
