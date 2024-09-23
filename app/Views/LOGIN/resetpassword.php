@@ -105,11 +105,13 @@
         <?php endif; ?>
 
         <form action="<?= site_url('/reset-password') ?>" method="post">
-            <input type="hidden" name="token" value="<?= $token ?>">
-            <label for="password" class="form-label">New Password:</label>
-            <input id="password" type="password" name="password" class="v-text-field" required minlength="8" placeholder="Enter new password">
-            <button type="submit" class="bfp-btn">Reset Password</button>
-        </form>
+    <?= csrf_field() ?>
+    <input type="hidden" name="token" value="<?= $token ?>">
+    <label for="password" class="form-label">New Password:</label>
+    <input id="password" type="password" name="password" class="v-text-field" required minlength="8" placeholder="Enter new password">
+    <button type="submit" class="bfp-btn">Reset Password</button>
+</form>
+
     </div>
 </body>
 

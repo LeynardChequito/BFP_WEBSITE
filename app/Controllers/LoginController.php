@@ -128,69 +128,70 @@ class LoginController extends BaseController
     }
 
     public function dologin()
-    {
-        helper(['url', 'session']);
-        
-        $accountModel = new AccountModel();
-        $email = $this->request->getVar('email');
-        $password = $this->request->getVar('password');
-        $token = $this->request->getVar('token');
+{
+    helper(['url', 'session']);
+    
+    $accountModel = new AccountModel();
+    $email = $this->request->getVar('email');
+    $password = $this->request->getVar('password');
+    $token = $this->request->getVar('token'); // if used
 
-        // Ensure that email and password are provided
-        if (!$email || !$password) {
-            $res['status'] = '0';
-            $res['message'] = 'Email or password missing.';
-            return $this->response->setJSON($res);
-        }
-
-        // Fetch the user data from the account model using email
-        $data = $accountModel->where('email', $email)->first();
-
-        // Check if the user exists
-        if (!$data) {
-            $res['status'] = '0';
-            $res['message'] = 'Email does not exist.';
-            return $this->response->setJSON($res);
-        }
-
-        // Check if the email is verified
-        if (!$data['verified']) {
-            $res['status'] = '0';
-            $res['message'] = 'Your email is not verified. Please check your email for the verification link.';
-            return $this->response->setJSON($res);
-        }
-
-        // Verify the provided password
-        if (!password_verify($password, $data['password'])) {
-            $res['status'] = '0';
-            $res['message'] = 'Password is incorrect.';
-            return $this->response->setJSON($res);
-        }
-
-        // Check if a token is provided, and update the user's token
-        if ($token) {
-            $updateToken = $accountModel->update($data['user_id'], ['token' => $token]);
-            if (!$updateToken) {
-                $res['status'] = '0';
-                $res['message'] = 'Failed to update token.';
-                return $this->response->setJSON($res);
-            }
-        }
-
-        // Set session data
-        $ses_data = [
-            'user_id' => $data['user_id'],
-            'email' => $data['email'],
-            'fullName' => $data['fullName'],
-            'isLoggedIn' => TRUE
-        ];
-        session()->set($ses_data);
-
-        // Successful login response
-        $res['status'] = '1';
-        $res['message'] = 'Login successful!';
+    // Ensure that email and password are provided
+    if (!$email || !$password) {
+        $res['status'] = '0';
+        $res['message'] = 'Email or password missing.';
         return $this->response->setJSON($res);
     }
+
+    // Fetch the user data from the account model using email
+    $data = $accountModel->where('email', $email)->first();
+
+    // Check if the user exists
+    if (!$data) {
+        $res['status'] = '0';
+        $res['message'] = 'Email does not exist.';
+        return $this->response->setJSON($res);
+    }
+
+    // Check if the email is verified
+    if (!$data['verified']) {
+        $res['status'] = '0';
+        $res['message'] = 'Your email is not verified. Please check your email for the verification link.';
+        return $this->response->setJSON($res);
+    }
+
+    // Verify the provided password
+    if (!password_verify($password, $data['password'])) {
+        $res['status'] = '0';
+        $res['message'] = 'Password is incorrect.';
+        return $this->response->setJSON($res);
+    }
+
+    // If a token is provided, and you want to update the user's token
+    if ($token) {
+        $updateToken = $accountModel->update($data['user_id'], ['token' => $token]);
+        if (!$updateToken) {
+            $res['status'] = '0';
+            $res['message'] = 'Failed to update token.';
+            return $this->response->setJSON($res);
+        }
+    }
+
+    // Set session data
+    $ses_data = [
+        'user_id' => $data['user_id'],
+        'email' => $data['email'],
+        'fullName' => $data['fullName'],
+        'isLoggedIn' => TRUE
+    ];
+    session()->set($ses_data);
+
+    // Successful login response
+    $res['status'] = '1';
+    $res['message'] = 'Login successful!';
+    return $this->response->setJSON($res);
+}
+
 
     public function forgotPassword()
     {
@@ -252,29 +253,30 @@ class LoginController extends BaseController
     }
 
     public function processResetPassword()
-    {
-        $token = $this->request->getVar('token');
-        $newPassword = $this->request->getVar('password');
-        $accountModel = new AccountModel();
+{
+    $token = $this->request->getVar('token');
+    $newPassword = $this->request->getVar('password');
+    $accountModel = new AccountModel();
 
-        // Validate token
-        $user = $accountModel->where('verification_token', $token)->first();
+    // Validate token
+    $user = $accountModel->where('verification_token', $token)->first();
 
-        if (!$user || new DateTime() > new DateTime($user['verification_expiration'])) {
-            session()->setFlashdata('error', 'Invalid or expired token.');
-            return redirect()->to('/forgot-password');
-        }
-
-        // Hash the new password before saving it in the database
-        $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-        $accountModel->update($user['user_id'], [
-            'password' => $hashedPassword,
-            'verification_token' => null,             // Reset the verification token
-            'verification_expiration' => null,        // Reset the expiration time
-            'token' => bin2hex(random_bytes(16))      // Optionally update the user's token
-        ]);
-
-        session()->setFlashdata('success', 'Password successfully reset. You can now log in.');
-        return redirect()->to('/login');
+    if (!$user || new DateTime() > new DateTime($user['verification_expiration'])) {
+        session()->setFlashdata('error', 'Invalid or expired token.');
+        return redirect()->to('/forgot-password');
     }
+
+    // Hash the new password before saving it in the database
+    $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+    $accountModel->update($user['user_id'], [
+        'password' => $hashedPassword,
+        'verification_token' => null,  // Reset the verification token
+        'verification_expiration' => null, // Reset the expiration time
+        'token' => bin2hex(random_bytes(16)) // Optionally update the user's token
+    ]);
+
+    session()->setFlashdata('success', 'Password successfully reset. You can now log in.');
+    return redirect()->to('/login');
+}
+
 }

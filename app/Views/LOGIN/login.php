@@ -154,19 +154,20 @@
             </div>
         <?php endif; ?>
 
-        <formaction="<?= site_url('/dologin') ?>" method="POST">
-        <?= csrf_field() ?>
-            <label for="email" class="form-label">Email:</label>
-            <input id="email" type="text" name="email" class="v-text-field" required>
-            <br>
-            <label for="password" class="form-label">Password:</label>
-            <input id="password" type="password" name="password" class="v-text-field" required>
-            <div class="show-password">
-                <input type="checkbox" id="showPassword"> Show Password
-            </div>
-            <br>
-            <button id="btnLogin" type="submit" class="bfp-btn">Login</button>
-        </form>
+        <form action="<?= site_url('/dologin') ?>" method="POST">
+    <?= csrf_field() ?>
+    <label for="email" class="form-label">Email:</label>
+    <input id="email" type="text" name="email" class="v-text-field" required>
+    <br>
+    <label for="password" class="form-label">Password:</label>
+    <input id="password" type="password" name="password" class="v-text-field" required>
+    <div class="show-password">
+        <input type="checkbox" id="showPassword"> Show Password
+    </div>
+    <br>
+    <button id="btnLogin" type="submit" class="bfp-btn">Login</button>
+</form>
+
         <a href="<?= site_url('/forgot-password') ?>" class="bfp-link">Forgot Password?</a>
         <a href="<?= site_url('/registration') ?>" class="create-account-btn">Create an Account</a>
     </div>

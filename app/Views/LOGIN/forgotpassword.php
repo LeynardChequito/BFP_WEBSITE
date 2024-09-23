@@ -135,12 +135,14 @@
             </div>
         <?php endif; ?>
 
-        <form action="<?= site_url('/forgot-password') ?>" method="post">
-            <label for="email" class="form-label">Email:</label>
-            <input id="email" type="email" name="email" class="v-text-field" required placeholder="Enter your email address">
-            <button type="submit" class="bfp-btn">Submit</button>
-            <button type="button" class="cancel-btn" onclick="window.location.href='<?= site_url('/login') ?>'">Cancel</button>
-        </form>
+        <form action="<?= site_url('/forgot-password') ?>" method="POST">
+    <?= csrf_field() ?>
+    <label for="email" class="form-label">Email:</label>
+    <input id="email" type="email" name="email" class="v-text-field" required placeholder="Enter your email address">
+    <button type="submit" class="bfp-btn">Submit</button>
+    <button type="button" class="cancel-btn" onclick="window.location.href='<?= site_url('/login') ?>'">Cancel</button>
+</form>
+
     </div>
 </body>
 
