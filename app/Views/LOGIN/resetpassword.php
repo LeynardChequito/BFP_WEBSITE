@@ -68,6 +68,17 @@
             transform: translateY(-3px);
         }
 
+        .show-password {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            color: #fff;
+        }
+
+        .show-password input {
+            margin-right: 5px;
+        }
+
         .alert-danger {
             background-color: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -104,15 +115,36 @@
             </div>
         <?php endif; ?>
 
-        <form action="<?= site_url('/reset-password') ?>" method="post">
-    <?= csrf_field() ?>
-    <input type="hidden" name="token" value="<?= $token ?>">
-    <label for="password" class="form-label">New Password:</label>
-    <input id="password" type="password" name="password" class="v-text-field" required minlength="8" placeholder="Enter new password">
-    <button type="submit" class="bfp-btn">Reset Password</button>
-</form>
-
+        <form action="<?= site_url('/reset-password') ?>" method="post" id="resetForm">
+            <?= csrf_field() ?>
+            <input type="hidden" name="token" value="<?= $token ?>">
+            
+            <label for="password" class="form-label">New Password:</label>
+            <input id="password" type="password" name="password" class="v-text-field" required minlength="8" placeholder="Enter new password">
+            
+            <div class="show-password">
+                <input type="checkbox" id="showPassword"> Show Password
+            </div>
+            
+            <button type="submit" class="bfp-btn">Reset Password</button>
+        </form>
     </div>
+
+    <script>
+        // Script to toggle password visibility
+        document.getElementById('showPassword').addEventListener('change', function () {
+            var passwordInput = document.getElementById('password');
+            passwordInput.type = this.checked ? 'text' : 'password';
+        });
+
+        // Script to show a confirmation message before form submission
+        document.getElementById('resetForm').addEventListener('submit', function (e) {
+            const confirmed = confirm('Are you sure you want to reset your password?');
+            if (!confirmed) {
+                e.preventDefault(); // Prevent form submission if user cancels
+            }
+        });
+    </script>
 </body>
 
 </html>
