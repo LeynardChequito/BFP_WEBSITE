@@ -154,7 +154,8 @@
             </div>
         <?php endif; ?>
 
-        <form>
+        <formaction="<?= site_url('/dologin') ?>" method="POST">
+        <?= csrf_field() ?>
             <label for="email" class="form-label">Email:</label>
             <input id="email" type="text" name="email" class="v-text-field" required>
             <br>
