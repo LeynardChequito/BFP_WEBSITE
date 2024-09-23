@@ -138,9 +138,8 @@ class LoginController extends BaseController
 
     // Ensure that email and password are provided
     if (!$email || !$password) {
-        $res['status'] = '0';
-        $res['message'] = 'Email or password missing.';
-        return $this->response->setJSON($res);
+        session()->setFlashdata('error', 'Email or password missing.');
+        return redirect()->to('/login');
     }
 
     // Fetch the user data from the account model using email
@@ -148,32 +147,28 @@ class LoginController extends BaseController
 
     // Check if the user exists
     if (!$data) {
-        $res['status'] = '0';
-        $res['message'] = 'Email does not exist.';
-        return $this->response->setJSON($res);
+        session()->setFlashdata('error', 'Email does not exist.');
+        return redirect()->to('/login');
     }
 
     // Check if the email is verified
     if (!$data['verified']) {
-        $res['status'] = '0';
-        $res['message'] = 'Your email is not verified. Please check your email for the verification link.';
-        return $this->response->setJSON($res);
+        session()->setFlashdata('error', 'Your email is not verified. Please check your email for the verification link.');
+        return redirect()->to('/login');
     }
 
     // Verify the provided password
     if (!password_verify($password, $data['password'])) {
-        $res['status'] = '0';
-        $res['message'] = 'Password is incorrect.';
-        return $this->response->setJSON($res);
+        session()->setFlashdata('error', 'Password is incorrect.');
+        return redirect()->to('/login');
     }
 
     // If a token is provided, and you want to update the user's token
     if ($token) {
         $updateToken = $accountModel->update($data['user_id'], ['token' => $token]);
         if (!$updateToken) {
-            $res['status'] = '0';
-            $res['message'] = 'Failed to update token.';
-            return $this->response->setJSON($res);
+            session()->setFlashdata('error', 'Failed to update token.');
+            return redirect()->to('/login');
         }
     }
 
@@ -186,11 +181,11 @@ class LoginController extends BaseController
     ];
     session()->set($ses_data);
 
-    // Successful login response
-    $res['status'] = '1';
-    $res['message'] = 'Login successful!';
-    return $this->response->setJSON($res);
+    // Redirect to the home page after successful login
+    session()->setFlashdata('success', 'Login successful!');
+    return redirect()->to('/home');
 }
+
 
 
     public function forgotPassword()
@@ -226,7 +221,95 @@ class LoginController extends BaseController
 
         // Send the reset link to the user's email
         $resetLink = base_url('/reset-password?token=' . $resetToken);
-        $message = "Click the following link to reset your password: " . $resetLink;
+        $message = " <!DOCTYPE html>
+        <html lang='en'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    color: #333;
+                    margin: 0;
+                    padding: 0;
+                }
+                .email-container {
+                    width: 100%;
+                    max-width: 600px;
+                    margin: 20px auto;
+                    background-color: #ffffff;
+                    border: 1px solid #dddddd;
+                    border-radius: 8px;
+                }
+                .email-header {
+                    background-color: #d9534f;
+                    padding: 20px;
+                    text-align: center;
+                    color: #ffffff;
+                    border-radius: 8px 8px 0 0;
+                }
+                .email-header img {
+                    max-width: 150px;
+                }
+                .email-body {
+                    padding: 20px;
+                    text-align: left;
+                }
+                .email-body h1 {
+                    color: #d9534f;
+                    font-size: 24px;
+                }
+                .email-body p {
+                    font-size: 16px;
+                    line-height: 1.5;
+                }
+                .email-footer {
+                    background-color: #f4f4f4;
+                    padding: 10px;
+                    text-align: center;
+                    font-size: 12px;
+                    color: #888888;
+                    border-radius: 0 0 8px 8px;
+                }
+                .reset-link {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    background-color: #d9534f;
+                    color: #ffffff;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    margin-top: 10px;
+                }
+                .reset-link:hover {
+                    background-color: #c9302c;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='email-container'>
+                <div class='email-header'>
+                    <img src='/bfpcalapancity/public/images/bglog.jpg' alt='BFP Logo'>
+                    <h2>Bureau of Fire Protection</h2>
+                </div>
+                <div class='email-body'>
+                    <h1>Password Reset Request</h1>
+                    <p>Dear {$user['fullName']},</p>
+                    <p>We received a request to reset your password for your BFP account. If you did not make this request, you can safely ignore this email.</p>
+                    <p>To reset your password, click the button below:</p>
+                    <p><a href='{$resetLink}' class='reset-link'>Reset Password</a></p>
+                    <p>This link will expire in 1 hour. If you need further assistance, please contact BFP's IT department.</p>
+                    <p>Thank you, <br>The Bureau of Fire Protection Admin Team</p>
+                </div>
+                <div class='email-footer'>
+                    <p>This is an automated message, please do not reply.</p>
+                    <p>Bureau of Fire Protection, Philippines</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
 
         // Send the reset email
         $this->sendEmail($email, 'Password Reset', $message);
