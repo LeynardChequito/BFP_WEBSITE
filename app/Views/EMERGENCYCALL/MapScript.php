@@ -654,15 +654,19 @@
         }
     }
   // Async function to fetch recent reports
-async function getRecentReports() {
+  async function getRecentReports() {
     try {
         const response = await fetch('https://bfpcalapancity.online/reports-recent');
         const data = await response.json();
+        
+        // Log the entire response data
+        console.log('Response Data:', data);
 
         if (response.ok && Array.isArray(data) && data.length > 0) {
             let newReportsReceived = false;
 
             // Populate the report list using the modular populateReportList function
+            console.log('Passing Data to populateReportList:', data);
             populateReportList(data);
 
             data.forEach(report => {
@@ -671,7 +675,6 @@ async function getRecentReports() {
                 }
             });
 
-            // Play siren sound when new reports are received
             if (newReportsReceived) {
                 const sirenSound = document.getElementById('sirenSound');
                 document.addEventListener('click', () => sirenSound.play(), {
@@ -685,6 +688,7 @@ async function getRecentReports() {
         console.error('Error fetching recent reports:', error);
     }
 }
+
 
 // Function to open the modal when the URL contains #newReportModal
 function openModalOnHash() {
