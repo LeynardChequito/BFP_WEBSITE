@@ -37,20 +37,20 @@
 
     // Function to populate the report in the UI
     function populateReportList(data) {
+    const newReportsList = document.getElementById('newReportsList');
+    newReportsList.innerHTML = ''; // Clear any existing reports
+
     if (!Array.isArray(data) || data.length === 0) {
         console.error('No valid report data available');
+        newReportsList.innerHTML = '<p>No recent reports available</p>';
         return; // Exit the function if data is not valid
     }
 
     console.log('Data passed to populateReportList:', data);
 
-    const newReportsList = document.getElementById('newReportsList');
-    newReportsList.innerHTML = ''; // Clear any existing reports
-
     data.forEach(report => {
-        const reportId = report.communityreport_id;
-
         const {
+            communityreport_id,
             latitude,
             longitude,
             fullName,
@@ -58,10 +58,9 @@
             timestamp
         } = report;
 
-        // Create a new list item for the report
         const listItem = document.createElement('li');
         listItem.classList.add('list-group-item');
-        listItem.id = `report-${reportId}`;
+        listItem.id = `report-${communityreport_id}`;
 
         listItem.innerHTML = `
             <div style="padding: 10px; border-radius: 5px;">
@@ -78,6 +77,7 @@
         newReportsList.appendChild(listItem);
     });
 }
+
 
     function gotoRescueMap() {
         window.location.href = '/rescuemap?openModal=true';
@@ -659,35 +659,18 @@
         const response = await fetch('https://bfpcalapancity.online/reports-recent');
         const data = await response.json();
         
-        // Log the entire response data
         console.log('Response Data:', data);
 
         if (response.ok && Array.isArray(data) && data.length > 0) {
-            let newReportsReceived = false;
-
-            // Populate the report list using the modular populateReportList function
-            console.log('Passing Data to populateReportList:', data);
             populateReportList(data);
-
-            data.forEach(report => {
-                if (!isReportRemoved(report.id)) {
-                    newReportsReceived = true;
-                }
-            });
-
-            if (newReportsReceived) {
-                const sirenSound = document.getElementById('sirenSound');
-                document.addEventListener('click', () => sirenSound.play(), {
-                    once: true
-                });
-            }
         } else {
-            console.error('Failed to fetch recent reports or no reports available');
+            console.error('No recent reports available');
         }
     } catch (error) {
         console.error('Error fetching recent reports:', error);
     }
 }
+
 
 
 // Function to open the modal when the URL contains #newReportModal

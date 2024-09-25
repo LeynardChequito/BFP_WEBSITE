@@ -161,29 +161,30 @@ class CommunityReportController extends BaseController
     public function getRecentReports()
     {
         $model = new CommunityReportModel();
-
-        // Get the current timestamp in Manila timezone
+    
+        // Debugging: log the query output
         $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
-        $eightHoursAgo = $manilaTime->modify('-8 hours')->format('Y-m-d H:i');
-
-        // Adjust the query to get reports newer than 8 hours ago in MySQL-compatible timezone format
-        $eightHoursAgoUTC = (new \DateTime($eightHoursAgo, new \DateTimeZone('Asia/Manila')))
-            ->setTimezone(new \DateTimeZone('UTC'))
-            ->format('Y-m-d H:i');
-
-        $reports = $model->where('timestamp >=', $eightHoursAgoUTC)
+        $eightHoursAgo = $manilaTime->modify('-8 hours')->format('Y-m-d H:i:s');
+    
+        $reports = $model->where('timestamp >=', $eightHoursAgo)
             ->orderBy('timestamp', 'DESC')
             ->findAll();
-
-        // Convert timestamps to 'Asia/Manila' timezone before returning the JSON response
+    
+        if (empty($reports)) {
+            log_message('debug', 'No reports found in the last 8 hours');
+            return $this->response->setJSON([]);
+        }
+    
+        log_message('debug', 'Reports found: ' . json_encode($reports));
         foreach ($reports as &$report) {
             $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
                 ->setTimezone(new \DateTimeZone('Asia/Manila'))
                 ->format('Y-m-d (h:i a)');
         }
-
+    
         return $this->response->setJSON($reports);
     }
+    
 
     public function getLatestReports()
     {
