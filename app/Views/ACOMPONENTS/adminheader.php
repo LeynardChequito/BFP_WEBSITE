@@ -223,11 +223,15 @@ function fetchLatestReports() {
         .catch(error => console.error('Error fetching reports:', error));
 }
 
-// Trigger report click and redirect to /rescuemap with communityreport_id
 function showReportDetails(report) {
-    // Redirect to the /rescuemap page with the communityreport_id as a URL parameter
-    window.location.href = `/rescuemap?communityreport_id=${report.communityreport_id}`;
+    if (report.communityreport_id) {
+        // Redirect to the /rescuemap page with the communityreport_id as a URL parameter
+        window.location.href = `/rescuemap?communityreport_id=${report.communityreport_id}`;
+    } else {
+        console.error("Error: communityreport_id is undefined");
+    }
 }
+
 
         // Call this function periodically to refresh the notifications
         setInterval(fetchLatestReports, 60000); // Refresh every 60 seconds

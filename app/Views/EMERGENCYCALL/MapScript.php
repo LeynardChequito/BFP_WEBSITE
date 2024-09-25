@@ -36,57 +36,74 @@
 
 
     function populateReportList(data) {
-        if (!Array.isArray(data) || data.length === 0) {
-            console.error('No valid report data available');
-            return; // Exit the function if data is not valid
-        }
+    // Check if the data is valid and contains reports
+    if (!Array.isArray(data) || data.length === 0) {
+        console.error('No valid report data available');
+        return; // Exit the function if data is not valid
+    }
 
-        const newReportsList = document.getElementById('newReportsList');
-        newReportsList.innerHTML = ''; // Clear any existing reports
+    const newReportsList = document.getElementById('newReportsList');
+    newReportsList.innerHTML = ''; // Clear any existing reports
 
-        data.forEach(report => {
-            const reportId = report.id;
+    // Iterate over each report in the data
+    data.forEach(report => {
+        const reportId = report.communityreport_id; // Assuming the correct ID field
 
-            if (!isReportRemoved(reportId)) {
-                const {
-                    latitude,
-                    longitude,
-                    fullName,
-                    fileproof,
-                    timestamp
-                } = report;
-                const listItem = document.createElement('li');
-                const baseUrl = "<?= base_url() ?>";
-                listItem.classList.add('list-group-item');
-                listItem.id = `report-${reportId}`;
-                listItem.innerHTML = `
-                    <div style="padding: 10px; border-radius: 5px;">
-                        <h4>User in Need: ${fullName}</h4>
-                        <p><strong>Timestamp:</strong> ${timestamp}</p>
-                        <p><strong>File Proof:</strong></p>
-                        <div class="fileProofContainer" style="margin-bottom: 10px;">
-                            <img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
-                        </div>
-                        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
-                        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
+        if (!isReportRemoved(reportId)) {
+            const {
+                latitude,
+                longitude,
+                fullName,
+                fileproof,
+                timestamp
+            } = report;
+
+            // Create a new list item for the report
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            listItem.id = `report-${reportId}`;
+
+            // Construct base URL using JavaScript (passed from server)
+            const baseUrl = document.getElementById('baseUrl').value; // Assuming you pass the base URL via a hidden field
+
+            listItem.innerHTML = `
+                <div style="padding: 10px; border-radius: 5px;">
+                    <h4>User in Need: ${fullName}</h4>
+                    <p><strong>Timestamp:</strong> ${timestamp}</p>
+                    <p><strong>File Proof:</strong></p>
+                    <div class="fileProofContainer" style="margin-bottom: 10px;">
+                        <img src="${baseUrl}/bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image" style="max-width: 100px; height: auto;">
                     </div>
-                `;
+                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
+                        onclick="showRouteToRescuer(${latitude}, ${longitude})">
+                        Show Route
+                    </button> 
+                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
+                        onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">
+                        Submit Fire Report
+                    </button> 
+                </div>
+            `;
 
-                newReportsList.appendChild(listItem);
+            // Append the list item to the reports list
+            newReportsList.appendChild(listItem);
 
-                const marker = L.marker([latitude, longitude], {
-                    icon: userMarker
-                }).addTo(map);
-                const popupContent = `
+            // Create a map marker for the report location
+            const marker = L.marker([latitude, longitude], {
+                icon: userMarker // Assuming userMarker is defined somewhere
+            }).addTo(map);
+
+            // Create the popup content for the marker
+            const popupContent = `
                 <div class="popup-content">
                     <h4>User in Need: ${fullName}</h4>
                     <p><strong>Timestamp:</strong> ${timestamp}</p>
                 </div>
             `;
-                marker.bindPopup(popupContent);
-            }
-        });
-    }
+            marker.bindPopup(popupContent);
+        }
+    });
+}
 
     function gotoRescueMap() {
         window.location.href = '/rescuemap?openModal=true';
@@ -811,52 +828,39 @@
     });
 
     // Function to get URL parameters
-function getUrlParameter(name) {
+    function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
     const results = regex.exec(window.location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    return results === null ? undefined : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
-
 document.addEventListener('DOMContentLoaded', function() {
     // Get the communityreport_id from the URL
     const communityreport_id = getUrlParameter('communityreport_id');
     
     if (communityreport_id) {
         // Fetch the report details using the communityreport_id
-        fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
-            .then(response => response.json())
-            .then(report => {
-                // Show the report details in the modal
-                const newReportsList = document.getElementById('newReportsList');
-                newReportsList.innerHTML = ''; // Clear previous modal content
-                
-                // Create the report details to show in the modal
-                const reportDetails = document.createElement('li');
-                reportDetails.classList.add('list-group-item');
-                
-                let mediaContent = '';
-                const fileExtension = report.fileproof.split('.').pop().toLowerCase();
-                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                    mediaContent = `<img src="${report.fileproof}" class="img-fluid" alt="File Proof">`;
-                } else if (['mp4', 'mov', 'avi'].includes(fileExtension)) {
-                    mediaContent = `<video src="${report.fileproof}" controls class="img-fluid"></video>`;
-                }
-
-                reportDetails.innerHTML = `
-                    <h4>${report.fullName}</h4>
-                    <p><strong>Submitted:</strong> ${report.timestamp} (${report.timeAgo})</p>
-                    ${mediaContent}
-                `;
-                
-                // Append the report details to the modal
-                newReportsList.appendChild(reportDetails);
-                
-                // Show the modal
-                $('#newReportModal').modal('show');
-            })
-            .catch(error => console.error('Error fetching report:', error));
+        fetchReportByCommunityReportId(communityreport_id);
+    } else {
+        console.error('No valid communityreport_id found in the URL');
     }
 });
-
+function fetchReportByCommunityReportId(communityreport_id) {
+    fetch(`http://localhost:8080/getReportByCommunityReportId/${communityreport_id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('No valid report data available');
+            }
+            return response.json();
+        })
+        .then(report => {
+            if (report) {
+                // Show the report details in the modal
+                populateReportList(report);
+            } else {
+                console.error('No report found for this communityreport_id');
+            }
+        })
+        .catch(error => console.error('Error fetching report:', error));
+}
 </script>
