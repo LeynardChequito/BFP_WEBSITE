@@ -1,4 +1,6 @@
 <script>
+
+const baseUrl = "<?= base_url() ?>";
     // Function to reload the site
     function reloadSite() {
         location.reload();
@@ -46,8 +48,6 @@
         return; // Exit the function if data is not valid
     }
 
-    console.log('Data passed to populateReportList:', data);
-
     data.forEach(report => {
         const {
             communityreport_id,
@@ -64,27 +64,26 @@
 
         listItem.innerHTML = `
              <div style="padding: 10px; border-radius: 5px;">
-                    <h4>User in Need: ${fullName}</h4>
-                    <p><strong>Timestamp:</strong> ${timestamp}</p>
-                    <p><strong>File Proof:</strong></p>
-                    <div class="fileProofContainer" style="margin-bottom: 10px;">
-                        <img src="${baseUrl}/bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image" style="max-width: 100px; height: auto;">
-                    </div>
-                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
-                        onclick="showRouteToRescuer(${latitude}, ${longitude})">
-                        Show Route
-                    </button> 
-                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
-                        onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">
-                        Submit Fire Report
-                    </button> 
-                </div>
+                 <h4>User in Need: ${fullName}</h4>
+                 <p><strong>Timestamp:</strong> ${timestamp}</p>
+                 <p><strong>File Proof:</strong></p>
+                 <div class="fileProofContainer" style="margin-bottom: 10px;">
+                     <img src="${baseUrl}/bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image" style="max-width: 100px; height: auto;">
+                 </div>
+                 <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
+                     onclick="showRouteToRescuer(${latitude}, ${longitude})">
+                     Show Route
+                 </button> 
+                 <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
+                     onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">
+                     Submit Fire Report
+                 </button> 
+             </div>
         `;
 
         newReportsList.appendChild(listItem);
     });
 }
-
 
     function gotoRescueMap() {
         window.location.href = '/rescuemap?openModal=true';
