@@ -63,15 +63,22 @@
         listItem.id = `report-${communityreport_id}`;
 
         listItem.innerHTML = `
-            <div style="padding: 10px; border-radius: 5px;">
-                <h4>User in Need: ${fullName}</h4>
-                <p><strong>Timestamp:</strong> ${timestamp}</p>
-                <p><strong>File Proof:</strong></p>
-                <div class="fileProofContainer" style="margin-bottom: 10px;">
-                    <img src="https://bfpcalapancity.online/bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image" style="max-width: 100px; height: auto;">
+             <div style="padding: 10px; border-radius: 5px;">
+                    <h4>User in Need: ${fullName}</h4>
+                    <p><strong>Timestamp:</strong> ${timestamp}</p>
+                    <p><strong>File Proof:</strong></p>
+                    <div class="fileProofContainer" style="margin-bottom: 10px;">
+                        <img src="${baseUrl}/bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image" style="max-width: 100px; height: auto;">
+                    </div>
+                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
+                        onclick="showRouteToRescuer(${latitude}, ${longitude})">
+                        Show Route
+                    </button> 
+                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
+                        onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">
+                        Submit Fire Report
+                    </button> 
                 </div>
-                <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
-            </div>
         `;
 
         newReportsList.appendChild(listItem);
