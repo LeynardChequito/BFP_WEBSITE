@@ -186,39 +186,41 @@ class CommunityReportController extends BaseController
     }
 
     public function getLatestReports()
-{
-    $communityReportModel = new CommunityReportModel();
-
-    // Get the current timestamp in Manila timezone
-    $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
-
-    // Get the reports, order by newest first
-    $reports = $communityReportModel->orderBy('timestamp', 'DESC')->findAll();
-
-    // Prepare an array to store formatted reports
-    $formattedReports = [];
-
-    // Process each report
-    foreach ($reports as $report) {
-        $timestamp = new \DateTime($report['timestamp'], new \DateTimeZone('UTC'));
-        $timestamp->setTimezone(new \DateTimeZone('Asia/Manila')); // Convert to Manila time
-
-        // Calculate the time difference between now and the report's timestamp
-        $interval = $manilaTime->diff($timestamp);
-        $timeAgo = $this->formatTimeAgo($interval);
-
-        // Add formatted data to the array
-        $formattedReports[] = [
-            'fullName' => $report['fullName'],
-            'fileproof' => base_url('bfpcalapancity/public/community_report/' . $report['fileproof']),
-            'timestamp' => $timestamp->format('Y-m-d h:i A'),
-            'timeAgo' => $timeAgo,
-        ];
+    {
+        $communityReportModel = new CommunityReportModel();
+    
+        // Get the current timestamp in Manila timezone
+        $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
+    
+        // Get the reports, order by newest first
+        $reports = $communityReportModel->orderBy('timestamp', 'DESC')->findAll();
+    
+        // Prepare an array to store formatted reports
+        $formattedReports = [];
+    
+        // Process each report
+        foreach ($reports as $report) {
+            $timestamp = new \DateTime($report['timestamp'], new \DateTimeZone('UTC'));
+            $timestamp->setTimezone(new \DateTimeZone('Asia/Manila')); // Convert to Manila time
+    
+            // Calculate the time difference between now and the report's timestamp
+            $interval = $manilaTime->diff($timestamp);
+            $timeAgo = $this->formatTimeAgo($interval);
+    
+            // Add formatted data to the array, including the communityreport_id
+            $formattedReports[] = [
+                'communityreport_id' => $report['communityreport_id'],  // Include this in the response
+                'fullName' => $report['fullName'],
+                'fileproof' => base_url('bfpcalapancity/public/community_report/' . $report['fileproof']),
+                'timestamp' => $timestamp->format('Y-m-d h:i A'),
+                'timeAgo' => $timeAgo,
+            ];
+        }
+    
+        // Return the formatted data as a JSON response
+        return $this->response->setJSON($formattedReports);
     }
-
-    // Return the formatted data as a JSON response
-    return $this->response->setJSON($formattedReports);
-}
+    
 
 /**
  * Helper function to format the time ago indicator.

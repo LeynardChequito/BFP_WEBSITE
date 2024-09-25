@@ -209,7 +209,7 @@ function fetchLatestReports() {
                     ${mediaContent}
                     <div>
                         <h4>${report.fullName}</h4>
-                        <p><strong></strong> (${report.timeAgo})</p>
+                        <p><strong>Submitted:</strong> ${report.timestamp} (${report.timeAgo})</p>
                     </div>
                 `;
                 notificationContainer.appendChild(notification);
