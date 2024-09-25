@@ -653,42 +653,47 @@
             localStorage.setItem('removedReports', JSON.stringify(removedReports));
         }
     }
-    // Function to get recent reports from the database and display them
-    async function getRecentReports() {
-        try {
-            const response = await fetch('https://bfpcalapancity.online/reports-recent');
-            const data = await response.json();
+  // Async function to fetch recent reports
+async function getRecentReports() {
+    try {
+        const response = await fetch('https://bfpcalapancity.online/reports-recent');
+        const data = await response.json();
 
-            if (response.ok && Array.isArray(data) && data.length > 0) {
-                let newReportsReceived = false;
+        if (response.ok && Array.isArray(data) && data.length > 0) {
+            let newReportsReceived = false;
 
-                // Populate the report list using the modular populateReportList function
-                populateReportList(data);
+            // Populate the report list using the modular populateReportList function
+            populateReportList(data);
 
-                data.forEach(report => {
-                    if (!isReportRemoved(report.id)) {
-                        newReportsReceived = true;
-                    }
-                });
-
-                if (newReportsReceived) {
-                    const sirenSound = document.getElementById('sirenSound');
-                    document.addEventListener('click', () => sirenSound.play(), {
-                        once: true
-                    });
+            data.forEach(report => {
+                if (!isReportRemoved(report.id)) {
+                    newReportsReceived = true;
                 }
-            } else {
-                console.error('Failed to fetch recent reports or no reports available');
-            }
-        } catch (error) {
-            console.error('Error fetching recent reports:', error);
-        }
-    }
+            });
 
-    // Ensure reports are fetched when the DOM is ready
-    document.addEventListener('DOMContentLoaded', function() {
-        getRecentReports();
-    });
+            // Play siren sound when new reports are received
+            if (newReportsReceived) {
+                const sirenSound = document.getElementById('sirenSound');
+                document.addEventListener('click', () => sirenSound.play(), {
+                    once: true
+                });
+            }
+        } else {
+            console.error('Failed to fetch recent reports or no reports available');
+        }
+    } catch (error) {
+        console.error('Error fetching recent reports:', error);
+    }
+}
+
+// Function to open the modal when the URL contains #newReportModal
+function openModalOnHash() {
+    if (window.location.hash === '#newReportModal') {
+        const newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
+        newReportModal.show();
+        getRecentReports(); // Load the recent reports when the modal opens
+    }
+}
 
     // Function to mark a report as submitted
     function submitReportForm(lat, lng, communityreport_id) {
@@ -787,19 +792,13 @@
             alert("There was a problem calculating the route. Please try again.");
         }
     }
-
     document.addEventListener('DOMContentLoaded', function() {
-        getRecentReports(); // Fetch new reports when the page loads
+    // Fetch recent reports when the page loads
+    getRecentReports();
 
-        // Open the modal if the page loads with the hash #newReportModal
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.location.hash === '#newReportModal') {
-                var newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
-                newReportModal.show();
-                getRecentReports(); // Load the recent reports when the modal opens
-            }
-        });
-    });
+    // Check if the page loads with #newReportModal in the URL hash
+    openModalOnHash();
+});
 
    // Assuming there's a function to extract the communityreport_id from the URL
 function getUrlParameter(name) {
