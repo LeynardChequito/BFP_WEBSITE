@@ -35,8 +35,8 @@
     }, 'Streets').addTo(map);
 
 
-    function populateReportList(data) {
-    // Check if the data is valid and contains reports
+    // Function to populate the report in the UI
+function populateReportList(data) {
     if (!Array.isArray(data) || data.length === 0) {
         console.error('No valid report data available');
         return; // Exit the function if data is not valid
@@ -45,65 +45,38 @@
     const newReportsList = document.getElementById('newReportsList');
     newReportsList.innerHTML = ''; // Clear any existing reports
 
-    // Iterate over each report in the data
     data.forEach(report => {
-        const reportId = report.communityreport_id; // Assuming the correct ID field
+        const reportId = report.communityreport_id;
 
-        if (!isReportRemoved(reportId)) {
-            const {
-                latitude,
-                longitude,
-                fullName,
-                fileproof,
-                timestamp
-            } = report;
+        const {
+            latitude,
+            longitude,
+            fullName,
+            fileproof,
+            timestamp
+        } = report;
 
-            // Create a new list item for the report
-            const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item');
-            listItem.id = `report-${reportId}`;
+        // Create a new list item for the report
+        const listItem = document.createElement('li');
+        listItem.classList.add('list-group-item');
+        listItem.id = `report-${reportId}`;
 
-            // Construct base URL using JavaScript (passed from server)
-            const baseUrl = document.getElementById('baseUrl').value; // Assuming you pass the base URL via a hidden field
-
-            listItem.innerHTML = `
-                <div style="padding: 10px; border-radius: 5px;">
-                    <h4>User in Need: ${fullName}</h4>
-                    <p><strong>Timestamp:</strong> ${timestamp}</p>
-                    <p><strong>File Proof:</strong></p>
-                    <div class="fileProofContainer" style="margin-bottom: 10px;">
-                        <img src="${baseUrl}/bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image" style="max-width: 100px; height: auto;">
-                    </div>
-                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
-                        onclick="showRouteToRescuer(${latitude}, ${longitude})">
-                        Show Route
-                    </button> 
-                    <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
-                        onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">
-                        Submit Fire Report
-                    </button> 
+        listItem.innerHTML = `
+            <div style="padding: 10px; border-radius: 5px;">
+                <h4>User in Need: ${fullName}</h4>
+                <p><strong>Timestamp:</strong> ${timestamp}</p>
+                <p><strong>File Proof:</strong></p>
+                <div class="fileProofContainer" style="margin-bottom: 10px;">
+                    <img src="https://bfpcalapancity.online/bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image" style="max-width: 100px; height: auto;">
                 </div>
-            `;
+                <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
+            </div>
+        `;
 
-            // Append the list item to the reports list
-            newReportsList.appendChild(listItem);
-
-            // Create a map marker for the report location
-            const marker = L.marker([latitude, longitude], {
-                icon: userMarker // Assuming userMarker is defined somewhere
-            }).addTo(map);
-
-            // Create the popup content for the marker
-            const popupContent = `
-                <div class="popup-content">
-                    <h4>User in Need: ${fullName}</h4>
-                    <p><strong>Timestamp:</strong> ${timestamp}</p>
-                </div>
-            `;
-            marker.bindPopup(popupContent);
-        }
+        newReportsList.appendChild(listItem);
     });
 }
+
 
     function gotoRescueMap() {
         window.location.href = '/rescuemap?openModal=true';
@@ -827,22 +800,21 @@
         });
     });
 
-    // Function to get URL parameters
-    function getUrlParameter(name) {
+   // Assuming there's a function to extract the communityreport_id from the URL
+function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
     const results = regex.exec(window.location.search);
-    return results === null ? undefined : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Get the communityreport_id from the URL
     const communityreport_id = getUrlParameter('communityreport_id');
-    
+
     if (communityreport_id) {
-        // Fetch the report details using the communityreport_id
-        fetchReportByCommunityReportId(communityreport_id);
+        fetchReportByCommunityReportId(communityreport_id); // Fetch report using the ID
     } else {
-        console.error('No valid communityreport_id found in the URL');
+        console.error('No communityreport_id found in the URL');
     }
 });
 function fetchReportByCommunityReportId(communityreport_id) {
@@ -855,8 +827,8 @@ function fetchReportByCommunityReportId(communityreport_id) {
         })
         .then(report => {
             if (report) {
-                // Show the report details in the modal
-                populateReportList(report);
+                // Populate report data in the modal or DOM element
+                populateReportList([report]); // Passing as an array since your populate function expects an array
             } else {
                 console.error('No report found for this communityreport_id');
             }
