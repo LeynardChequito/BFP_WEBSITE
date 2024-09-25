@@ -42,7 +42,7 @@
         return; // Exit the function if data is not valid
     }
 
-    console.log('Data passed to populateReportList:', data); // Log the data passed to this function
+    console.log('Data passed to populateReportList:', data);
 
     const newReportsList = document.getElementById('newReportsList');
     newReportsList.innerHTML = ''; // Clear any existing reports
