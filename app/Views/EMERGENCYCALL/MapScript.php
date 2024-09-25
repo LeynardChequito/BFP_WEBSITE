@@ -12,8 +12,8 @@
         document.getElementById("philippineTime").textContent = "Philippine Standard Time: " + getCurrentTimeInPhilippines();
         setTimeout(updateTime, 1000); // Update time every second
     }
-// Extract the latitude and longitude from the URL parameters
-const urlParams = new URLSearchParams(window.location.search);
+    // Extract the latitude and longitude from the URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
     const lat = urlParams.get('lat');
     const lng = urlParams.get('lng');
 
@@ -23,64 +23,74 @@ const urlParams = new URLSearchParams(window.location.search);
     const map = L.map("map", {
         zoom: 19
     });
-// Use OpenStreetMap tiles (no CORS issues)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
-    map.setView([13.3839, 121.1860], 14); // Calapan City location
+    // Use OpenStreetMap tiles (no CORS issues)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 16,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    map.setView([13.3839, 121.1860], 15); // Calapan City location
 
     L.esri.Vector.vectorBasemapLayer(basemapEnum, {
         apiKey: apiKey
     }, 'Streets').addTo(map);
-    
-    
+
+
     function populateReportList(data) {
-    if (!Array.isArray(data) || data.length === 0) {
-        console.error('No valid report data available');
-        return; // Exit the function if data is not valid
-    }
+        if (!Array.isArray(data) || data.length === 0) {
+            console.error('No valid report data available');
+            return; // Exit the function if data is not valid
+        }
 
-    const newReportsList = document.getElementById('newReportsList');
-    newReportsList.innerHTML = ''; // Clear any existing reports
+        const newReportsList = document.getElementById('newReportsList');
+        newReportsList.innerHTML = ''; // Clear any existing reports
 
-    data.forEach(report => {
-        const reportId = report.id;
+        data.forEach(report => {
+            const reportId = report.id;
 
-        if (!isReportRemoved(reportId)) {
-            const { latitude, longitude, fullName, fileproof, timestamp } = report;
-            const listItem = document.createElement('li');
-            const baseUrl = "<?= base_url() ?>";
-            listItem.classList.add('list-group-item');
-            listItem.id = `report-${reportId}`;
-            listItem.innerHTML = `
-    <div style="padding: 10px; border-radius: 5px;">
-        <h4>User in Need: ${fullName}</h4>
-        <p><strong>Timestamp:</strong> ${timestamp}</p>
-        <p><strong>File Proof:</strong></p>
-        <div class="fileProofContainer" style="margin-bottom: 10px;">
-            <img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
-        </div>
-        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
-        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
-    </div>
-`;
+            if (!isReportRemoved(reportId)) {
+                const {
+                    latitude,
+                    longitude,
+                    fullName,
+                    fileproof,
+                    timestamp
+                } = report;
+                const listItem = document.createElement('li');
+                const baseUrl = "<?= base_url() ?>";
+                listItem.classList.add('list-group-item');
+                listItem.id = `report-${reportId}`;
+                listItem.innerHTML = `
+                    <div style="padding: 10px; border-radius: 5px;">
+                        <h4>User in Need: ${fullName}</h4>
+                        <p><strong>Timestamp:</strong> ${timestamp}</p>
+                        <p><strong>File Proof:</strong></p>
+                        <div class="fileProofContainer" style="margin-bottom: 10px;">
+                            <img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image">
+                        </div>
+                        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button> 
+                        <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" onclick="submitReportForm(${latitude}, ${longitude}, ${reportId})">Submit Fire Report</button> 
+                    </div>
+                `;
 
-            newReportsList.appendChild(listItem);
+                newReportsList.appendChild(listItem);
 
-            const marker = L.marker([latitude, longitude], { icon: userMarker }).addTo(map);
-            const popupContent = `
+                const marker = L.marker([latitude, longitude], {
+                    icon: userMarker
+                }).addTo(map);
+                const popupContent = `
                 <div class="popup-content">
                     <h4>User in Need: ${fullName}</h4>
                     <p><strong>Timestamp:</strong> ${timestamp}</p>
                 </div>
             `;
-            marker.bindPopup(popupContent);
-        }
-    });
-}
+                marker.bindPopup(popupContent);
+            }
+        });
+    }
 
-    file://%20global%20function%20declarationfunction%20gotorescuemap()%20{%20%20%20%20window.location.href%20=%20'/rescuemap?openModal=true%27;}
+    function gotoRescueMap() {
+        window.location.href = '/rescuemap?openModal=true';
+    }
 
     // Call populateReportList when the modal is shown
     document.addEventListener('DOMContentLoaded', function() {
@@ -282,7 +292,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         document.getElementById("directions").innerHTML = "Route canceled. Click on the map to create a new route.";
     }
 
-   async function navigateToHydrant(lat, lng) {
+    async function navigateToHydrant(lat, lng) {
         endCoords = [lng, lat]; // Set hydrant as end point
         updateRoute(); // Update the route to the selected hydrant
     }
@@ -293,136 +303,141 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         popupAnchor: [1, -34],
         shadowSize: [41, 41]
     });
-// Function to show rescuer's geolocation
-let rescuerMarker; // Declare rescuerMarker globally so it can be updated later
+    // Function to show rescuer's geolocation
+    let rescuerMarker; // Declare rescuerMarker globally so it can be updated later
 
-function showRescuerLocation(position) {
-    const rescuerLatitude = position.coords.latitude;
-    const rescuerLongitude = position.coords.longitude;
-    startCoords = [rescuerLongitude, rescuerLatitude];
+    function showRescuerLocation(position) {
+        const rescuerLatitude = position.coords.latitude;
+        const rescuerLongitude = position.coords.longitude;
+        startCoords = [rescuerLongitude, rescuerLatitude];
 
-    // Update rescuer's marker position
-    if (!rescuerMarker) {
-        rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], { icon: rescuerIcon }).addTo(map);
-    } else {
-        rescuerMarker.setLatLng([rescuerLatitude, rescuerLongitude]);
-    }
+        // Update rescuer's marker position
+        if (!rescuerMarker) {
+            rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], {
+                icon: rescuerIcon
+            }).addTo(map);
+        } else {
+            rescuerMarker.setLatLng([rescuerLatitude, rescuerLongitude]);
+        }
 
-    rescuerMarker.bindPopup("'You are here.' - Rescuer").openPopup();
+        rescuerMarker.bindPopup("'You are here.' - Rescuer").openPopup();
 
-    // Update route to adjust to the rescuer's current position
-    if (endCoords) {
-        updateRoute();  // Continuously update route to destination
-    }
+        // Update route to adjust to the rescuer's current position
+        if (endCoords) {
+            updateRoute(); // Continuously update route to destination
+        }
 
-    // Save current position
-    saveRescuerPositionToLocalStorage(position);
+        // Save current position
+        saveRescuerPositionToLocalStorage(position);
 
-    suggestNearestHydrants({ lat: rescuerLatitude, lng: rescuerLongitude });
-}
-function saveCurrentRouteToLocalStorage() {
-    if (startCoords && endCoords) {
-        localStorage.setItem('startCoords', JSON.stringify(startCoords));
-        localStorage.setItem('endCoords', JSON.stringify(endCoords));
-    }
-}
-
-function saveRescuerPositionToLocalStorage(position) {
-    localStorage.setItem('rescuerCoords', JSON.stringify({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-    }));
-}
-
-// Call this function whenever the route is updated or rescuer moves
-
-function restoreRouteAndPosition() {
-    const savedStartCoords = JSON.parse(localStorage.getItem('startCoords'));
-    const savedEndCoords = JSON.parse(localStorage.getItem('endCoords'));
-    const savedRescuerCoords = JSON.parse(localStorage.getItem('rescuerCoords'));
-
-    if (savedStartCoords && savedEndCoords) {
-        startCoords = savedStartCoords;
-        endCoords = savedEndCoords;
-        updateRoute();  // Redraw the route on the map
-    }
-
-    if (savedRescuerCoords) {
-        showRescuerLocation({
-            coords: {
-                latitude: savedRescuerCoords.lat,
-                longitude: savedRescuerCoords.lng
-            }
+        suggestNearestHydrants({
+            lat: rescuerLatitude,
+            lng: rescuerLongitude
         });
     }
-}
 
-// Call this function on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', restoreRouteAndPosition);
-
-
-// Function to track the rescuer's location
-function trackRescuerLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(
-            position => {
-                showRescuerLocation(position); // Calls the function to update the location
-            },
-            error => {
-                console.error('Error tracking rescuer location:', error);
-            },
-            {
-                enableHighAccuracy: true,
-                maximumAge: 500,
-                timeout: 1000
-            }
-        );
-    } else {
-        alert("Geolocation is not supported by this browser.");
-    }
-}
-
-// Ensure rescuer's location is tracked on page load
-document.addEventListener('DOMContentLoaded', function () {
-    trackRescuerLocation(); // Start tracking rescuer's current location when the page loads
-});
-
-   
-function restoreRouteAndPosition() {
-    const savedStartCoords = JSON.parse(localStorage.getItem('startCoords'));
-    const savedEndCoords = JSON.parse(localStorage.getItem('endCoords'));
-    const savedRescuerCoords = JSON.parse(localStorage.getItem('rescuerCoords'));
-
-    if (savedStartCoords && savedEndCoords) {
-        startCoords = savedStartCoords;
-        endCoords = savedEndCoords;
-        updateRoute();  // Redraw the route on the map
+    function saveCurrentRouteToLocalStorage() {
+        if (startCoords && endCoords) {
+            localStorage.setItem('startCoords', JSON.stringify(startCoords));
+            localStorage.setItem('endCoords', JSON.stringify(endCoords));
+        }
     }
 
-    if (savedRescuerCoords) {
-        showRescuerLocation({
-            coords: {
-                latitude: savedRescuerCoords.lat,
-                longitude: savedRescuerCoords.lng
-            }
-        });
+    function saveRescuerPositionToLocalStorage(position) {
+        localStorage.setItem('rescuerCoords', JSON.stringify({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        }));
     }
-}
 
-// Call this function on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', restoreRouteAndPosition);
+    // Call this function whenever the route is updated or rescuer moves
+
+    function restoreRouteAndPosition() {
+        const savedStartCoords = JSON.parse(localStorage.getItem('startCoords'));
+        const savedEndCoords = JSON.parse(localStorage.getItem('endCoords'));
+        const savedRescuerCoords = JSON.parse(localStorage.getItem('rescuerCoords'));
+
+        if (savedStartCoords && savedEndCoords) {
+            startCoords = savedStartCoords;
+            endCoords = savedEndCoords;
+            updateRoute(); // Redraw the route on the map
+        }
+
+        if (savedRescuerCoords) {
+            showRescuerLocation({
+                coords: {
+                    latitude: savedRescuerCoords.lat,
+                    longitude: savedRescuerCoords.lng
+                }
+            });
+        }
+    }
+
+    // Call this function on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', restoreRouteAndPosition);
 
 
-// Ensure rescuer's location is tracked on page load
-document.addEventListener('DOMContentLoaded', function () {
-    trackRescuerLocation(); // Start tracking rescuer's current location when the page loads
-});
-    
+    // Function to track the rescuer's location
+    function trackRescuerLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(
+                position => {
+                    showRescuerLocation(position); // Calls the function to update the location
+                },
+                error => {
+                    console.error('Error tracking rescuer location:', error);
+                }, {
+                    enableHighAccuracy: true,
+                    maximumAge: 500,
+                    timeout: 1000
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    // Ensure rescuer's location is tracked on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        trackRescuerLocation(); // Start tracking rescuer's current location when the page loads
+    });
+
+
+    function restoreRouteAndPosition() {
+        const savedStartCoords = JSON.parse(localStorage.getItem('startCoords'));
+        const savedEndCoords = JSON.parse(localStorage.getItem('endCoords'));
+        const savedRescuerCoords = JSON.parse(localStorage.getItem('rescuerCoords'));
+
+        if (savedStartCoords && savedEndCoords) {
+            startCoords = savedStartCoords;
+            endCoords = savedEndCoords;
+            updateRoute(); // Redraw the route on the map
+        }
+
+        if (savedRescuerCoords) {
+            showRescuerLocation({
+                coords: {
+                    latitude: savedRescuerCoords.lat,
+                    longitude: savedRescuerCoords.lng
+                }
+            });
+        }
+    }
+
+    // Call this function on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', restoreRouteAndPosition);
+
+
+    // Ensure rescuer's location is tracked on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        trackRescuerLocation(); // Start tracking rescuer's current location when the page loads
+    });
+
 
     let startCoords = null;
     let endCoords = null;
 
-async function updateRoute() {
+    async function updateRoute() {
         if (!startCoords || !endCoords) {
             alert("Rescuer location or report location is missing. Please try again.");
             return;
@@ -442,10 +457,14 @@ async function updateRoute() {
 
             // Display directions
             const directionsHTML = response.directions[0].features.map(f => {
-                const { text, length, time } = f.attributes;
+                const {
+                    text,
+                    length,
+                    time
+                } = f.attributes;
                 return `<p>${text} (${length.toFixed(2)} km, ${time.toFixed(2)} minutes)</p>`;
             }).join("");
-            
+
             // Show directions panel and add the route details
             const directionsDiv = document.getElementById("directions");
             directionsDiv.innerHTML = directionsHTML;
@@ -457,17 +476,17 @@ async function updateRoute() {
         }
     }
 
- function toggleDirections() {
+    function toggleDirections() {
         const directionsDiv = document.getElementById("directions");
         directionsDiv.style.display = directionsDiv.style.display === "none" ? "block" : "none";
     }
-// Ensure rescuer's location is captured on page load
-document.addEventListener('DOMContentLoaded', function() {
-    getRescuerLocation(); // Get the rescuer's current location when the page loads
-});
+    // Ensure rescuer's location is captured on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        getRescuerLocation(); // Get the rescuer's current location when the page loads
+    });
 
-// Function to get and set the rescuer's location
- function getRescuerLocation() {
+    // Function to get and set the rescuer's location
+    function getRescuerLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showRescuerLocation);
         } else {
@@ -475,13 +494,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-document.addEventListener('DOMContentLoaded', getRescuerLocation);
-function suggestNearestHydrants(rescuerLocation) {
+    document.addEventListener('DOMContentLoaded', getRescuerLocation);
+
+    function suggestNearestHydrants(rescuerLocation) {
         const nearestHydrants = fireHydrants
             .map(hydrant => {
                 const distance = getDistance(rescuerLocation.lat, rescuerLocation.lng, hydrant.lat, hydrant.lng);
                 const timeInMinutes = distance / 666.67; // Assumed speed: 40 km/h
-                return { ...hydrant, distance, timeInMinutes };
+                return {
+                    ...hydrant,
+                    distance,
+                    timeInMinutes
+                };
             })
             .filter(hydrant => hydrant.distance <= 2500) // 2.5km radius
             .sort((a, b) => a.distance - b.distance); // Sort by distance
@@ -504,8 +528,8 @@ function suggestNearestHydrants(rescuerLocation) {
         });
     }
 
-// Function to calculate the distance between two geographic points using the Haversine formula
- function getDistance(lat1, lon1, lat2, lon2) {
+    // Function to calculate the distance between two geographic points using the Haversine formula
+    function getDistance(lat1, lon1, lat2, lon2) {
         const R = 6371e3; // Earth’s radius in meters
         const φ1 = toRadians(lat1);
         const φ2 = toRadians(lat2);
@@ -517,7 +541,7 @@ function suggestNearestHydrants(rescuerLocation) {
         return R * c; // In meters
     }
 
-function toRadians(degrees) {
+    function toRadians(degrees) {
         return degrees * (Math.PI / 180);
     }
     const userMarker = L.icon({
@@ -526,14 +550,14 @@ function toRadians(degrees) {
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
     });
-    
+
     // Function to track and remove submitted reports
-// Function to add task to the DOM (For Task List)
-function addTaskToDOM(taskText, checked = false) {
-    const taskList = document.getElementById('task-list');
-    const newTask = document.createElement('li');
-    newTask.className = 'list-group-item d-flex justify-content-between align-items-center';
-    newTask.innerHTML = `
+    // Function to add task to the DOM (For Task List)
+    function addTaskToDOM(taskText, checked = false) {
+        const taskList = document.getElementById('task-list');
+        const newTask = document.createElement('li');
+        newTask.className = 'list-group-item d-flex justify-content-between align-items-center';
+        newTask.innerHTML = `
         <span>${taskText}</span>
         <div>
             <label class="me-2" style="margin-left: 30px;">
@@ -542,159 +566,151 @@ function addTaskToDOM(taskText, checked = false) {
             <button class="btn btn-danger btn-sm" style="margin-left: 10px;" onclick="removeTask(this)">Done</button>
         </div>
     `;
-    taskList.appendChild(newTask);
-}
-
-// Function to add a new task
-function addTask() {
-    const taskText = document.getElementById('new-task').value;
-    if (taskText === '') {
-        alert('Please enter a task');
-        return;
+        taskList.appendChild(newTask);
     }
-    addTaskToDOM(taskText);
-    saveTasks(); // Save tasks to localStorage
-    document.getElementById('new-task').value = ''; // Clear input field
-}
 
-// Function to remove a task with confirmation
-function removeTask(button) {
-    const confirmation = confirm("Are you sure you want to mark this task as done?");
-    if (confirmation) {
-        const taskItem = button.closest('li');
-        taskItem.remove();
-        saveTasks(); // Save tasks to localStorage after removal
+    // Function to add a new task
+    function addTask() {
+        const taskText = document.getElementById('new-task').value;
+        if (taskText === '') {
+            alert('Please enter a task');
+            return;
+        }
+        addTaskToDOM(taskText);
+        saveTasks(); // Save tasks to localStorage
+        document.getElementById('new-task').value = ''; // Clear input field
     }
-}
 
-// Function to save tasks to localStorage
-function saveTasks() {
-    const taskList = document.querySelectorAll('#task-list li');
-    const tasks = [];
-    taskList.forEach(task => {
-        tasks.push({
-            text: task.querySelector('span').textContent,
-            checked: task.querySelector('input').checked
-        });
-    });
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-}
-
-// Function to load tasks from localStorage
-function loadTasks() {
-    const savedTasks = localStorage.getItem('tasks');
-    if (savedTasks) {
-        const tasks = JSON.parse(savedTasks);
-        tasks.forEach(task => {
-            addTaskToDOM(task.text, task.checked);
-        });
-    }
-}
-
-// Listen for changes to checkboxes and save state
-document.addEventListener('change', function (e) {
-    if (e.target && e.target.type === 'checkbox') {
-        saveTasks(); // Save tasks to localStorage on checkbox toggle
-    }
-});
-
-// Load tasks when the page is loaded
-document.addEventListener('DOMContentLoaded', function () {
-    loadTasks();
-});
-
-// Function to remove a report notification with confirmation
-function removeNotification(reportId) {
-    const confirmation = confirm("Are you sure you want to remove this notification?");
-    if (confirmation) {
-        // Mark the report as removed (store the ID in localStorage)
-        markReportAsRemoved(reportId);
-
-        // Remove the report from the UI
-        const reportItem = document.getElementById(`report-${reportId}`);
-        if (reportItem) {
-            reportItem.remove();
+    // Function to remove a task with confirmation
+    function removeTask(button) {
+        const confirmation = confirm("Are you sure you want to mark this task as done?");
+        if (confirmation) {
+            const taskItem = button.closest('li');
+            taskItem.remove();
+            saveTasks(); // Save tasks to localStorage after removal
         }
     }
-}
-// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-//     // Perform asynchronous operation
-//     performTask().then(() => {
-//         sendResponse({ success: true });
-//     }).catch(error => {
-//         sendResponse({ success: false, error: error });
-//     });
-//     return true; // Keeps the message channel open for async response
-// });
 
-
-// Function to check if a report has been submitted (already marked as handled)
-function isReportSubmitted(communityreport_id) {
-    const submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
-    return submittedReports.includes(communityreport_id);
-}
-// Function to check if a report has been removed
-function isReportRemoved(reportId) {
-    const removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
-    return removedReports.includes(reportId);
-}
-
-// Function to store removed reports in localStorage to avoid fetching them again
-function markReportAsRemoved(reportId) {
-    let removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
-
-    if (!removedReports.includes(reportId)) {
-        removedReports.push(reportId);
-        localStorage.setItem('removedReports', JSON.stringify(removedReports));
-    }
-}
-// Function to get recent reports from the database and display them
-async function getRecentReports() {
-    try {
-        const response = await fetch('https://bfpcalapancity.online/reports-recent');
-        const data = await response.json();
-
-        if (response.ok && Array.isArray(data) && data.length > 0) {
-            let newReportsReceived = false;
-
-            // Populate the report list using the modular populateReportList function
-            populateReportList(data);
-
-            data.forEach(report => {
-                if (!isReportRemoved(report.id)) {
-                    newReportsReceived = true;
-                }
+    // Function to save tasks to localStorage
+    function saveTasks() {
+        const taskList = document.querySelectorAll('#task-list li');
+        const tasks = [];
+        taskList.forEach(task => {
+            tasks.push({
+                text: task.querySelector('span').textContent,
+                checked: task.querySelector('input').checked
             });
-
-            if (newReportsReceived) {
-                const sirenSound = document.getElementById('sirenSound');
-                document.addEventListener('click', () => sirenSound.play(), { once: true });
-            }
-        } else {
-            console.error('Failed to fetch recent reports or no reports available');
-        }
-    } catch (error) {
-        console.error('Error fetching recent reports:', error);
+        });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     }
-}
 
-// Ensure reports are fetched when the DOM is ready
-document.addEventListener('DOMContentLoaded', function () {
-    getRecentReports();
-});
+    // Function to load tasks from localStorage
+    function loadTasks() {
+        const savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+            const tasks = JSON.parse(savedTasks);
+            tasks.forEach(task => {
+                addTaskToDOM(task.text, task.checked);
+            });
+        }
+    }
 
-// Function to mark a report as submitted
-function submitReportForm(lat, lng, communityreport_id) {
-    // Simulate the form submission (you can change the URL if needed)
-    console.log("Form submission for report:", communityreport_id);
-    window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
+    // Listen for changes to checkboxes and save state
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.type === 'checkbox') {
+            saveTasks(); // Save tasks to localStorage on checkbox toggle
+        }
+    });
 
-    // Mark this report as submitted
-    markReportAsSubmitted(communityreport_id);
-}
+    // Load tasks when the page is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        loadTasks();
+    });
+
+    // Function to remove a report notification with confirmation
+    function removeNotification(reportId) {
+        const confirmation = confirm("Are you sure you want to remove this notification?");
+        if (confirmation) {
+            // Mark the report as removed (store the ID in localStorage)
+            markReportAsRemoved(reportId);
+
+            // Remove the report from the UI
+            const reportItem = document.getElementById(`report-${reportId}`);
+            if (reportItem) {
+                reportItem.remove();
+            }
+        }
+    }
+
+    // Function to check if a report has been submitted (already marked as handled)
+    function isReportSubmitted(communityreport_id) {
+        const submittedReports = JSON.parse(localStorage.getItem('submittedReports')) || [];
+        return submittedReports.includes(communityreport_id);
+    }
+    // Function to check if a report has been removed
+    function isReportRemoved(reportId) {
+        const removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
+        return removedReports.includes(reportId);
+    }
+
+    // Function to store removed reports in localStorage to avoid fetching them again
+    function markReportAsRemoved(reportId) {
+        let removedReports = JSON.parse(localStorage.getItem('removedReports')) || [];
+
+        if (!removedReports.includes(reportId)) {
+            removedReports.push(reportId);
+            localStorage.setItem('removedReports', JSON.stringify(removedReports));
+        }
+    }
+    // Function to get recent reports from the database and display them
+    async function getRecentReports() {
+        try {
+            const response = await fetch('https://bfpcalapancity.online/reports-recent');
+            const data = await response.json();
+
+            if (response.ok && Array.isArray(data) && data.length > 0) {
+                let newReportsReceived = false;
+
+                // Populate the report list using the modular populateReportList function
+                populateReportList(data);
+
+                data.forEach(report => {
+                    if (!isReportRemoved(report.id)) {
+                        newReportsReceived = true;
+                    }
+                });
+
+                if (newReportsReceived) {
+                    const sirenSound = document.getElementById('sirenSound');
+                    document.addEventListener('click', () => sirenSound.play(), {
+                        once: true
+                    });
+                }
+            } else {
+                console.error('Failed to fetch recent reports or no reports available');
+            }
+        } catch (error) {
+            console.error('Error fetching recent reports:', error);
+        }
+    }
+
+    // Ensure reports are fetched when the DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        getRecentReports();
+    });
+
+    // Function to mark a report as submitted
+    function submitReportForm(lat, lng, communityreport_id) {
+        // Simulate the form submission (you can change the URL if needed)
+        console.log("Form submission for report:", communityreport_id);
+        window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
+
+        // Mark this report as submitted
+        markReportAsSubmitted(communityreport_id);
+    }
 
 
-function toggleDirections() {
+    function toggleDirections() {
         const directionsDiv = document.getElementById("directions");
         directionsDiv.style.display = directionsDiv.style.display === "none" ? "block" : "none";
     }
@@ -729,7 +745,7 @@ function toggleDirections() {
         }
     }
 
- function showRouteToRescuer(lat, lng) {
+    function showRouteToRescuer(lat, lng) {
         endCoords = [lng, lat]; // Set the endCoords to the location of the report
         updateRoute(); // Call the function to update and display the route
 
@@ -740,9 +756,9 @@ function toggleDirections() {
             modalInstance.hide(); // Close the modal
         }
     }
-    
-  // Function to update and display the route
-async function updateRoute() {
+
+    // Function to update and display the route
+    async function updateRoute() {
         if (!startCoords || !endCoords) {
             alert("Rescuer location or report location is missing. Please try again.");
             return;
@@ -762,10 +778,14 @@ async function updateRoute() {
 
             // Display directions
             const directionsHTML = response.directions[0].features.map(f => {
-                const { text, length, time } = f.attributes;
+                const {
+                    text,
+                    length,
+                    time
+                } = f.attributes;
                 return `<p>${text} (${length.toFixed(2)} km, ${time.toFixed(2)} minutes)</p>`;
             }).join("");
-            
+
             // Show directions panel and add the route details
             const directionsDiv = document.getElementById("directions");
             directionsDiv.innerHTML = directionsHTML;
@@ -777,17 +797,66 @@ async function updateRoute() {
         }
     }
 
-   document.addEventListener('DOMContentLoaded', function () {
-    getRecentReports(); // Fetch new reports when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        getRecentReports(); // Fetch new reports when the page loads
 
-     // Open the modal if the page loads with the hash #newReportModal
-     document.addEventListener('DOMContentLoaded', function() {
+        // Open the modal if the page loads with the hash #newReportModal
+        document.addEventListener('DOMContentLoaded', function() {
             if (window.location.hash === '#newReportModal') {
                 var newReportModal = new bootstrap.Modal(document.getElementById('newReportModal'));
                 newReportModal.show();
                 getRecentReports(); // Load the recent reports when the modal opens
             }
         });
-});
+    });
+
+    // Function to get URL parameters
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    const results = regex.exec(window.location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the communityreport_id from the URL
+    const communityreport_id = getUrlParameter('communityreport_id');
     
+    if (communityreport_id) {
+        // Fetch the report details using the communityreport_id
+        fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
+            .then(response => response.json())
+            .then(report => {
+                // Show the report details in the modal
+                const newReportsList = document.getElementById('newReportsList');
+                newReportsList.innerHTML = ''; // Clear previous modal content
+                
+                // Create the report details to show in the modal
+                const reportDetails = document.createElement('li');
+                reportDetails.classList.add('list-group-item');
+                
+                let mediaContent = '';
+                const fileExtension = report.fileproof.split('.').pop().toLowerCase();
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                    mediaContent = `<img src="${report.fileproof}" class="img-fluid" alt="File Proof">`;
+                } else if (['mp4', 'mov', 'avi'].includes(fileExtension)) {
+                    mediaContent = `<video src="${report.fileproof}" controls class="img-fluid"></video>`;
+                }
+
+                reportDetails.innerHTML = `
+                    <h4>${report.fullName}</h4>
+                    <p><strong>Submitted:</strong> ${report.timestamp} (${report.timeAgo})</p>
+                    ${mediaContent}
+                `;
+                
+                // Append the report details to the modal
+                newReportsList.appendChild(reportDetails);
+                
+                // Show the modal
+                $('#newReportModal').modal('show');
+            })
+            .catch(error => console.error('Error fetching report:', error));
+    }
+});
+
 </script>

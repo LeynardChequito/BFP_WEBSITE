@@ -4,13 +4,16 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CommunityReportModel;
-use App\Models\AdminModel; // Ensure you have this model
+use App\Models\AdminModel;
 use Config\Services;
+use CodeIgniter\API\ResponseTrait;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 
 class CommunityReportController extends BaseController
 {
+    use ResponseTrait;
+
     protected $session;
     protected $firebaseServerKey = 'AAAAMdjqKPk:APA91bH4dQbOlZJbcnrviv8Cak23oGKjVbzs3O0V9s1jEo_SLynqGa-XqxLa4rXtXAWn7eSeeyuqjf9fexjsxzJJVPXmU3GzY8sjddKyRqiFoZdr14ryMhvpGD2I-KmfRjL2rVWVVPnV';
 
@@ -181,4 +184,76 @@ class CommunityReportController extends BaseController
 
         return $this->response->setJSON($reports);
     }
+
+    public function getLatestReports()
+{
+    $communityReportModel = new CommunityReportModel();
+
+    // Get the current timestamp in Manila timezone
+    $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
+
+    // Get the reports, order by newest first
+    $reports = $communityReportModel->orderBy('timestamp', 'DESC')->findAll();
+
+    // Prepare an array to store formatted reports
+    $formattedReports = [];
+
+    // Process each report
+    foreach ($reports as $report) {
+        $timestamp = new \DateTime($report['timestamp'], new \DateTimeZone('UTC'));
+        $timestamp->setTimezone(new \DateTimeZone('Asia/Manila')); // Convert to Manila time
+
+        // Calculate the time difference between now and the report's timestamp
+        $interval = $manilaTime->diff($timestamp);
+        $timeAgo = $this->formatTimeAgo($interval);
+
+        // Add formatted data to the array
+        $formattedReports[] = [
+            'fullName' => $report['fullName'],
+            'fileproof' => base_url('public/community_report/' . $report['fileproof']),
+            'timestamp' => $timestamp->format('Y-m-d h:i A'),
+            'timeAgo' => $timeAgo,
+        ];
+    }
+
+    // Return the formatted data as a JSON response
+    return $this->response->setJSON($formattedReports);
+}
+
+/**
+ * Helper function to format the time ago indicator.
+ */
+private function formatTimeAgo($interval)
+{
+    if ($interval->y > 0) {
+        return $interval->y . ' year(s) ago';
+    } elseif ($interval->m > 0) {
+        return $interval->m . ' month(s) ago';
+    } elseif ($interval->d > 0) {
+        return $interval->d . ' day(s) ago';
+    } elseif ($interval->h > 0) {
+        return $interval->h . ' hour(s) ago';
+    } elseif ($interval->i > 0) {
+        return $interval->i . ' minute(s) ago';
+    } else {
+        return 'just now';
+    }
+}
+public function getReportByCommunityReportId($communityreport_id)
+{
+    // Load the model
+    $communityReportModel = new CommunityReportModel();
+
+    // Fetch the report by communityreport_id
+    $report = $communityReportModel->where('communityreport_id', $communityreport_id)->first();
+
+    // Check if the report exists
+    if ($report) {
+        // Return the report as JSON
+        return $this->respond($report);
+    } else {
+        // Return a 404 response if the report is not found
+        return $this->failNotFound('Report not found');
+    }
+}
 }

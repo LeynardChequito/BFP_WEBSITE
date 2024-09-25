@@ -32,7 +32,7 @@ $routes->get('verify', 'LoginController::verify');
 $routes->get('admin/verify', 'ARegistrationController::verify');
 
 // NAVIGATION BAR
-$routes->get('home', 'HomeController::home');
+$routes->get('home', 'HomeController::home', ['filter' => 'user']);
 $routes->get('contact-us', 'HomeController::contactUs', ['filter' => 'user']);
 $routes->get('banner', 'HomeController::banner', ['filter' => 'user']);
 $routes->get('logout', 'HomeController::logout', ['filter' => 'user']);
@@ -83,9 +83,9 @@ $routes->post('carousel/update/(:num)', 'CarouselController::update/$1', ['filte
 $routes->post('carousel/delete/(:num)', 'CarouselController::delete/$1', ['filter' => 'admin']);
 
 // GRAPH
-$routes->get('graph', 'GraphController::graph',);
-$routes->get('graph/getReports', 'GraphController::getReports',);
-$routes->get('graph/getReport', 'GraphController::getReport',);
+$routes->get('graph', 'GraphController::graph',['filter' => 'admin']);
+$routes->get('graph/getReports', 'GraphController::getReports',['filter' => 'admin']);
+$routes->get('graph/getReport', 'GraphController::getReport',['filter' => 'admin']);
 
 //MAPPING
 $routes->get('user-location', 'LocationController::showUserLocation', ['filter' => 'user']);
@@ -100,6 +100,9 @@ $routes->post('getEmergencyCallCoordinates', 'CommunityReportController::getEmer
 $routes->get('reports-recent', 'CommunityReportController::getRecentReports', ['filter' => 'admin']);
 $routes->get('/community-report/latest-reports', 'CommunityReportController::getLatestReports');
 $routes->get('/save-token', 'CommunityReportController::saveToken', );
+
+$routes->get('getLatestReports', 'CommunityReportController::getLatestReports');
+$routes->get('getReportByCommunityReportId', 'CommunityReportController::getReportByCommunityReportId');
 
 // RESCUER REPORT
 $routes->get('fire-report/create', 'RescuerReportController::firereportform',);

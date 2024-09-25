@@ -352,21 +352,22 @@
         </button>
 
         <!-- Modal for new reports -->
-        <div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="newReportModalLabel">New Community Reports</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ul id="newReportsList" class="list-group">
-                            <!-- New reports will be listed here -->
-                        </ul>
-                    </div>
-                </div>
+<div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newReportModalLabel">New Community Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="newReportsList" class="list-group">
+                    <!-- The report details will be dynamically added here -->
+                </ul>
             </div>
         </div>
+    </div>
+</div>
+
     </div>
 
     <!-- Audio for alerting -->
