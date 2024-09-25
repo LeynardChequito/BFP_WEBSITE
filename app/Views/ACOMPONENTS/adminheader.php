@@ -118,9 +118,6 @@
         <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
-    <!-- Audio element for the alarm sound -->
-    <audio id="sirenSound" src="bfpcalapancity/public/45secs_alarm.mp3" preload="auto"></audio>
-
     <!-- External scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -165,14 +162,14 @@
             }
         });
 
- // Load the alarm sound
+// Load the alarm sound
 const sirenSound = new Audio('https://bfpcalapancity.online/bfpcalapancity/public/45secs_alarm.mp3');
 sirenSound.preload = 'auto';
 
-// Variable to check if user interaction has occurred
+// Variable to track if the user has interacted with the page
 let userInteracted = false;
 
-// Wait for user interaction to allow sound playing
+// Add event listener to track user interaction
 document.addEventListener('click', function() {
     userInteracted = true;
 });
@@ -180,23 +177,22 @@ document.addEventListener('click', function() {
 // Firebase Message Listener for Notifications
 messaging.onMessage((payload) => {
     console.log('Message received: ', payload);
-    
+
     const notificationContainer = document.getElementById('notificationContainer');
     const notification = document.createElement('div');
     notification.classList.add('notification-item');
     notification.innerHTML = `<h4>${payload.notification.title}</h4><p>${payload.notification.body}</p>`;
     notificationContainer.appendChild(notification);
 
-    // Play the siren sound when a new notification is received, but only if user has interacted with the page
+    // Play the siren sound only if user interaction has occurred
     if (userInteracted) {
         sirenSound.play().catch(error => {
             console.error('Error playing siren sound:', error);
         });
     } else {
-        console.log('Siren sound not played, waiting for user interaction.');
+        console.log('Siren sound not played. Waiting for user interaction.');
     }
 });
-
 
 let lastReportCount = 0;
 
@@ -215,8 +211,7 @@ function fetchLatestReports() {
                 notificationContainer.innerHTML = '<p class="text-center text-muted">No new notifications</p>';
             } else {
                 // If the number of reports has increased, play the alarm sound
-                if (data.length > lastReportCount) {
-                    const sirenSound = document.getElementById('sirenSound');
+                if (data.length > lastReportCount && userInteracted) {
                     sirenSound.play().catch(error => {
                         console.error('Error playing siren sound:', error);
                     });
@@ -268,26 +263,26 @@ function showReportDetails(report) {
     }
 }
 
+// Call this function periodically to refresh the notifications
+setInterval(fetchLatestReports, 60000); // Refresh every 60 seconds
+fetchLatestReports(); // Initial call to load notifications on page load
 
-        // Call this function periodically to refresh the notifications
-        setInterval(fetchLatestReports, 60000); // Refresh every 60 seconds
-        fetchLatestReports(); // Initial call to load notifications on page load
+function updatePhilippineTime() {
+    const now = new Date();
+    const options = {
+        timeZone: 'Asia/Manila',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    };
+    const philippineTime = now.toLocaleTimeString('en-US', options);
+    document.getElementById('current-time').innerText = philippineTime;
+}
 
-        function updatePhilippineTime() {
-            const now = new Date();
-            const options = {
-                timeZone: 'Asia/Manila',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
-            };
-            const philippineTime = now.toLocaleTimeString('en-US', options);
-            document.getElementById('current-time').innerText = philippineTime;
-        }
+setInterval(updatePhilippineTime, 1000); // Update time every second
+updatePhilippineTime(); // Initial call to display time immediately
 
-        setInterval(updatePhilippineTime, 1000); // Update time every second
-        updatePhilippineTime(); // Initial call to display time immediately
     </script>
 
     <!-- jQuery -->
