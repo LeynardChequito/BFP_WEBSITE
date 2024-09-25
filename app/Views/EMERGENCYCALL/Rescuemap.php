@@ -330,21 +330,21 @@
 </head>
 
 <body>
- 
+
     <!-- Button to trigger back to admin-home -->
     <button class="btn-back" onclick="window.location.href='/admin-home';">Back</button>
-    
+
     <div class="map-card">
         <div id="map-container">
             <div id="map"></div>
         </div>
 
         <div class="bfp-header">
-    <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
-    <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
-    <div id="directions" style="display: none;">Click on the map to create a start and end for the route.</div>
-<button id="directions" onclick="toggleDirections()">Show Steps</button>
-</div>
+            <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
+            <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
+            <div id="directions" style="display: none;">Click on the map to create a start and end for the route.</div>
+            <button id="directions" onclick="toggleDirections()">Show Steps</button>
+        </div>
 
         <!-- Push Notification Button to open the New Reports modal -->
         <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal" onclick="getRecentReports()">
@@ -352,29 +352,30 @@
         </button>
 
         <!-- Modal for new reports -->
-<div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="newReportModalLabel">New Community Report</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <ul id="newReportsList" class="list-group">
-                    <!-- The report details will be dynamically added here -->
-                </ul>
+        <div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newReportModalLabel">New Community Report</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="newReportsList" class="list-group">
+                            <!-- Report details will be dynamically inserted here -->
+                        </ul>
+
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
     </div>
 
     <!-- Audio for alerting -->
     <audio id="sirenSound" src="bfpcalapancity/public/45secs_alarm.mp3" preload=""></audio>
 
-<?= view('EMERGENCYCALL/MapScript'); ?>
-    
+    <?= view('EMERGENCYCALL/MapScript'); ?>
+
 </body>
 
 </html>

@@ -36,11 +36,13 @@
 
 
     // Function to populate the report in the UI
-function populateReportList(data) {
+    function populateReportList(data) {
     if (!Array.isArray(data) || data.length === 0) {
         console.error('No valid report data available');
         return; // Exit the function if data is not valid
     }
+
+    console.log('Data passed to populateReportList:', data); // Log the data passed to this function
 
     const newReportsList = document.getElementById('newReportsList');
     newReportsList.innerHTML = ''; // Clear any existing reports
@@ -76,7 +78,6 @@ function populateReportList(data) {
         newReportsList.appendChild(listItem);
     });
 }
-
 
     function gotoRescueMap() {
         window.location.href = '/rescuemap?openModal=true';
@@ -826,8 +827,8 @@ function fetchReportByCommunityReportId(communityreport_id) {
             return response.json();
         })
         .then(report => {
+            console.log(report); // Add this line to log the fetched report data
             if (report) {
-                // Populate report data in the modal or DOM element
                 populateReportList([report]); // Passing as an array since your populate function expects an array
             } else {
                 console.error('No report found for this communityreport_id');
