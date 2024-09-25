@@ -165,16 +165,28 @@
             }
         });
 
-        messaging.onMessage((payload) => {
-            console.log('Message received: ', payload);
-            const notificationContainer = document.getElementById('notificationContainer');
-            const notification = document.createElement('div');
-            notification.classList.add('notification-item');
-            notification.innerHTML = `<h4>${payload.notification.title}</h4><p>${payload.notification.body}</p>`;
-            notificationContainer.appendChild(notification);
-        });
+        // Load the alarm sound
+const sirenSound = new Audio('https://bfpcalapancity.online/bfpcalapancity/public/45secs_alarm.mp3');
+sirenSound.preload = 'auto';
 
-// Fetch the latest reports and display them in the notification list
+// Firebase Message Listener for Notifications
+messaging.onMessage((payload) => {
+    console.log('Message received: ', payload);
+    
+    const notificationContainer = document.getElementById('notificationContainer');
+    const notification = document.createElement('div');
+    notification.classList.add('notification-item');
+    notification.innerHTML = `<h4>${payload.notification.title}</h4><p>${payload.notification.body}</p>`;
+    notificationContainer.appendChild(notification);
+
+    // Play the siren sound when a new notification is received
+    const sirenSound = document.getElementById('sirenSound');
+    sirenSound.play().catch(error => {
+        console.error('Error playing siren sound:', error);
+    });
+});
+let lastReportCount = 0;
+
 function fetchLatestReports() {
     fetch("https://bfpcalapancity.online/getLatestReports")
         .then(response => response.json())
@@ -188,37 +200,48 @@ function fetchLatestReports() {
 
             if (data.length === 0) {
                 notificationContainer.innerHTML = '<p class="text-center text-muted">No new notifications</p>';
-            }
-
-            // Loop through the reports and display each
-            data.forEach(report => {
-                const notification = document.createElement('div');
-                notification.classList.add('notification-item');
-                notification.setAttribute('data-communityreport-id', report.communityreport_id); // Store communityreport_id
-                
-                // Check if the fileproof is an image or a video
-                let mediaContent = '';
-                const fileExtension = report.fileproof.split('.').pop().toLowerCase();
-                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                    mediaContent = `<img src="${report.fileproof}" alt="File Proof">`;
-                } else if (['mp4', 'mov', 'avi'].includes(fileExtension)) {
-                    mediaContent = `<video src="${report.fileproof}" controls></video>`;
+            } else {
+                // If the number of reports has increased, play the alarm sound
+                if (data.length > lastReportCount) {
+                    const sirenSound = document.getElementById('sirenSound');
+                    sirenSound.play().catch(error => {
+                        console.error('Error playing siren sound:', error);
+                    });
                 }
 
-                notification.innerHTML = `
-                    ${mediaContent}
-                    <div>
-                        <h4>${report.fullName}</h4>
-                        <p><strong>Submitted:</strong> ${report.timestamp} (${report.timeAgo})</p>
-                    </div>
-                `;
-                notificationContainer.appendChild(notification);
+                // Update the last report count
+                lastReportCount = data.length;
 
-                // Add click event listener to open the modal and display report details
-                notification.addEventListener('click', function() {
-                    showReportDetails(report);
+                // Loop through the reports and display each
+                data.forEach(report => {
+                    const notification = document.createElement('div');
+                    notification.classList.add('notification-item');
+                    notification.setAttribute('data-communityreport-id', report.communityreport_id); // Store communityreport_id
+
+                    // Check if the fileproof is an image or a video
+                    let mediaContent = '';
+                    const fileExtension = report.fileproof.split('.').pop().toLowerCase();
+                    if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                        mediaContent = `<img src="${report.fileproof}" alt="File Proof">`;
+                    } else if (['mp4', 'mov', 'avi'].includes(fileExtension)) {
+                        mediaContent = `<video src="${report.fileproof}" controls></video>`;
+                    }
+
+                    notification.innerHTML = `
+                        ${mediaContent}
+                        <div>
+                            <h4>${report.fullName}</h4>
+                            <p><strong>Submitted:</strong> ${report.timestamp} (${report.timeAgo})</p>
+                        </div>
+                    `;
+                    notificationContainer.appendChild(notification);
+
+                    // Add click event listener to open the modal and display report details
+                    notification.addEventListener('click', function() {
+                        showReportDetails(report);
+                    });
                 });
-            });
+            }
         })
         .catch(error => console.error('Error fetching reports:', error));
 }
