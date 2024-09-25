@@ -165,9 +165,17 @@
             }
         });
 
-        // Load the alarm sound
+ // Load the alarm sound
 const sirenSound = new Audio('https://bfpcalapancity.online/bfpcalapancity/public/45secs_alarm.mp3');
 sirenSound.preload = 'auto';
+
+// Variable to check if user interaction has occurred
+let userInteracted = false;
+
+// Wait for user interaction to allow sound playing
+document.addEventListener('click', function() {
+    userInteracted = true;
+});
 
 // Firebase Message Listener for Notifications
 messaging.onMessage((payload) => {
@@ -179,12 +187,17 @@ messaging.onMessage((payload) => {
     notification.innerHTML = `<h4>${payload.notification.title}</h4><p>${payload.notification.body}</p>`;
     notificationContainer.appendChild(notification);
 
-    // Play the siren sound when a new notification is received
-    const sirenSound = document.getElementById('sirenSound');
-    sirenSound.play().catch(error => {
-        console.error('Error playing siren sound:', error);
-    });
+    // Play the siren sound when a new notification is received, but only if user has interacted with the page
+    if (userInteracted) {
+        sirenSound.play().catch(error => {
+            console.error('Error playing siren sound:', error);
+        });
+    } else {
+        console.log('Siren sound not played, waiting for user interaction.');
+    }
 });
+
+
 let lastReportCount = 0;
 
 function fetchLatestReports() {
