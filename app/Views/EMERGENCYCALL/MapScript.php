@@ -846,7 +846,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 function fetchReportByCommunityReportId(communityreport_id) {
-    fetch(`http://localhost:8080/getReportByCommunityReportId/${communityreport_id}`)
+    fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('No valid report data available');
