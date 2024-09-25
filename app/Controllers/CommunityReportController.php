@@ -210,7 +210,7 @@ class CommunityReportController extends BaseController
         // Add formatted data to the array
         $formattedReports[] = [
             'fullName' => $report['fullName'],
-            'fileproof' => base_url('public/community_report/' . $report['fileproof']),
+            'fileproof' => base_url('bfpcalapancity/public/community_report/' . $report['fileproof']),
             'timestamp' => $timestamp->format('Y-m-d h:i A'),
             'timeAgo' => $timeAgo,
         ];
