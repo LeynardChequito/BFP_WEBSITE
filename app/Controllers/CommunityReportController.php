@@ -243,19 +243,18 @@ private function formatTimeAgo($interval)
 }
 public function getReportByCommunityReportId($communityreport_id)
 {
-    // Load the model
     $communityReportModel = new CommunityReportModel();
 
     // Fetch the report by communityreport_id
     $report = $communityReportModel->where('communityreport_id', $communityreport_id)->first();
 
-    // Check if the report exists
     if ($report) {
-        // Return the report as JSON
-        return $this->respond($report);
+        // Return the report as JSON with a success status code
+        return $this->respond($report, 200);
     } else {
         // Return a 404 response if the report is not found
         return $this->failNotFound('Report not found');
     }
 }
+
 }
