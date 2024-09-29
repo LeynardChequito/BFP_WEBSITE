@@ -159,7 +159,7 @@ class RegistrationController extends BaseController
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #007BFF;
-            color: white;
+            color: #fff;
             text-decoration: none;
             border-radius: 5px;
         }
@@ -182,7 +182,7 @@ class RegistrationController extends BaseController
         <a href='$verificationLink'>Verify Email</a>
         <p>(Note: Once you click the verification button, you will be directed to the login page where you can log in with your email and password to continue.)</p>
         <p>The verification link will expire after 10 minutes.</p>
-        <p>Best regards,<br>BFP_Mailer</p>
+        <p>Best regards,<br>BFP Admin</p>
         <div class='footer'>
             <p>If you need assistance, please message us on <a href='https://www.facebook.com/calapancityfirestation.orientalmindoro?mibextid=ZbWKwL' target='_blank'>Facebook</a>.</p>
             <p>BFP Calapan City Fire Station, New City Hall Complex, Brgy. Guinobatan, Calapan City, Oriental Mindoro</p>
