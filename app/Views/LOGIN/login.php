@@ -72,6 +72,7 @@
         }
         .form-label {
             margin-top: 15px;
+            color: #fff;
         }
         .bfp-link {
             color: #fff;
