@@ -134,6 +134,9 @@
             .login-card {
                 margin-top: 5px;
             }
+            body{
+                margin-top: 5px;
+            }
         }
     </style>
 </head>
