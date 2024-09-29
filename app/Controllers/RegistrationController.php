@@ -123,73 +123,94 @@ class RegistrationController extends BaseController
             // Insert data into the database
             $accountModel->insert($data);
 
-            // Send verification email
+            // Send verification email using Heredoc
             $verificationLink = base_url("verify?token=$verificationToken");
             $subject = 'Email Verification';
-            $message = "<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .email-container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        p {
-            color: #333;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        a:hover {
-            background-color: #0056b3;
-        }
-        .footer {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div class='email-container'>
-        <h1>Email Verification</h1>
-        <p>Hello,</p>
-        <p>Thank you for registering with us. To complete your registration, please verify your email address by clicking the verification button below:</p>
-        <a href='$verificationLink'>Verify Email</a>
-        <p>(Note: Once you click the verification button, you will be directed to the login page where you can log in with your email and password to continue.)</p>
-        <p>The verification link will expire after 10 minutes.</p>
-        <p>Best regards,<br>BFP Admin</p>
-        <div class='footer'>
-            <p>If you need assistance, please message us on <a href='https://www.facebook.com/calapancityfirestation.orientalmindoro?mibextid=ZbWKwL' target='_blank'>Facebook</a>.</p>
-            <p>BFP Calapan City Fire Station, New City Hall Complex, Brgy. Guinobatan, Calapan City, Oriental Mindoro</p>
-        </div>
-    </div>
-</body>
-</html>";
+            $message = <<<EOD
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Email Verification</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+                <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                .email-container {
+                    max-width: 600px;
+                    margin: 20px auto;
+                }
+
+                .card {
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    border-radius: 15px;
+                }
+
+                .card-body p {
+                    color: #333;
+                    font-size: 16px;
+                    line-height: 1.5;
+                }
+
+                a {
+                    display: inline-block;
+                    margin-top: 20px;
+                    padding: 10px 20px;
+                    background-color: #007BFF;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                }
+
+                a:hover {
+                    background-color: #0056b3;
+                }
+
+                .footer {
+                    padding-top: 10px;
+                    font-size: 14px;
+                    color: #666;
+                    text-align: justify;
+                    background-color: #f9f9f9;
+                    border-top: 1px solid #ccc;
+                    border-radius: 0 0 15px 15px;
+                }
+            </style>
+            </head>
+            <body>
+            <div class="email-container">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="text-center">Email Verification</h1>
+                        <p>Hello,</p>
+                        <p>Thank you for registering with us. To complete your registration, please verify your email address by clicking the verification button below:</p>
+                        <a href='{$verificationLink}' class="btn btn-primary">Verify Email</a>
+                        <p>(Note: Once you click the verification button, you will be directed to the login page where you can log in with your email and password to continue.)</p>
+                        <p>The verification link will expire after 10 minutes.</p>
+                        <p>Best regards,<br>BFP Admin</p>
+                        <hr/>
+                        <div class="footer">
+                            <p>If you need assistance, please message us on 
+                                <a href="https://www.facebook.com/calapancityfirestation.orientalmindoro?mibextid=ZbWKwL" target="_blank">Facebook</a> 
+                                or send an email to 
+                                <a href="mailto:bfpcalapancity@gmail.com">Message BFP Calapan City</a>.
+                            </p>
+                            <hr/>
+                            <p>BFP Calapan City Fire Station, New City Hall Complex, Brgy. Guinobatan, Calapan City, Oriental Mindoro</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+            </body>
+            </html>
+            EOD;
 
             $this->sendEmail($this->request->getVar('email'), $subject, $message);
 
