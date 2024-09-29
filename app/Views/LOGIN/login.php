@@ -132,7 +132,7 @@
         /* Media query for background image */
         @media screen and (max-width: 420px) {
             .login-card {
-                margin-top: 30px;
+                margin-top: 10px;
             }
         }
     </style>
