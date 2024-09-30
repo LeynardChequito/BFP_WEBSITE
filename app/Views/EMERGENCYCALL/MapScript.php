@@ -828,8 +828,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-
-
 function fetchReportByCommunityReportId(communityreport_id) {
     fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
         .then(response => {
