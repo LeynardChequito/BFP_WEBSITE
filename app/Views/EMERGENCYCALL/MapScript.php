@@ -691,23 +691,24 @@ function openModalOnHash() {
 
 // Function to mark a report as submitted and trigger form submission
 function submitReportForm(lat, lng, communityreport_id) {
-    console.log('Lat:', lat, 'Lng:', lng, 'Community Report ID:', communityreport_id);
+    const form = document.getElementById('fireReportForm');
+    
+    if (!form) {
+        console.error("Form with ID 'fireReportForm' does not exist.");
+        return;
+    }
 
     if (!communityreport_id) {
         console.error("communityreport_id is missing");
-        return; // Exit if there's no valid communityreport_id
+        return;
     }
 
-    document.getElementById('fireReportForm').communityreport_id.value = communityreport_id;
+    form.communityreport_id.value = communityreport_id;
 
-    // Simulate form submission or perform your action
+    // Perform your form submission logic here
     window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
-
-    // Mark the report as submitted (if applicable)
-    markReportAsSubmitted(communityreport_id);
 }
-
-    function toggleDirections() {
+  function toggleDirections() {
         const directionsDiv = document.getElementById("directions");
         directionsDiv.style.display = directionsDiv.style.display === "none" ? "block" : "none";
     }
