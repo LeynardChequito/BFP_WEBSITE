@@ -210,6 +210,8 @@
         </div>
     </nav>
 
+
+
     <!-- Modal for Emergency Form -->
     <div id="myModal" class="modal">
         <div class="modal-dialog modal-dialog-centered">
@@ -221,7 +223,9 @@
                 <div class="modal-body">
                 <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
 
-                <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />   
+                <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" /> 
+                
+                <input type="hidden" id="communityreport_id" name="communityreport_id" value="">
                     <div class="form-group">
                             <label for="fullName">Your Name:</label>
                             <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>

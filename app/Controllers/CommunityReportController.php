@@ -31,60 +31,53 @@ class CommunityReportController extends BaseController
     public function submitCommunityReport()
     {
         helper(['form', 'url', 'session']);
-    
+        
         $rules = [
             'fullName' => 'required|max_length[255]',
             'latitude' => 'required|decimal',
             'longitude' => 'required|decimal',
             'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
+            'communityreport_id' => 'required|integer' // Add validation rule for communityreport_id
         ];
-    
+        
         if ($this->validate($rules)) {
             $communityReportModel = new CommunityReportModel();
-    
+        
             $fileproof = $this->request->getFile('fileproof');
             if ($fileproof->isValid() && !$fileproof->hasMoved()) {
                 $fileproofName = $fileproof->getRandomName();
                 $fileproof->move(ROOTPATH . 'public/community_report/', $fileproofName);
-    
+        
                 $data = [
+                    'communityreport_id' => $this->request->getVar('communityreport_id'), // Use the communityreport_id
                     'fullName' => $this->request->getVar('fullName'),
                     'latitude' => $this->request->getVar('latitude'),
                     'longitude' => $this->request->getVar('longitude'),
                     'fileproof' => $fileproofName, // Just store the filename
                 ];
-    
+        
                 $communityReportModel->insert($data);
+        
+                // Additional logic like sending notifications...
     
-                // Prepare notification details
-                $title = 'New Emergency Call';
-                $body = "A new emergency call has been submitted by {$data['fullName']} at coordinates ({$data['latitude']}, {$data['longitude']}).";
-                $imageUrl = base_url('public/community_report/' . $fileproofName);
-    
-                // Notify all admins
-                $this->notifyAllAdmins($title, $body, $imageUrl);
-    
-                // Return success response as JSON
                 return $this->response->setStatusCode(200)->setJSON([
                     'success' => true,
                     'message' => 'Emergency Call successfully submitted!',
                 ]);
-                
             } else {
-                // Fileproof upload failed
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Failed to upload file proof.',
                 ]);
             }
         } else {
-            // Validation failed
             return $this->response->setJSON([
                 'success' => false,
                 'message' => $this->validator->getErrors(),
             ]);
         }
     }
+    
     
     public function sendPushNotificationToUser($token, $title, $body, $imageUrl = null)
     {
