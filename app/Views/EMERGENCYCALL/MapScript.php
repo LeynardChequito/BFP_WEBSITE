@@ -812,11 +812,13 @@ function getUrlParameter(name) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Get the communityreport_id from the URL
     const communityreport_id = getUrlParameter('communityreport_id');
     
-    // Ensure the hidden input field exists before setting its value
+    // Check if the input field exists
     const communityReportInput = document.getElementById('communityreport_id');
     
+    // If the input field exists, set the value from the URL
     if (communityReportInput && communityreport_id) {
         communityReportInput.value = communityreport_id;
     } else if (!communityReportInput) {
@@ -825,6 +827,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('No communityreport_id found in the URL.');
     }
 });
+
 
 
 function fetchReportByCommunityReportId(communityreport_id) {
