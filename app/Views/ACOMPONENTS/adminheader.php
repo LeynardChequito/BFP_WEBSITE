@@ -178,21 +178,26 @@ document.addEventListener('click', function() {
 messaging.onMessage((payload) => {
     console.log('Message received: ', payload);
 
-    const notificationContainer = document.getElementById('notificationContainer');
-    const notification = document.createElement('div');
-    notification.classList.add('notification-item');
-    notification.innerHTML = `<h4>${payload.notification.title}</h4><p>${payload.notification.body}</p>`;
-    notificationContainer.appendChild(notification);
+    if (payload && payload.notification) {
+        const notificationContainer = document.getElementById('notificationContainer');
+        const notification = document.createElement('div');
+        notification.classList.add('notification-item');
+        notification.innerHTML = `<h4>${payload.notification.title}</h4><p>${payload.notification.body}</p>`;
+        notificationContainer.appendChild(notification);
 
-    // Play the siren sound only if user interaction has occurred
-    if (userInteracted) {
-        sirenSound.play().catch(error => {
-            console.error('Error playing siren sound:', error);
-        });
+        // Play the siren sound only if user interaction has occurred
+        if (userInteracted) {
+            sirenSound.play().catch(error => {
+                console.error('Error playing siren sound:', error);
+            });
+        } else {
+            console.log('Siren sound not played. Waiting for user interaction.');
+        }
     } else {
-        console.log('Siren sound not played. Waiting for user interaction.');
+        console.error('Payload does not contain expected notification data.');
     }
 });
+
 
 let lastReportCount = 0;
 
@@ -228,12 +233,15 @@ function fetchLatestReports() {
 
                     // Check if the fileproof is an image or a video
                     let mediaContent = '';
-                    const fileExtension = report.fileproof.split('.').pop().toLowerCase();
-                    if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                        mediaContent = `<img src="${report.fileproof}" alt="File Proof">`;
-                    } else if (['mp4', 'mov', 'avi'].includes(fileExtension)) {
-                        mediaContent = `<video src="${report.fileproof}" controls></video>`;
-                    }
+const fileExtension = report.fileproof.split('.').pop().toLowerCase();
+if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+    mediaContent = `<img src="${report.fileproof}" alt="File Proof">`;
+} else if (['mp4', 'mov', 'avi'].includes(fileExtension)) {
+    mediaContent = `<video src="${report.fileproof}" controls></video>`;
+} else {
+    console.error('Unsupported file type:', fileExtension);
+}
+
 
                     notification.innerHTML = `
                         ${mediaContent}
@@ -255,11 +263,11 @@ function fetchLatestReports() {
 }
 
 function showReportDetails(report) {
-    if (report.communityreport_id) {
+    if (report && report.communityreport_id) {
         // Redirect to the /rescuemap page with the communityreport_id as a URL parameter
         window.location.href = `/rescuemap?communityreport_id=${report.communityreport_id}`;
     } else {
-        console.error("Error: communityreport_id is undefined");
+        console.error("Error: communityreport_id is undefined or the report object is invalid");
     }
 }
 

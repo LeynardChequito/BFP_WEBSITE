@@ -690,9 +690,19 @@ function openModalOnHash() {
 
 // Function to mark a report as submitted and trigger form submission
 function submitReportForm(lat, lng, communityreport_id) {
-        // Simulate the form submission (you can change the URL if needed)
-        console.log("Form submission for report:", communityreport_id);
-        window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
+    // Dynamically set the hidden input field in the form with the communityreport_id
+    document.getElementById('fireReportForm').communityreport_id.value = communityreport_id;
+
+    // Simulate the form submission (e.g., make an AJAX request or manually submit the form)
+    console.log("Form submission for report:", communityreport_id);
+
+    // Optionally, use AJAX to submit the form without page reload
+    // Or, use a window redirect for a GET request (if needed, but usually POST is better)
+    window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
+
+    // Mark this report as submitted in the UI
+    markReportAsSubmitted(communityreport_id);
+}
 
 
 
@@ -736,11 +746,12 @@ function submitReportForm(lat, lng, communityreport_id) {
         updateRoute(); // Call the function to update and display the route
 
         // Close the modal after clicking the "Show Route" button
-        var modalElement = document.getElementById('newReportModal');
-        var modalInstance = bootstrap.Modal.getInstance(modalElement); // Get the instance of the modal
-        if (modalInstance) {
-            modalInstance.hide(); // Close the modal
-        }
+var modalElement = document.getElementById('newReportModal');
+var modalInstance = bootstrap.Modal.getInstance(modalElement); // Get the instance of the modal
+if (modalInstance) {
+    modalInstance.hide(); // Close the modal
+}
+
     }
 
     // Function to update and display the route
