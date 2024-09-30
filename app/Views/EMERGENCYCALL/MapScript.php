@@ -803,7 +803,7 @@ if (modalInstance) {
     openModalOnHash();
 });
 
-   // Function to extract the 'communityreport_id' from the URL
+// Function to extract the 'communityreport_id' from the URL
 function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -814,13 +814,18 @@ function getUrlParameter(name) {
 document.addEventListener('DOMContentLoaded', function () {
     const communityreport_id = getUrlParameter('communityreport_id');
     
-    if (communityreport_id) {
-        // Set the 'communityreport_id' in the form as a hidden field
-        document.getElementById('communityreport_id').value = communityreport_id;
-    } else {
-        console.error('No communityreport_id found in the URL');
+    // Ensure the hidden input field exists before setting its value
+    const communityReportInput = document.getElementById('communityreport_id');
+    
+    if (communityReportInput && communityreport_id) {
+        communityReportInput.value = communityreport_id;
+    } else if (!communityReportInput) {
+        console.error('Element with ID communityreport_id not found in the DOM.');
+    } else if (!communityreport_id) {
+        console.error('No communityreport_id found in the URL.');
     }
 });
+
 
 function fetchReportByCommunityReportId(communityreport_id) {
     fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
