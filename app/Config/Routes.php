@@ -106,8 +106,8 @@ $routes->get('getReportByCommunityReportId/(:num)', 'CommunityReportController::
 
 
 // RESCUER REPORT
-$routes->get('fire-report/create', 'RescuerReportController::firereportform',);
-$routes->post('fire-report/store', 'RescuerReportController::store',);
+$routes->get('fire-report/create', 'FireReportController::firereportform',);
+$routes->post('fire-report/store', 'FireReportController::storeRescuerReport');
 $routes->get('rescuer-report/form', 'RescuerReportController::reportform');
 $routes->post('rescuer-report/save', 'RescuerReportController::save');
 $routes->get('rescuer-report/success', function () {

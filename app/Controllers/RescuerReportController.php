@@ -7,10 +7,6 @@ use App\Models\RescuerReportModel;
 
 class RescuerReportController extends BaseController
 {
-    public function firereportform()
-    {
-        return view('RESCUERREPORT/fire_report_form');
-    }
 
     public function reportform()
     {
