@@ -75,9 +75,10 @@ const baseUrl = "<?= base_url() ?>";
                      Show Route
                  </button> 
                  <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
-                     onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">
-                     Submit Fire Report
-                 </button> 
+    onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">
+    Submit Fire Report
+</button>
+
              </div>
         `;
 
@@ -690,21 +691,21 @@ function openModalOnHash() {
 
 // Function to mark a report as submitted and trigger form submission
 function submitReportForm(lat, lng, communityreport_id) {
-    // Dynamically set the hidden input field in the form with the communityreport_id
+    console.log('Lat:', lat, 'Lng:', lng, 'Community Report ID:', communityreport_id);
+
+    if (!communityreport_id) {
+        console.error("communityreport_id is missing");
+        return; // Exit if there's no valid communityreport_id
+    }
+
     document.getElementById('fireReportForm').communityreport_id.value = communityreport_id;
 
-    // Simulate the form submission (e.g., make an AJAX request or manually submit the form)
-    console.log("Form submission for report:", communityreport_id);
-
-    // Optionally, use AJAX to submit the form without page reload
-    // Or, use a window redirect for a GET request (if needed, but usually POST is better)
+    // Simulate form submission or perform your action
     window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
 
-    // Mark this report as submitted in the UI
+    // Mark the report as submitted (if applicable)
     markReportAsSubmitted(communityreport_id);
 }
-
-
 
     function toggleDirections() {
         const directionsDiv = document.getElementById("directions");
