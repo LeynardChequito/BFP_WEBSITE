@@ -61,6 +61,8 @@ const baseUrl = "<?= base_url() ?>";
     }
 
     reports.forEach(report => {
+        console.log(report); // Log each report to ensure structure
+
         const {
             communityreport_id,
             latitude,
@@ -69,6 +71,12 @@ const baseUrl = "<?= base_url() ?>";
             fileproof,
             timestamp
         } = report;
+
+        // Check if required fields are present
+        if (!communityreport_id || !latitude || !longitude || !fullName || !fileproof || !timestamp) {
+            console.error('Missing report fields', report);
+            return; // Skip this report if required fields are missing
+        }
 
         // Convert latitude and longitude to numbers
         const lat = parseFloat(latitude);
@@ -84,7 +92,7 @@ const baseUrl = "<?= base_url() ?>";
                 <p><strong>Timestamp:</strong> ${timestamp}</p>
                 <p><strong>File Proof:</strong></p>
                 <div class="fileProofContainer" style="margin-bottom: 10px;">
-                    <img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" 
+                    <img src="${baseUrl}/bfpcalapancity/public/community_report/${fileproof}" 
                          alt="File Proof" 
                          class="file-proof-image" 
                          style="max-width: 100px; height: auto;" 
@@ -836,8 +844,6 @@ function getUrlParameter(name) {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-
-
 function fetchReportByCommunityReportId(communityreport_id) {
     fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
         .then(response => {
@@ -847,16 +853,17 @@ function fetchReportByCommunityReportId(communityreport_id) {
             return response.json();
         })
         .then(report => {
-            console.log(report); // Log the report structure
-            if (report && Object.keys(report).length > 0) { // Check if report is valid
-                populateReportList([report]); // Wrap the report in an array
+            console.log(report); // Log the entire report object to see its structure
+
+            if (report && typeof report === 'object' && Object.keys(report).length > 0) {
+                // Wrap the report in an array since your populate function expects an array
+                populateReportList([report]); 
             } else {
                 console.error('No report found for this communityreport_id');
             }
         })
         .catch(error => console.error('Error fetching report:', error));
 }
-
 
 document.addEventListener('DOMContentLoaded', function() {
     getRecentReports(); // Fetch recent reports
