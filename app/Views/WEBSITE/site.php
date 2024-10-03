@@ -225,7 +225,7 @@
 
                 <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" /> 
                 
-                <input type="text" id="communityreport_id" name="communityreport_id" value="">
+                <input type="show" id="communityreport_id" name="communityreport_id" value="">
                     <div class="form-group">
                             <label for="fullName">Your Name:</label>
                             <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>

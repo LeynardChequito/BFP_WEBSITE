@@ -379,25 +379,26 @@ const baseUrl = "<?= base_url() ?>";
     document.addEventListener('DOMContentLoaded', restoreRouteAndPosition);
 
 
-    // Function to track the rescuer's location
     function trackRescuerLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(
-                position => {
-                    showRescuerLocation(position); // Calls the function to update the location
-                },
-                error => {
-                    console.error('Error tracking rescuer location:', error);
-                }, {
-                    enableHighAccuracy: true,
-                    maximumAge: 500,
-                    timeout: 1000
-                }
-            );
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+            position => {
+                showRescuerLocation(position);
+            },
+            error => {
+                console.error('Error tracking rescuer location:', error);
+                alert('Could not get your location. Please check your location settings.');
+            }, {
+                enableHighAccuracy: true,
+                maximumAge: 500,
+                timeout: 10000 // Increase timeout for better reliability
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by this browser.");
     }
+}
+
 
     // Ensure rescuer's location is tracked on page load
     document.addEventListener('DOMContentLoaded', function() {
@@ -670,9 +671,7 @@ const baseUrl = "<?= base_url() ?>";
         const response = await fetch('https://bfpcalapancity.online/reports-recent');
         const data = await response.json();
 
-        console.log('Response Data:', data);
-
-        if (response.ok && Array.isArray(data) && data.length > 0) {
+        if (response.ok && Array.isArray(data)) {
             populateReportList(data);
         } else {
             console.error('No recent reports available');
@@ -683,6 +682,7 @@ const baseUrl = "<?= base_url() ?>";
         document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>'; // Inform the user
     }
 }
+
 
 // Function to open the modal when the URL contains #newReportModal
 function openModalOnHash() {
@@ -816,21 +816,20 @@ function getUrlParameter(name) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Get the communityreport_id from the URL
     const communityreport_id = getUrlParameter('communityreport_id');
-    
-    // Check if the input field exists
     const communityReportInput = document.getElementById('communityreport_id');
-    
-    // If the input field exists, set the value from the URL
-    if (communityReportInput && communityreport_id) {
-        communityReportInput.value = communityreport_id;
-    } else if (!communityReportInput) {
+
+    if (communityReportInput) {
+        if (communityreport_id) {
+            communityReportInput.value = communityreport_id;
+        } else {
+            console.error('No communityreport_id found in the URL.');
+        }
+    } else {
         console.error('Element with ID communityreport_id not found in the DOM.');
-    } else if (!communityreport_id) {
-        console.error('No communityreport_id found in the URL.');
     }
 });
+
 
 function fetchReportByCommunityReportId(communityreport_id) {
     fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
