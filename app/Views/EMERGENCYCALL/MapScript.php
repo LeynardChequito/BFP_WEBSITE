@@ -61,7 +61,7 @@ const baseUrl = "<?= base_url() ?>";
     }
 
     reports.forEach(report => {
-        console.log('Processing report:', report); // Log each report
+        console.log('Processing report:', report); // Log each report for debugging
 
         const {
             communityreport_id,
@@ -116,7 +116,6 @@ const baseUrl = "<?= base_url() ?>";
         userMarker.bindPopup(`User in Need: ${fullName}`).openPopup(); // Popup with user's name
     });
 }
-
 
 // Fetch the report if communityreport_id is present in the URL
 if (communityreport_id) {
@@ -843,7 +842,6 @@ function getUrlParameter(name) {
     const results = regex.exec(window.location.search);
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
-
 function fetchReportByCommunityReportId(communityreport_id) {
     fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
         .then(response => {
@@ -858,6 +856,7 @@ function fetchReportByCommunityReportId(communityreport_id) {
 
             // Validate the report structure
             if (report && typeof report === 'object' && Object.keys(report).length > 0) {
+                // Wrap the report in an array since your populate function expects an array
                 populateReportList([report]);
             } else {
                 console.error('Invalid report structure or empty report received', report);
@@ -865,6 +864,7 @@ function fetchReportByCommunityReportId(communityreport_id) {
         })
         .catch(error => console.error('Error fetching report:', error));
 }
+
 
 
 document.addEventListener('DOMContentLoaded', function() {
