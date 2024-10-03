@@ -48,14 +48,16 @@ const baseUrl = "<?= base_url() ?>";
     const newReportsList = document.getElementById('newReportsList');
     newReportsList.innerHTML = ''; // Clear any existing reports
 
-    if (!Array.isArray(reports)) {
-        reports = [reports]; // Wrap the single report in an array if necessary
-    }
-
-    if (reports.length === 0) {
+    // Check if the input is a valid report object or an array
+    if (!reports || (Array.isArray(reports) && reports.length === 0)) {
         console.error('No valid report data available');
         newReportsList.innerHTML = '<p>No recent reports available</p>';
         return; // Exit the function if data is not valid
+    }
+
+    // Wrap single report in an array if necessary
+    if (!Array.isArray(reports)) {
+        reports = [reports]; // Wrap the single report in an array if necessary
     }
 
     reports.forEach(report => {
@@ -837,14 +839,18 @@ function fetchReportByCommunityReportId(communityreport_id) {
             return response.json();
         })
         .then(report => {
-            console.log(report); // Check the report structure
+            console.log(report); // Log the fetched report to check its structure
             if (report) {
                 // Wrap the report in an array since your populate function expects an array
-                populateReportList([report]); 
+                populateReportList(report); 
             } else {
                 console.error('No report found for this communityreport_id');
+                populateReportList([]); // Call with an empty array if no report is found
             }
         })
-        .catch(error => console.error('Error fetching report:', error));
+        .catch(error => {
+            console.error('Error fetching report:', error);
+            populateReportList([]); // Call with an empty array if an error occurs
+        });
 }
 </script>
