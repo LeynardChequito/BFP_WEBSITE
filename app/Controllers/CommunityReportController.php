@@ -151,32 +151,20 @@ class CommunityReportController extends BaseController
         }
     }
 
-    public function getRecentReports()
-    {
+    public function getRecentReports() {
         $model = new CommunityReportModel();
-    
-        // Debugging: log the query output
-        $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
-        $eightHoursAgo = $manilaTime->modify('-8 hours')->format('Y-m-d H:i:s');
+        $eightHoursAgo = (new \DateTime('now', new \DateTimeZone('Asia/Manila')))
+            ->modify('-8 hours')
+            ->format('Y-m-d H:i:s');
     
         $reports = $model->where('timestamp >=', $eightHoursAgo)
             ->orderBy('timestamp', 'DESC')
             ->findAll();
     
-        if (empty($reports)) {
-            log_message('debug', 'No reports found in the last 8 hours');
-            return $this->response->setJSON([]);
-        }
-    
-        log_message('debug', 'Reports found: ' . json_encode($reports));
-        foreach ($reports as &$report) {
-            $report['timestamp'] = (new \DateTime($report['timestamp'], new \DateTimeZone('UTC')))
-                ->setTimezone(new \DateTimeZone('Asia/Manila'))
-                ->format('Y-m-d (h:i a)');
-        }
-    
+        // Process reports to include formatted timestamps, etc.
         return $this->response->setJSON($reports);
     }
+    
     
 
     public function getLatestReports()

@@ -109,7 +109,7 @@
 </head>
 
 <body>
-<div class="col-lg-2">
+<!-- <div class="col-lg-2">
     <div class="sidebar">
         <h2 class="text-center mb-4">BFP Admin</h2>
         <ul class="list-unstyled components">
@@ -153,4 +153,4 @@
     </div>
 </div>
 </body>
-</html>
+</html> -->

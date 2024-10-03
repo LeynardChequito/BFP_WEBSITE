@@ -206,70 +206,40 @@ function fetchLatestReports() {
         .then(response => response.json())
         .then(data => {
             const notificationContainer = document.getElementById('notificationContainer');
-            const notificationCounter = document.getElementById('notification-counter');
-            notificationContainer.innerHTML = ''; // Clear the container
+            notificationContainer.innerHTML = ''; // Clear previous notifications
 
-            // Update the notification counter
-            notificationCounter.innerText = data.length;
+            // Loop through the reports and create notification items
+            data.forEach(report => {
+                const notification = document.createElement('div');
+                notification.classList.add('notification-item');
+                notification.setAttribute('data-communityreport-id', report.communityreport_id);
+                
+                // Create content based on whether fileproof is an image or video
+                const mediaContent = (report.fileproof.endsWith('.jpg') || report.fileproof.endsWith('.png')) 
+                    ? `<img src="${report.fileproof}" alt="File Proof">` 
+                    : `<video src="${report.fileproof}" controls></video>`;
 
-            if (data.length === 0) {
-                notificationContainer.innerHTML = '<p class="text-center text-muted">No new notifications</p>';
-            } else {
-                // If the number of reports has increased, play the alarm sound
-                if (data.length > lastReportCount && userInteracted) {
-                    sirenSound.play().catch(error => {
-                        console.error('Error playing siren sound:', error);
-                    });
-                }
+                notification.innerHTML = `
+                    ${mediaContent}
+                    <div>
+                        <h4>${report.fullName}</h4>
+                        <p><strong>Submitted:</strong> ${report.timestamp}</p>
+                    </div>
+                `;
 
-                // Update the last report count
-                lastReportCount = data.length;
-
-                // Loop through the reports and display each
-                data.forEach(report => {
-                    const notification = document.createElement('div');
-                    notification.classList.add('notification-item');
-                    notification.setAttribute('data-communityreport-id', report.communityreport_id); // Store communityreport_id
-
-                    // Check if the fileproof is an image or a video
-                    let mediaContent = '';
-const fileExtension = report.fileproof.split('.').pop().toLowerCase();
-if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-    mediaContent = `<img src="${report.fileproof}" alt="File Proof">`;
-} else if (['mp4', 'mov', 'avi'].includes(fileExtension)) {
-    mediaContent = `<video src="${report.fileproof}" controls></video>`;
-} else {
-    console.error('Unsupported file type:', fileExtension);
-}
-
-
-                    notification.innerHTML = `
-                        ${mediaContent}
-                        <div>
-                            <h4>${report.fullName}</h4>
-                            <p><strong>Submitted:</strong> ${report.timestamp} (${report.timeAgo})</p>
-                        </div>
-                    `;
-                    notificationContainer.appendChild(notification);
-
-                    // Add click event listener to open the modal and display report details
-                    notification.addEventListener('click', function() {
-                        showReportDetails(report);
-                    });
-                });
-            }
+                // Add click event listener to show report details
+                notification.addEventListener('click', () => showReportDetails(report));
+                notificationContainer.appendChild(notification);
+            });
         })
         .catch(error => console.error('Error fetching reports:', error));
 }
 
 function showReportDetails(report) {
-    if (report && report.communityreport_id) {
-        // Redirect to the /rescuemap page with the communityreport_id as a URL parameter
-        window.location.href = `/rescuemap?communityreport_id=${report.communityreport_id}`;
-    } else {
-        console.error("Error: communityreport_id is undefined or the report object is invalid");
-    }
+    // Redirect to the rescuemap with the communityreport_id
+    window.location.href = `/rescuemap?communityreport_id=${report.communityreport_id}`;
 }
+
 
 // Call this function periodically to refresh the notifications
 setInterval(fetchLatestReports, 60000); // Refresh every 60 seconds

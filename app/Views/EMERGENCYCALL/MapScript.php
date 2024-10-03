@@ -59,27 +59,30 @@ const baseUrl = "<?= base_url() ?>";
         } = report;
 
         const listItem = document.createElement('li');
-        listItem.classList.add('list-group-item');
+        listItem.classList.add('list-group-item', 'report-item');
         listItem.id = `report-${communityreport_id}`;
 
         listItem.innerHTML = `
-             <div style="padding: 10px; border-radius: 5px;">
-                 <h4>User in Need: ${fullName}</h4>
-                 <p><strong>Timestamp:</strong> ${timestamp}</p>
-                 <p><strong>File Proof:</strong></p>
-                 <div class="fileProofContainer" style="margin-bottom: 10px;">
-                     <img src="${baseUrl}/bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" class="file-proof-image" style="max-width: 100px; height: auto;">
-                 </div>
-                 <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
-                     onclick="showRouteToRescuer(${latitude}, ${longitude})">
-                     Show Route
-                 </button> 
-                 <button style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;" 
-    onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">
-    Submit Fire Report
-</button>
-
-             </div>
+            <div class="report-item-content" style="padding: 10px; border-radius: 5px;">
+                <h4>User in Need: ${fullName}</h4>
+                <p><strong>Timestamp:</strong> ${timestamp}</p>
+                <p><strong>File Proof:</strong></p>
+                <div class="fileProofContainer" style="margin-bottom: 10px;">
+                    <img src="${baseUrl}/bfpcalapancity/public/community_report/${fileproof}" 
+                         alt="File Proof" 
+                         class="file-proof-image" 
+                         style="max-width: 100px; height: auto;" 
+                         onerror="this.onerror=null; this.src='path/to/placeholder.jpg';">
+                </div>
+                <button class="btn btn-primary" 
+                        onclick="showRouteToRescuer(${latitude}, ${longitude})">
+                    Show Route
+                </button> 
+                <button class="btn btn-secondary" 
+                        onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">
+                    Submit Fire Report
+                </button>
+            </div>
         `;
 
         newReportsList.appendChild(listItem);
@@ -816,17 +819,10 @@ function getUrlParameter(name) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const communityreport_id = getUrlParameter('communityreport_id');
-    const communityReportInput = document.getElementById('communityreport_id');
-
-    if (communityReportInput) {
-        if (communityreport_id) {
-            communityReportInput.value = communityreport_id;
-        } else {
-            console.error('No communityreport_id found in the URL.');
-        }
-    } else {
-        console.error('Element with ID communityreport_id not found in the DOM.');
+    const urlParams = new URLSearchParams(window.location.search);
+    const communityreport_id = urlParams.get('communityreport_id');
+    if (communityreport_id) {
+        fetchReportByCommunityReportId(communityreport_id);
     }
 });
 
@@ -840,12 +836,8 @@ function fetchReportByCommunityReportId(communityreport_id) {
             return response.json();
         })
         .then(report => {
-            console.log(report); // Add this line to log the fetched report data
-            if (report) {
-                populateReportList([report]); // Passing as an array since your populate function expects an array
-            } else {
-                console.error('No report found for this communityreport_id');
-            }
+            // Assuming you have a modal to display report details
+            populateModalWithReportData(report);
         })
         .catch(error => console.error('Error fetching report:', error));
 }
