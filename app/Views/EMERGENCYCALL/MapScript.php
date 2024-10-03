@@ -83,6 +83,10 @@ const baseUrl = "<?= base_url() ?>";
         `;
 
         newReportsList.appendChild(listItem);
+
+        // Add the user marker to the map
+        const userMarker = L.marker([latitude, longitude], { icon: userIcon }).addTo(map);
+        userMarker.bindPopup(`User in Need: ${fullName}`).openPopup(); // Popup with user's name
     });
 }
 
