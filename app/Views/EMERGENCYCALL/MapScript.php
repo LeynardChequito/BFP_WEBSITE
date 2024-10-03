@@ -79,7 +79,7 @@ const baseUrl = "<?= base_url() ?>";
                          alt="File Proof" 
                          class="file-proof-image" 
                          style="max-width: 100px; height: auto;" 
-                         onerror="this.onerror=null; this.src='bfpcalapancity/public/community_report';">
+                         onerror="this.onerror=null; this.src='bfpcalapancity/public/community_report/${fileproof}';">
                 </div>
                 <button class="btn btn-primary" 
                         onclick="showRouteToRescuer(${latitude}, ${longitude})">
