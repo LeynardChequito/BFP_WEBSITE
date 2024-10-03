@@ -36,7 +36,13 @@ const baseUrl = "<?= base_url() ?>";
         apiKey: apiKey
     }, 'Streets').addTo(map);
 
-
+    const userMarker = L.icon({
+        iconUrl: 'https://img.icons8.com/papercut/40/user-location.png',
+        iconSize: [40, 40],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+    });
+    
     // Function to populate the report in the UI
     function populateReportList(report) {
     const newReportsList = document.getElementById('newReportsList');
@@ -550,12 +556,6 @@ const baseUrl = "<?= base_url() ?>";
     function toRadians(degrees) {
         return degrees * (Math.PI / 180);
     }
-    const userMarker = L.icon({
-        iconUrl: 'https://img.icons8.com/papercut/40/user-location.png',
-        iconSize: [40, 40],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
-    });
 
     // Function to track and remove submitted reports
     // Function to add task to the DOM (For Task List)
