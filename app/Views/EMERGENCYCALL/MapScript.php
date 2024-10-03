@@ -49,7 +49,12 @@ const baseUrl = "<?= base_url() ?>";
     const newReportsList = document.getElementById('newReportsList');
     newReportsList.innerHTML = ''; // Clear existing reports
 
-    if (!Array.isArray(reports) || reports.length === 0) {
+    // Ensure reports is an array
+    if (!Array.isArray(reports)) {
+        reports = [reports]; // Wrap the single report in an array if necessary
+    }
+
+    if (reports.length === 0) {
         console.error('No valid report data available');
         newReportsList.innerHTML = '<p>No recent reports available</p>';
         return; // Exit if data is not valid
@@ -65,6 +70,10 @@ const baseUrl = "<?= base_url() ?>";
             timestamp
         } = report;
 
+        // Convert latitude and longitude to numbers
+        const lat = parseFloat(latitude);
+        const lng = parseFloat(longitude);
+
         const listItem = document.createElement('li');
         listItem.classList.add('list-group-item', 'report-item');
         listItem.id = `report-${communityreport_id}`;
@@ -79,14 +88,14 @@ const baseUrl = "<?= base_url() ?>";
                          alt="File Proof" 
                          class="file-proof-image" 
                          style="max-width: 100px; height: auto;" 
-                         onerror="this.onerror=null; this.src='bfpcalapancity/public/community_report/${fileproof}';">
+                         onerror="this.onerror=null; this.src='bfpcalapancity/public/community_report';">
                 </div>
                 <button class="btn btn-primary" 
-                        onclick="showRouteToRescuer(${latitude}, ${longitude})">
+                        onclick="showRouteToRescuer(${lat}, ${lng})">
                     Show Route
                 </button> 
                 <button class="btn btn-secondary" 
-                        onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">
+                        onclick="submitReportForm(${lat}, ${lng}, ${communityreport_id})">
                     Submit Fire Report
                 </button>
             </div>
@@ -95,10 +104,11 @@ const baseUrl = "<?= base_url() ?>";
         newReportsList.appendChild(listItem);
 
         // Add the user marker to the map
-        const userMarker = L.marker([latitude, longitude], { icon: userMarkerIcon }).addTo(map);
+        const userMarker = L.marker([lat, lng], { icon: userMarkerIcon }).addTo(map);
         userMarker.bindPopup(`User in Need: ${fullName}`).openPopup(); // Popup with user's name
     });
 }
+
 
 // Fetch the report if communityreport_id is present in the URL
 if (communityreport_id) {
