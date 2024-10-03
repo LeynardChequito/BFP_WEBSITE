@@ -751,7 +751,7 @@ function submitReportForm(lat, lng, communityreport_id) {
     }
 
     function displayFileProof(fileProofURL, containerId) {
-        const baseURL = 'bfpcalapancity/public/community_report/';
+        const fileProofUrl = `${baseUrl}public/community_report/${fileproof}`;
         const fullURL = baseURL + fileProofURL;
 
         const fileProofContainer = document.getElementById(containerId);
@@ -858,7 +858,6 @@ function fetchReportByCommunityReportId(communityreport_id) {
 
             // Validate the report structure
             if (report && typeof report === 'object' && Object.keys(report).length > 0) {
-                // Wrap the report in an array since your populate function expects an array
                 populateReportList([report]);
             } else {
                 console.error('Invalid report structure or empty report received', report);
@@ -866,6 +865,7 @@ function fetchReportByCommunityReportId(communityreport_id) {
         })
         .catch(error => console.error('Error fetching report:', error));
 }
+
 
 document.addEventListener('DOMContentLoaded', function() {
     getRecentReports(); // Fetch recent reports
