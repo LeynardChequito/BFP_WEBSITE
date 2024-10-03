@@ -102,7 +102,7 @@ $routes->get('/community-report/latest-reports', 'CommunityReportController::get
 $routes->get('/save-token', 'CommunityReportController::saveToken', );
 
 $routes->get('getLatestReports', 'CommunityReportController::getLatestReports');
-$routes->get('getReportByCommunityReportId/(:num)', 'CommunityReportController::getReportByCommunityReportId/$1');
+$routes->post('getReportByCommunityReportId/(:num)', 'CommunityReportController::getReportByCommunityReportId/$1');
 
 
 // RESCUER REPORT
