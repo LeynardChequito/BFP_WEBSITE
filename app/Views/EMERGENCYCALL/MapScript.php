@@ -42,13 +42,13 @@ const baseUrl = "<?= base_url() ?>";
     const newReportsList = document.getElementById('newReportsList');
     newReportsList.innerHTML = ''; // Clear any existing reports
 
-    if (!Array.isArray(data) || data.length === 0) {
+    if (!Array.isArray(report) || report.length === 0) { // Changed from 'data' to 'report'
         console.error('No valid report data available');
         newReportsList.innerHTML = '<p>No recent reports available</p>';
         return; // Exit the function if data is not valid
     }
 
-    data.forEach(report => {
+    report.forEach(report => { // 'report' is now the parameter
         const {
             communityreport_id,
             latitude,
@@ -675,7 +675,7 @@ const baseUrl = "<?= base_url() ?>";
         const data = await response.json();
 
         if (response.ok && Array.isArray(data)) {
-            populateReportList(data);
+            populateReportList(data); // Pass data to populateReportList
         } else {
             console.error('No recent reports available');
             document.getElementById('newReportsList').innerHTML = '<p>No recent reports available</p>'; // Inform the user
@@ -818,8 +818,11 @@ function getUrlParameter(name) {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const urlParams = new URLSearchParams(window.location.search);
+document.addEventListener('DOMContentLoaded', function() {
+    getRecentReports(); // Fetch recent reports
+    openModalOnHash(); // Check if the page loads with #newReportModal in the URL hash
+
+    // Check for communityreport_id in the URL and fetch if present
     const communityreport_id = urlParams.get('communityreport_id');
     if (communityreport_id) {
         fetchReportByCommunityReportId(communityreport_id);
@@ -836,8 +839,13 @@ function fetchReportByCommunityReportId(communityreport_id) {
             return response.json();
         })
         .then(report => {
-            // Assuming you have a modal to display report details
-            populateReportList(report);
+            console.log(report); // Check the report structure
+            if (report) {
+                // Wrap the report in an array since your populate function expects an array
+                populateReportList([report]); 
+            } else {
+                console.error('No report found for this communityreport_id');
+            }
         })
         .catch(error => console.error('Error fetching report:', error));
 }
