@@ -669,20 +669,20 @@ const baseUrl = "<?= base_url() ?>";
     try {
         const response = await fetch('https://bfpcalapancity.online/reports-recent');
         const data = await response.json();
-        
+
         console.log('Response Data:', data);
 
         if (response.ok && Array.isArray(data) && data.length > 0) {
             populateReportList(data);
         } else {
             console.error('No recent reports available');
+            document.getElementById('newReportsList').innerHTML = '<p>No recent reports available</p>'; // Inform the user
         }
     } catch (error) {
         console.error('Error fetching recent reports:', error);
+        document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>'; // Inform the user
     }
 }
-
-
 
 // Function to open the modal when the URL contains #newReportModal
 function openModalOnHash() {
