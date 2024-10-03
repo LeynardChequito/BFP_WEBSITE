@@ -18,6 +18,7 @@ const baseUrl = "<?= base_url() ?>";
     const urlParams = new URLSearchParams(window.location.search);
     const lat = urlParams.get('lat');
     const lng = urlParams.get('lng');
+    const communityreport_id = urlParams.get('communityreport_id'); // Get communityreport_id from URL
 
     // const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs"; //old api-key
     const apiKey = "AAPKac6c1269609841b2a00dd16b90f0ccb8iFjQh8pTb7aadJWaETJip3ISvXcpq_5cB296OQurtGW79gpbXuMKZPe9kx-6mGWl";
@@ -46,18 +47,12 @@ const baseUrl = "<?= base_url() ?>";
     // Function to populate the report in the UI
     function populateReportList(reports) {
     const newReportsList = document.getElementById('newReportsList');
-    newReportsList.innerHTML = ''; // Clear any existing reports
+    newReportsList.innerHTML = ''; // Clear existing reports
 
-    // Check if the input is a valid report object or an array
-    if (!reports || (Array.isArray(reports) && reports.length === 0)) {
+    if (!Array.isArray(reports) || reports.length === 0) {
         console.error('No valid report data available');
         newReportsList.innerHTML = '<p>No recent reports available</p>';
-        return; // Exit the function if data is not valid
-    }
-
-    // Wrap single report in an array if necessary
-    if (!Array.isArray(reports)) {
-        reports = [reports]; // Wrap the single report in an array if necessary
+        return; // Exit if data is not valid
     }
 
     reports.forEach(report => {
@@ -105,14 +100,22 @@ const baseUrl = "<?= base_url() ?>";
     });
 }
 
-    function gotoRescueMap() {
-        window.location.href = '/rescuemap?openModal=true';
-    }
+// Fetch the report if communityreport_id is present in the URL
+if (communityreport_id) {
+    fetchReportByCommunityReportId(communityreport_id);
+}
+
+function gotoRescueMap() {
+    window.location.href = '/rescuemap?openModal=true';
+}
 
     // Call populateReportList when the modal is shown
     document.addEventListener('DOMContentLoaded', function() {
     populateReportList([]);
 });
+
+
+
     // Directions container
     const directions = document.createElement("div");
 directions.id = "directions";
@@ -692,7 +695,6 @@ const routeLines = L.layerGroup().addTo(map);
     }
 }
 
-
 // Function to open the modal when the URL contains #newReportModal
 function openModalOnHash() {
     if (window.location.hash === '#newReportModal') {
@@ -824,10 +826,6 @@ function getUrlParameter(name) {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    getRecentReports();
-    openModalOnHash();
-});
 
 
 function fetchReportByCommunityReportId(communityreport_id) {
@@ -839,18 +837,19 @@ function fetchReportByCommunityReportId(communityreport_id) {
             return response.json();
         })
         .then(report => {
-            console.log(report); // Log the fetched report to check its structure
-            if (report) {
-                // Wrap the report in an array since your populate function expects an array
-                populateReportList(report); 
+            console.log(report); // Log the report structure
+            if (report && Object.keys(report).length > 0) { // Check if report is valid
+                populateReportList([report]); // Wrap the report in an array
             } else {
                 console.error('No report found for this communityreport_id');
-                populateReportList([]); // Call with an empty array if no report is found
             }
         })
-        .catch(error => {
-            console.error('Error fetching report:', error);
-            populateReportList([]); // Call with an empty array if an error occurs
-        });
+        .catch(error => console.error('Error fetching report:', error));
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    getRecentReports(); // Fetch recent reports
+    openModalOnHash(); // Check if the page loads with #newReportModal in the URL hash
+});
 </script>
