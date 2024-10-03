@@ -38,7 +38,7 @@ const baseUrl = "<?= base_url() ?>";
 
 
     // Function to populate the report in the UI
-    function populateReportList(data) {
+    function populateReportList(report) {
     const newReportsList = document.getElementById('newReportsList');
     newReportsList.innerHTML = ''; // Clear any existing reports
 
@@ -837,7 +837,7 @@ function fetchReportByCommunityReportId(communityreport_id) {
         })
         .then(report => {
             // Assuming you have a modal to display report details
-            populateModalWithReportData(report);
+            populateReportList(report);
         })
         .catch(error => console.error('Error fetching report:', error));
 }
