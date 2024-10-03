@@ -36,25 +36,29 @@ const baseUrl = "<?= base_url() ?>";
         apiKey: apiKey
     }, 'Streets').addTo(map);
 
-    const userMarker = L.icon({
-        iconUrl: 'https://img.icons8.com/papercut/40/user-location.png',
-        iconSize: [40, 40],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
-    });
-    
+    const userMarkerIcon = L.icon({
+    iconUrl: 'https://img.icons8.com/papercut/40/user-location.png',
+    iconSize: [40, 40],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+});
+
     // Function to populate the report in the UI
-    function populateReportList(report) {
+    function populateReportList(reports) {
     const newReportsList = document.getElementById('newReportsList');
     newReportsList.innerHTML = ''; // Clear any existing reports
 
-    if (!Array.isArray(report) || report.length === 0) { // Changed from 'data' to 'report'
+    if (!Array.isArray(reports)) {
+        reports = [reports]; // Wrap the single report in an array if necessary
+    }
+
+    if (reports.length === 0) {
         console.error('No valid report data available');
         newReportsList.innerHTML = '<p>No recent reports available</p>';
         return; // Exit the function if data is not valid
     }
 
-    report.forEach(report => { // 'report' is now the parameter
+    reports.forEach(report => {
         const {
             communityreport_id,
             latitude,
@@ -78,7 +82,7 @@ const baseUrl = "<?= base_url() ?>";
                          alt="File Proof" 
                          class="file-proof-image" 
                          style="max-width: 100px; height: auto;" 
-                         onerror="this.onerror=null; this.src='path/to/placeholder.jpg';">
+                         onerror="this.onerror=null; this.src='bfpcalapancity/public/community_report';">
                 </div>
                 <button class="btn btn-primary" 
                         onclick="showRouteToRescuer(${latitude}, ${longitude})">
@@ -94,7 +98,7 @@ const baseUrl = "<?= base_url() ?>";
         newReportsList.appendChild(listItem);
 
         // Add the user marker to the map
-        const userMarker = L.marker([latitude, longitude], { icon: userMarker }).addTo(map);
+        const userMarker = L.marker([latitude, longitude], { icon: userMarkerIcon }).addTo(map);
         userMarker.bindPopup(`User in Need: ${fullName}`).openPopup(); // Popup with user's name
     });
 }
@@ -105,17 +109,17 @@ const baseUrl = "<?= base_url() ?>";
 
     // Call populateReportList when the modal is shown
     document.addEventListener('DOMContentLoaded', function() {
-        populateReportList();
-    });
+    populateReportList([]);
+});
     // Directions container
     const directions = document.createElement("div");
-    directions.id = "directions";
-    directions.innerHTML = "Click on the map to create a start and end for the route.";
-    document.body.appendChild(directions);
+directions.id = "directions";
+directions.innerHTML = "Click on the map to create a start and end for the route.";
+document.body.appendChild(directions);
 
-    const startLayerGroup = L.layerGroup().addTo(map);
-    const endLayerGroup = L.layerGroup().addTo(map);
-    const routeLines = L.layerGroup().addTo(map);
+const startLayerGroup = L.layerGroup().addTo(map);
+const endLayerGroup = L.layerGroup().addTo(map);
+const routeLines = L.layerGroup().addTo(map);
 
     // Fire hydrant marker
     const fireHydrants = [{
@@ -819,14 +823,8 @@ function getUrlParameter(name) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    getRecentReports(); // Fetch recent reports
-    openModalOnHash(); // Check if the page loads with #newReportModal in the URL hash
-
-    // Check for communityreport_id in the URL and fetch if present
-    const communityreport_id = urlParams.get('communityreport_id');
-    if (communityreport_id) {
-        fetchReportByCommunityReportId(communityreport_id);
-    }
+    getRecentReports();
+    openModalOnHash();
 });
 
 
