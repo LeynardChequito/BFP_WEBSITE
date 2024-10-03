@@ -61,7 +61,7 @@ const baseUrl = "<?= base_url() ?>";
     }
 
     reports.forEach(report => {
-        console.log(report); // Log each report to ensure structure
+        console.log('Processing report:', report); // Log each report
 
         const {
             communityreport_id,
@@ -92,7 +92,7 @@ const baseUrl = "<?= base_url() ?>";
                 <p><strong>Timestamp:</strong> ${timestamp}</p>
                 <p><strong>File Proof:</strong></p>
                 <div class="fileProofContainer" style="margin-bottom: 10px;">
-                    <img src="${baseUrl}/bfpcalapancity/public/community_report/${fileproof}" 
+                    <img src="${baseUrl}public/community_report/${fileproof}" 
                          alt="File Proof" 
                          class="file-proof-image" 
                          style="max-width: 100px; height: auto;" 
@@ -848,18 +848,20 @@ function fetchReportByCommunityReportId(communityreport_id) {
     fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
         .then(response => {
             if (!response.ok) {
+                console.error('Failed to fetch report data:', response.statusText);
                 throw new Error('No valid report data available');
             }
             return response.json();
         })
         .then(report => {
-            console.log(report); // Log the entire report object to see its structure
+            console.log('Fetched report:', report); // Log the entire report object
 
+            // Validate the report structure
             if (report && typeof report === 'object' && Object.keys(report).length > 0) {
                 // Wrap the report in an array since your populate function expects an array
-                populateReportList([report]); 
+                populateReportList([report]);
             } else {
-                console.error('No report found for this communityreport_id');
+                console.error('Invalid report structure or empty report received', report);
             }
         })
         .catch(error => console.error('Error fetching report:', error));
