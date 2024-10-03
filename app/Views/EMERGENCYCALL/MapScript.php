@@ -854,18 +854,19 @@ function fetchReportByCommunityReportId(communityreport_id) {
         .then(report => {
             console.log('Fetched report:', report); // Log the entire report object
 
-            // Validate the report structure
             if (report && typeof report === 'object' && Object.keys(report).length > 0) {
-                // Wrap the report in an array since your populate function expects an array
                 populateReportList([report]);
             } else {
                 console.error('Invalid report structure or empty report received', report);
             }
         })
-        .catch(error => console.error('Error fetching report:', error));
+        .catch(error => {
+            console.error('Error fetching report:', error);
+            if (error.message.includes('404')) {
+                alert('Report not found. Please check the report ID.');
+            }
+        });
 }
-
-
 
 document.addEventListener('DOMContentLoaded', function() {
     getRecentReports(); // Fetch recent reports
