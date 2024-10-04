@@ -23,16 +23,13 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Roboto', sans-serif;
-            background-color: #2c2f33; /* Dark background */
-            color: #ffffff; /* White text */
+            font-family: 'Arial', sans-serif;
+            background-color: #F0F0F0;
+            /* Neutral background similar to Waze */
         }
 
         #map {
@@ -41,105 +38,139 @@
             bottom: 0;
             right: 0;
             left: 0;
-            height: calc(100% - 70px);
-            /* Adjust height for direction panel */
-            z-index: 1;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            width: 100%;
+            height: 100%;
         }
 
-        #directions {
-            position: absolute;
-            z-index: 1000;
-            width: 300px;
-            max-height: 50%;
-            right: 20px;
-            top: 20px;
-            overflow-y: auto;
-            background: #23272a; /* Darker card background */
+        #map-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .floating-card {
+            background: white;
             border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: calc(100% - 40px);
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .push-notif-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
             padding: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            display: none;
-            font-size: 14px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .push-notif-btn:hover {
+            background-color: #0056b3;
         }
 
         .btn-back {
             position: fixed;
             top: 20px;
             left: 20px;
-            background-color: #7289da; /* Waze-like button color */
+            background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 25px; /* Rounded buttons */
+            padding: 8px 16px;
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            font-family: 'Arial', sans-serif;
             z-index: 1100;
         }
 
         .btn-back:hover {
-            background-color: #5b6eae; /* Darker shade for hover effect */
+            background-color: #0056b3;
+        }
+
+        .directions-panel {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 40%;
+            overflow-y: auto;
+            width: 300px;
+            display: none;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .hydrant-suggestion {
-            background-color: #99aab5; /* Light grey background */
+            background-color: #fff;
             padding: 10px;
             margin-bottom: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .hydrant-suggestion h6 {
             margin: 0;
-            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
         }
 
-        .navigate-btn,
-        .show-steps {
-            background-color: #7289da; /* Button color */
+        .hydrant-suggestion p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .navigate-btn {
+            background-color: #007bff;
             color: #fff;
             border: none;
-            padding: 10px 15px;
-            border-radius: 5px; /* Rounded buttons */
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.3s;
-        }
-
-        .navigate-btn:hover,
-        .show-steps:hover {
-            background-color: #5b6eae; /* Darker shade for hover effect */
-        }
-
-        .popup-content {
-            background-color: #2c2f33; /* Dark background */
-            color: #ffffff; /* White text */
+            padding: 8px 16px;
             border-radius: 5px;
-            padding: 10px;
-            font-family: 'Roboto', sans-serif;
-            font-size: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            font-family: 'Arial', sans-serif;
         }
 
-        /* Responsive Design */
+        .navigate-btn:hover {
+            background-color: #0056b3;
+        }
+
         @media (max-width: 768px) {
-            #directions {
-                width: 80%;
-                max-height: 40%;
-                bottom: 20px;
+            .floating-card {
+                left: 10px;
+                right: 10px;
+                width: auto;
+                max-width: 100%;
+            }
+
+            .directions-panel {
+                width: 90%;
                 left: 50%;
                 transform: translateX(-50%);
             }
-
-            .hydrant-suggestion {
-                padding: 8px;
-            }
-
-            .navigate-btn,
-            .show-steps {
-                width: 100%;
-            }
         }
-
     </style>
 </head>
 
@@ -148,46 +179,43 @@
     <!-- Button to trigger back to admin-home -->
     <button class="btn-back" onclick="window.location.href='/admin-home';">Back</button>
 
-    <div class="map-card">
-        <div id="map-container">
-            <div id="map"></div>
-        </div>
+    <div id="map-container">
+        <div id="map"></div>
+    </div>
 
-        <div class="bfp-header">
-            <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
-            <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
-            <div id="directions" style="display: none;">Click on the map to create a start and end for the route.</div>
-            <button id="directions" onclick="toggleDirections()">Show Steps</button>
-        </div>
+    <!-- Floating Card for Hydrant Suggestions -->
+    <div class="floating-card">
+        <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
+        <div id="hydrant-suggestions"></div>
+    </div>
 
-        <!-- Push Notification Button to open the New Reports modal -->
-        <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal" onclick="getRecentReports()">
-            &#128276;
-        </button>
+    <!-- Push Notification Button -->
+    <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal" onclick="getRecentReports()">
+        &#128276;
+    </button>
 
-        <!-- Modal for new reports -->
-        <div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="newReportModalLabel">New Community Report</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ul id="newReportsList" class="list-group">
-                            <!-- Report details will be dynamically inserted here -->
-                        </ul>
+    <!-- Directions Panel -->
+    <div id="directions-panel" class="directions-panel"></div>
 
-                    </div>
+    <!-- Modal for new reports -->
+    <div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newReportModalLabel">New Community Report</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="newReportsList" class="list-group">
+                        <!-- Report details will be dynamically inserted here -->
+                    </ul>
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Audio for alerting -->
     <audio id="sirenSound" src="bfpcalapancity/public/45secs_alarm.mp3" preload=""></audio>
-
 
     <script>
 
