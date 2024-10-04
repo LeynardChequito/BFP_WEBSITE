@@ -725,8 +725,12 @@ const routeLines = L.layerGroup().addTo(map);
             document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>'; // Inform the user
         }
     }
-}
 
+    // If communityreport_id exists, fetch specific report
+    if (communityreport_id) {
+        fetchReportByCommunityReportId(communityreport_id);
+    }
+}
 
 // Function to open the modal when the URL contains #newReportModal
 function openModalOnHash() {
@@ -871,7 +875,7 @@ function fetchReportByCommunityReportId(communityreport_id) {
             console.log('Fetched report:', report); // Log the entire report object
 
             if (report && typeof report === 'object' && Object.keys(report).length > 0) {
-                populateReportList([report]);
+                populateReportList([report]); // Populate the modal with the specific report
             } else {
                 console.error('Invalid report structure or empty report received', report);
             }
@@ -884,8 +888,10 @@ function fetchReportByCommunityReportId(communityreport_id) {
         });
 }
 
+// Call this function on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
-    getRecentReports(); // Fetch recent reports
-    openModalOnHash(); // Check if the page loads with #newReportModal in the URL hash
+    // Fetch recent reports when the page loads
+    getRecentReports();
+    openModalOnHash();
 });
 </script>
