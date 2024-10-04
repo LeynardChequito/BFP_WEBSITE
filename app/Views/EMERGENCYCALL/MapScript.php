@@ -46,18 +46,16 @@ const baseUrl = "<?= base_url() ?>";
 
     // Function to populate the report in the UI
     function populateReportList(reports) {
-    const newReportsList = document.getElementById('newReportsList');
-    newReportsList.innerHTML = ''; // Clear existing reports
+        const newReportsList = document.getElementById('newReportsList');
+        newReportsList.innerHTML = ''; // Clear existing reports
 
-    // Ensure reports is an array
     if (!Array.isArray(reports)) {
-        reports = [reports]; // Wrap the single report in an array if necessary
+        reports = [reports]; // Wrap single report in an array if necessary
     }
 
     if (reports.length === 0) {
-        console.error('No valid report data available');
         newReportsList.innerHTML = '<p>No recent reports available</p>';
-        return; // Exit if data is not valid
+        return; // Exit if no valid data
     }
 
     reports.forEach(report => {
@@ -72,41 +70,25 @@ const baseUrl = "<?= base_url() ?>";
             timestamp
         } = report;
 
-        // Check if required fields are present
-        if (!communityreport_id || !latitude || !longitude || !fullName || !fileproof || !timestamp) {
-            console.error('Missing report fields', report);
-            return; // Skip this report if required fields are missing
-        }
+        reports.forEach(report => {
+        const { communityreport_id, latitude, longitude, fullName, fileproof, timestamp } = report;
+
 
         // Convert latitude and longitude to numbers
         const lat = parseFloat(latitude);
         const lng = parseFloat(longitude);
 
         const listItem = document.createElement('li');
-        listItem.classList.add('list-group-item', 'report-item');
+        listItem.className = 'list-group-item report-item';
         listItem.id = `report-${communityreport_id}`;
 
         listItem.innerHTML = `
-            <div class="report-item-content" style="padding: 10px; border-radius: 5px;">
-                <h4>User in Need: ${fullName}</h4>
-                <p><strong>Timestamp:</strong> ${timestamp}</p>
-                <p><strong>File Proof:</strong></p>
-                <div class="fileProofContainer" style="margin-bottom: 10px;">
-                    <img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" 
-                         alt="File Proof" 
-                         class="file-proof-image" 
-                         style="max-width: 100px; height: auto;" 
-                         onerror="this.onerror=null; this.src='bfpcalapancity/public/community_report';">
-                </div>
-                <button class="btn btn-primary" 
-                        onclick="showRouteToRescuer(${lat}, ${lng})">
-                    Show Route
-                </button> 
-                <button class="btn btn-secondary" 
-                        onclick="submitReportForm(${lat}, ${lng}, ${communityreport_id})">
-                    Submit Fire Report
-                </button>
-            </div>
+            <h4>User in Need: ${fullName}</h4>
+            <p><strong>Timestamp:</strong> ${timestamp}</p>
+            <p><strong>File Proof:</strong></p>
+            <img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" style="max-width: 100px; height: auto;">
+            <button class="btn btn-primary" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
+            <button class="btn btn-secondary" onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">Submit Fire Report</button>
         `;
 
         newReportsList.appendChild(listItem);
@@ -759,23 +741,49 @@ function openModalOnHash() {
 // Function to mark a report as submitted and trigger form submission
 function submitReportForm(lat, lng, communityreport_id) {
     const form = document.getElementById('fireReportForm');
-
     if (!form) {
         console.error("Form with ID 'fireReportForm' does not exist.");
-        alert("The report form is currently unavailable. Please try again later."); // Alert the user
-        return; // Exit the function
+        alert("The report form is currently unavailable. Please try again later.");
+        return;
     }
 
-    if (!communityreport_id) {
-        console.error("communityreport_id is missing");
-        return; // Exit if communityreport_id is not provided
-    }
+    form.communityreport_id.value = communityreport_id; // Set the community report ID
 
-    form.communityreport_id.value = communityreport_id;
-
-    // Perform your form submission logic here
-    window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
+    // Use FormData to handle form submission
+    const formData = new FormData(form);
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json(); // Assuming server returns JSON
+        }
+        throw new Error('Network response was not ok.');
+    })
+    .then(data => {
+        console.log(data); // Log the server response
+        alert('Fire report submitted successfully!');
+        // Redirect or update the UI as needed
+        window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
+    })
+    .catch(error => {
+        console.error('Error submitting form:', error);
+        alert('An error occurred while submitting the form. Please try again.');
+    });
 }
+// Fetch recent reports if communityreport_id is present in the URL
+if (communityreport_id) {
+    fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
+    .then(response => response.json())
+    .then(report => populateReportList([report]))
+    .catch(error => console.error('Error fetching report:', error));
+}
+
+// On DOMContentLoaded, initialize the necessary functions
+document.addEventListener('DOMContentLoaded', function() {
+    updateTime(); // Start the clock
+});
 
   function toggleDirections() {
         const directionsDiv = document.getElementById("directions");

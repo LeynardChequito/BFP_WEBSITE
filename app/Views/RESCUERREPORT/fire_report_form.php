@@ -133,10 +133,10 @@
 
 <div class="form-container">
     <h1>Fire Report Form</h1>
-    <form id="fireReportForm" action="<?=site_url('fire-report/store')?>" method="post" enctype="multipart/form-data">
-    <?= csrf_field() ?>
-    <input type="hidden" id="communityreport_id" name="communityreport_id" value="<?= $communityReportId ?>" />
-
+    <form id="fireReportForm" action="<?= site_url('fire-report/store') ?>" method="post" enctype="multipart/form-data">
+        <?= csrf_field() ?>
+        <input type="hidden" id="communityreport_id" name="communityreport_id" value="<?= $communityReportId ?>" />
+        
         <label for="user_name">Name of Rescuer:</label>
         <input type="text" name="user_name" id="user_name" placeholder="Enter Rescuer's Name" required><br>
 
