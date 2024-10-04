@@ -84,7 +84,7 @@ class FireReportController extends BaseController
     {
         if ($photo && $photo->isValid() && !$photo->hasMoved()) {
             $newName = $photo->getRandomName();
-            $photo->move(WRITEPATH . 'uploads', $newName); // Save in writable/uploads
+            $photo->move(WRITEPATH . 'public/final-report', $newName);
             return $newName;
         }
         return null;
