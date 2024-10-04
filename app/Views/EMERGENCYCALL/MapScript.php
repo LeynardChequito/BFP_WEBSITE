@@ -92,7 +92,7 @@ const baseUrl = "<?= base_url() ?>";
                 <p><strong>Timestamp:</strong> ${timestamp}</p>
                 <p><strong>File Proof:</strong></p>
                 <div class="fileProofContainer" style="margin-bottom: 10px;">
-                    <img src="${baseUrl}public/community_report/${fileproof}" 
+                    <img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" 
                          alt="File Proof" 
                          class="file-proof-image" 
                          style="max-width: 100px; height: auto;" 
