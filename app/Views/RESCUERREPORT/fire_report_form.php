@@ -134,8 +134,8 @@
 <div class="form-container">
     <h1>Fire Report Form</h1>
     <form id="fireReportForm" action="<?=site_url('fire-report/store')?>" method="post" enctype="multipart/form-data">
-        <?= csrf_field() ?>
-        <input type="hidden" id="communityreport_id" name="communityreport_id" value="<?= $communityReportId ?>" />
+    <?= csrf_field() ?>
+    <input type="hidden" id="communityreport_id" name="communityreport_id" value="<?= $communityReportId ?>" />
 
         <label for="user_name">Name of Rescuer:</label>
         <input type="text" name="user_name" id="user_name" placeholder="Enter Rescuer's Name" required><br>
@@ -221,15 +221,9 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var modal = document.getElementById("successModal");
-        if (!modal) {
-            console.error("Modal element not found.");
-            return;
-        }
-
-        var form = document.getElementById('fireReportForm');
+        const form = document.getElementById('fireReportForm');
         if (!form) {
-            console.error("Form element not found.");
+            console.error("Form with ID 'fireReportForm' does not exist.");
             return;
         }
 
@@ -240,7 +234,7 @@
             xhr.open('POST', form.action, true);
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    modal.style.display = "block";
+                    modal.style.display = "block"; // Show the success modal
                 } else {
                     alert('An error occurred while submitting the form. Please try again.');
                 }
@@ -250,6 +244,7 @@
             };
             xhr.send(formData);
         });
+
 
     });
 
