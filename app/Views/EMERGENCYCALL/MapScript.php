@@ -759,15 +759,16 @@ function openModalOnHash() {
 // Function to mark a report as submitted and trigger form submission
 function submitReportForm(lat, lng, communityreport_id) {
     const form = document.getElementById('fireReportForm');
-    
+
     if (!form) {
         console.error("Form with ID 'fireReportForm' does not exist.");
-        return;
+        alert("The report form is currently unavailable. Please try again later."); // Alert the user
+        return; // Exit the function
     }
 
     if (!communityreport_id) {
         console.error("communityreport_id is missing");
-        return;
+        return; // Exit if communityreport_id is not provided
     }
 
     form.communityreport_id.value = communityreport_id;
@@ -775,6 +776,7 @@ function submitReportForm(lat, lng, communityreport_id) {
     // Perform your form submission logic here
     window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
 }
+
   function toggleDirections() {
         const directionsDiv = document.getElementById("directions");
         directionsDiv.style.display = directionsDiv.style.display === "none" ? "block" : "none";
@@ -908,8 +910,8 @@ function fetchReportByCommunityReportId(communityreport_id) {
 
 // Call this function on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Fetch recent reports when the page loads
-    getRecentReports();
-    openModalOnHash();
-});
+        // Your existing JavaScript code
+        getRecentReports();
+        openModalOnHash();
+    });
 </script>
