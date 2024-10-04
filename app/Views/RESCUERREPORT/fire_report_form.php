@@ -231,7 +231,7 @@
     form.addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the default form submission
 
-        // Get community report ID from the object passed to the view
+        // Get community report ID from the passed object
         const communityReportId = <?= json_encode($communityReport['communityreport_id']) ?>;
 
         const formData = new FormData(form); // Create FormData object
@@ -263,7 +263,16 @@
             document.getElementById('successModal').style.display = "none"; // Hide modal
         };
     }
+
+    // Handle clicking outside of the modal to close it
+    window.onclick = function(event) {
+        const modal = document.getElementById('successModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
 });
+
 
     function toggleInputField() {
         const select = document.getElementById('property_damage_cost');

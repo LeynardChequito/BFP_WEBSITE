@@ -8,20 +8,18 @@ use App\Models\CommunityReportModel;
 use App\Models\FinalIncidentReportModel;
 
 class FireReportController extends BaseController
-{    public function firereportform($communityReportId = null)
+{   
+    public function firereportform($communityReportId = null)
     {
-        // Fetch community report data based on communityReportId
         $communityModel = new CommunityReportModel();
         $communityReport = $communityModel->find($communityReportId);
     
-        // Check if the community report exists
         if (!$communityReport) {
             return redirect()->back()->with('error', 'Community report not found.');
         }
     
-        // Pass the community report data to the view
         return view('RESCUERREPORT/fire_report_form', [
-            'communityReport' => $communityReport // Pass the whole object if needed
+            'communityReport' => $communityReport // Pass data to the view
         ]);
     }
     
