@@ -344,34 +344,49 @@ const routeLines = L.layerGroup().addTo(map);
     let rescuerMarker; // Declare rescuerMarker globally so it can be updated later
 
     function showRescuerLocation(position) {
-        const rescuerLatitude = position.coords.latitude;
-        const rescuerLongitude = position.coords.longitude;
-        startCoords = [rescuerLongitude, rescuerLatitude];
+    const rescuerLatitude = position.coords.latitude;
+    const rescuerLongitude = position.coords.longitude;
+    startCoords = [rescuerLongitude, rescuerLatitude];
 
-        // Update rescuer's marker position
-        if (!rescuerMarker) {
-            rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], {
-                icon: rescuerIcon
-            }).addTo(map);
-        } else {
-            rescuerMarker.setLatLng([rescuerLatitude, rescuerLongitude]);
-        }
-
-        rescuerMarker.bindPopup("'You are here.' - Rescuer").openPopup();
-
-        // Update route to adjust to the rescuer's current position
-        if (endCoords) {
-            updateRoute(); // Continuously update route to destination
-        }
-
-        // Save current position
-        saveRescuerPositionToLocalStorage(position);
-
-        suggestNearestHydrants({
-            lat: rescuerLatitude,
-            lng: rescuerLongitude
-        });
+    // Update rescuer's marker position
+    if (!rescuerMarker) {
+        rescuerMarker = L.marker([rescuerLatitude, rescuerLongitude], {
+            icon: rescuerIcon
+        }).addTo(map);
+    } else {
+        rescuerMarker.setLatLng([rescuerLatitude, rescuerLongitude]);
     }
+
+    let distance = 0;
+    let estimatedTime = 0;
+
+    // Update route to adjust to the rescuer's current position
+    if (endCoords) {
+        distance = getDistance(rescuerLatitude, rescuerLongitude, endCoords[1], endCoords[0]); // Use endCoords for calculation
+        estimatedTime = distance / 666.67; // Assuming speed is 40 km/h (666.67 m/min)
+        updateRoute(); // Continuously update route to destination
+    }
+
+    // Create the content for the popup
+    const popupContent = `
+        <div>
+            <p>'You are here.' - Rescuer</p>
+            <p>Estimated Distance: ${distance.toFixed(2)} meters</p>
+            <p>Estimated Time: ${estimatedTime.toFixed(2)} minutes</p>
+        </div>
+    `;
+
+    rescuerMarker.bindPopup(popupContent).openPopup();
+
+    // Save current position
+    saveRescuerPositionToLocalStorage(position);
+
+    suggestNearestHydrants({
+        lat: rescuerLatitude,
+        lng: rescuerLongitude
+    });
+}
+
 
     function saveCurrentRouteToLocalStorage() {
         if (startCoords && endCoords) {
