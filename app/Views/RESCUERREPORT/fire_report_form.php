@@ -60,7 +60,6 @@
             width: 100%; 
             height: 100%; 
             overflow: auto; 
-            background-color: rgb(0,0,0); 
             background-color: rgba(0,0,0,0.4); 
             padding-top: 60px;
         }
@@ -173,32 +172,31 @@
 
         <label for="property_damage_cost">Select Property Damage Cost:</label>
         <div style="display: flex; align-items: center;">
-<select name="property_damage_cost" id="property_damage_cost" required onchange="toggleInputField()">
-
-<option value="₱0 - ₱99">₱0 - ₱99</option>
-    <option value="₱100 - ₱999">₱100 - ₱999</option>
-    <option value="₱1000 - ₱9999">₱1,000 - ₱9,999</option>
-    <option value="₱10000 - ₱24999">₱10,000 - ₱24,999</option>
-    <option value="₱25000 - ₱49999">₱25,000 - ₱49,999</option>
-    <option value="₱50000 - ₱99999">₱50,000 - ₱99,999</option>
-    <option value="₱100000 - ₱249999">₱100,000 - ₱249,999</option>
-    <option value="₱250000 - ₱499999">₱250,000 - ₱499,999</option>
-    <option value="₱500000 - ₱999999">₱500,000 - ₱999,999</option>
-    <option value="₱1000000 - ₱1999999">₱1,000,000 - ₱1,999,999</option>
-    <option value="other">Other Amount</option>
-</select>
+            <select name="property_damage_cost" id="property_damage_cost" required onchange="toggleInputField()">
+                <option value="₱0 - ₱99">₱0 - ₱99</option>
+                <option value="₱100 - ₱999">₱100 - ₱999</option>
+                <option value="₱1000 - ₱9999">₱1,000 - ₱9,999</option>
+                <option value="₱10000 - ₱24999">₱10,000 - ₱24,999</option>
+                <option value="₱25000 - ₱49999">₱25,000 - ₱49,999</option>
+                <option value="₱50000 - ₱99999">₱50,000 - ₱99,999</option>
+                <option value="₱100000 - ₱249999">₱100,000 - ₱249,999</option>
+                <option value="₱250000 - ₱499999">₱250,000 - ₱499,999</option>
+                <option value="₱500000 - ₱999999">₱500,000 - ₱999,999</option>
+                <option value="₱1000000 - ₱1999999">₱1,000,000 - ₱1,999,999</option>
+                <option value="other">Other Amount</option>
+            </select>
         </div>
 
-<div id="custom_amount_field" style="display:none;">
-    <label for="custom_amount">Enter Amount:</label>
-    <div style="display: flex; align-items: center;">
-        <span>₱</span>
-        <input type="number" id="custom_amount" name="custom_amount" placeholder="Enter amount" />
-    </div>
-</div><br>
+        <div id="custom_amount_field" style="display:none;">
+            <label for="custom_amount">Enter Amount:</label>
+            <div style="display: flex; align-items: center;">
+                <span>₱</span>
+                <input type="number" id="custom_amount" name="custom_amount" placeholder="Enter amount" />
+            </div>
+        </div><br>
 
         <label for="number_of_injuries">Number of Casualties:</label>
-        <input type="number" name="number_of_injuries" id="number_of_injuries" placeholder="Enter the Number of Casulaties">
+        <input type="number" name="number_of_injuries" id="number_of_injuries" placeholder="Enter the Number of Casualties">
 
         <label for="additional_information">Additional Information (optional):</label>
         <textarea name="additional_information" id="additional_information"></textarea><br>
@@ -221,52 +219,52 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById('fireReportForm');
+        const form = document.getElementById('fireReportForm');
 
-if (!form) {
-    console.error("Form with ID 'fireReportForm' does not exist.");
-    return;
-}
-
-form.addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const formData = new FormData(form);
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', form.action, true);
-    
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            document.getElementById('successModal').style.display = "block"; // Show success modal
-        } else {
-            alert('An error occurred while submitting the form. Please try again.');
+        if (!form) {
+            console.error("Form with ID 'fireReportForm' does not exist.");
+            return;
         }
-    };
-    
-    xhr.onerror = function () {
-        alert('An error occurred while submitting the form. Please try again.');
-    };
-    
-    xhr.send(formData); // Send the request
-});
 
-    // Close modal functionality
-    const closeModal = document.querySelector('.close'); // Ensure the close button is selected after DOM load
-    if (closeModal) {
-        closeModal.onclick = function() {
-            document.getElementById('successModal').style.display = "none"; // Hide modal
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(form); // Create FormData object
+            const xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest
+            xhr.open('POST', form.action, true); // Prepare the request
+            
+            // Handle response
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    document.getElementById('successModal').style.display = "block"; // Show success modal
+                } else {
+                    alert('An error occurred while submitting the form. Please try again.');
+                }
+            };
+            
+            xhr.onerror = function () {
+                alert('An error occurred while submitting the form. Please try again.');
+            };
+            
+            xhr.send(formData); // Send the request
+        });
+
+        // Close modal functionality
+        const closeModal = document.querySelector('.close'); // Ensure the close button is selected after DOM load
+        if (closeModal) {
+            closeModal.onclick = function() {
+                document.getElementById('successModal').style.display = "none"; // Hide modal
+            };
+        }
+
+        // Handle clicking outside of the modal to close it
+        window.onclick = function(event) {
+            const modal = document.getElementById('successModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
         };
-    }
-
-    // Handle clicking outside of the modal to close it
-    window.onclick = function(event) {
-        const modal = document.getElementById('successModal');
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    };
-});
-
+    });
 
     function toggleInputField() {
         const select = document.getElementById('property_damage_cost');
