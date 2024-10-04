@@ -698,19 +698,35 @@ const routeLines = L.layerGroup().addTo(map);
   async function getRecentReports() {
     try {
         const response = await fetch('https://bfpcalapancity.online/reports-recent');
+
+        // Check if the response is OK (status in the range 200-299)
+        if (!response.ok) {
+            console.error('Error fetching recent reports:', response.statusText);
+            throw new Error('Failed to fetch recent reports');
+        }
+
+        // Try to parse JSON response
         const data = await response.json();
 
-        if (response.ok && Array.isArray(data)) {
+        // If the data is not an array, handle it accordingly
+        if (Array.isArray(data)) {
             populateReportList(data); // Pass data to populateReportList
         } else {
             console.error('No recent reports available');
             document.getElementById('newReportsList').innerHTML = '<p>No recent reports available</p>'; // Inform the user
         }
     } catch (error) {
-        console.error('Error fetching recent reports:', error);
-        document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>'; // Inform the user
+        // Handle JSON parsing error
+        if (error instanceof SyntaxError) {
+            console.error('Response was not valid JSON:', error);
+            document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please check the server response.</p>'; // Inform the user
+        } else {
+            console.error('Error fetching recent reports:', error);
+            document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>'; // Inform the user
+        }
     }
 }
+
 
 // Function to open the modal when the URL contains #newReportModal
 function openModalOnHash() {
