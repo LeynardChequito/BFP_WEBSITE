@@ -28,8 +28,8 @@
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            background-color: #F0F0F0;
-            /* Neutral background similar to Waze */
+            background-image: linear-gradient(to bottom right, #1a1a1a, #c81b1b); /* Darker gradient for Waze-like feel */
+            color: #ffffff; /* Default text color */
         }
 
         #map {
@@ -39,46 +39,73 @@
             right: 0;
             left: 0;
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 14px;
             width: 100%;
             height: 100%;
+            height: calc(100% - 70px); /* Adjust height for direction panel and buttons */
+        }
+
+        #directions {
+            position: absolute;
+            z-index: 1000;
+            width: 30%;
+            max-height: 50%;
+            right: 20px;
+            top: 20px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+            color: #333; /* Darker text for better readability */
+            font-family: Arial, Helvetica, Verdana;
+            line-height: 2.25;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            #directions {
+                width: 90%;
+                max-height: 40%;
+                top: unset;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        .popup-content {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .map-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .bfp-header {
+            text-align: center;
+            font-size: 16px; /* Increased font size */
+            font-weight: bold;
+            color: #007bff; /* Waze.com header color */
+            padding: 15px 0;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            margin: 0;
+            border-radius: 0 0 10px 10px; /* Rounded bottom corners */
         }
 
         #map-container {
             width: 100%;
-            height: 100%;
-        }
-
-        .floating-card {
-            background: white;
+            height: calc(100vh - 70px); /* Full height minus header and buttons */
             border-radius: 10px;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            width: calc(100% - 40px);
-            z-index: 1000;
-            max-width: 400px;
-        }
-
-        .push-notif-btn {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 50%;
-            font-size: 18px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        .push-notif-btn:hover {
-            background-color: #0056b3;
+            overflow: hidden;
+            position: relative;
         }
 
         .btn-back {
@@ -88,53 +115,47 @@
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            font-family: 'Arial', sans-serif;
             z-index: 1100;
         }
 
         .btn-back:hover {
+            background-color: #0056b3; /* Darker shade for hover effect */
+        }
+
+        .push-notif-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50%;
+            font-size: 24px; /* Larger button for mobile */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .push-notif-btn:hover {
             background-color: #0056b3;
         }
 
-        .directions-panel {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            max-height: 40%;
-            overflow-y: auto;
-            width: 300px;
-            display: none;
-        }
-
-        .popup-content {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
         .hydrant-suggestion {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .hydrant-suggestion h6 {
+        .hydrant-suggestion h4 {
             margin: 0;
-            font-size: 16px;
-            font-weight: bold;
             color: #333;
         }
 
@@ -143,34 +164,41 @@
             color: #666;
         }
 
-        .navigate-btn {
+        .navigate-btn, .show-steps {
             background-color: #007bff;
             color: #fff;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
             font-family: 'Arial', sans-serif;
+            margin-top: 10px;
         }
 
-        .navigate-btn:hover {
-            background-color: #0056b3;
+        .navigate-btn:hover, .show-steps:hover {
+            background-color: #0056b3; /* Darker shade for hover effect */
         }
 
+        /* Responsive styles */
         @media (max-width: 768px) {
-            .floating-card {
-                left: 10px;
-                right: 10px;
-                width: auto;
-                max-width: 100%;
+            #directions {
+                font-size: 14px;
             }
 
-            .directions-panel {
-                width: 90%;
-                left: 50%;
-                transform: translateX(-50%);
+            .hydrant-suggestion {
+                padding: 8px;
+            }
+
+            .navigate-btn, .show-steps {
+                padding: 8px 10px;
+            }
+
+            .btn-back {
+                padding: 8px 15px;
+                font-size: 14px; /* Adjust button size for mobile */
             }
         }
+
     </style>
 </head>
 
@@ -179,39 +207,40 @@
     <!-- Button to trigger back to admin-home -->
     <button class="btn-back" onclick="window.location.href='/admin-home';">Back</button>
 
-    <div id="map-container">
-        <div id="map"></div>
-    </div>
+    <div class="map-card">
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
 
-    <!-- Floating Card for Hydrant Suggestions -->
-    <div class="floating-card">
-        <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
-        <div id="hydrant-suggestions"></div>
-    </div>
+        <div class="bfp-header">
+            <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
+            <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
+            <div id="directions" style="display: none;">Click on the map to create a start and end for the route.</div>
+            <button class="show-steps" onclick="toggleDirections()">Show Steps</button>
+        </div>
 
-    <!-- Push Notification Button -->
-    <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal" onclick="getRecentReports()">
-        &#128276;
-    </button>
+        <!-- Push Notification Button to open the New Reports modal -->
+        <button class="push-notif-btn" data-bs-toggle="modal" data-bs-target="#newReportModal" onclick="getRecentReports()">
+            &#128276;
+        </button>
 
-    <!-- Directions Panel -->
-    <div id="directions-panel" class="directions-panel"></div>
-
-    <!-- Modal for new reports -->
-    <div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="newReportModalLabel">New Community Report</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <ul id="newReportsList" class="list-group">
-                        <!-- Report details will be dynamically inserted here -->
-                    </ul>
+        <!-- Modal for new reports -->
+        <div class="modal fade" id="newReportModal" tabindex="-1" aria-labelledby="newReportModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newReportModalLabel">New Community Report</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="newReportsList" class="list-group">
+                            <!-- Report details will be dynamically inserted here -->
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
 
     <!-- Audio for alerting -->
