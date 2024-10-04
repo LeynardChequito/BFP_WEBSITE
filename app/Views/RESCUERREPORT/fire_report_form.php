@@ -134,8 +134,9 @@
 <div class="form-container">
     <h1>Fire Report Form</h1>
     <form id="fireReportForm" action="<?= site_url('fire-report/store') ?>" method="post" enctype="multipart/form-data">
-        <?= csrf_field() ?>
-        
+    <?= csrf_field() ?>
+    
+    <input type="hidden" name="communityreport_id" id="communityreport_id" value="<?= $communityReport['communityreport_id'] ?>">
         <label for="user_name">Name of Rescuer:</label>
         <input type="text" name="user_name" id="user_name" placeholder="Enter Rescuer's Name" required><br>
 
@@ -222,39 +223,32 @@
     document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById('fireReportForm');
 
-    // Ensure the form exists
-    if (!form) {
-        console.error("Form with ID 'fireReportForm' does not exist.");
-        return;
-    }
+if (!form) {
+    console.error("Form with ID 'fireReportForm' does not exist.");
+    return;
+}
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
+form.addEventListener('submit', function(event) {
+    event.preventDefault();
 
-        // Get community report ID from the passed object
-        const communityReportId = <?= json_encode($communityReport['communityreport_id']) ?>;
-
-        const formData = new FormData(form); // Create FormData object
-        formData.append('communityreport_id', communityReportId); // Append community report ID to FormData
-
-        const xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest
-        xhr.open('POST', form.action, true); // Prepare the request
-        
-        // Handle response
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                document.getElementById('successModal').style.display = "block"; // Show success modal
-            } else {
-                alert('An error occurred while submitting the form. Please try again.');
-            }
-        };
-        
-        xhr.onerror = function () {
+    const formData = new FormData(form);
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', form.action, true);
+    
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            document.getElementById('successModal').style.display = "block"; // Show success modal
+        } else {
             alert('An error occurred while submitting the form. Please try again.');
-        };
-        
-        xhr.send(formData); // Send the request
-    });
+        }
+    };
+    
+    xhr.onerror = function () {
+        alert('An error occurred while submitting the form. Please try again.');
+    };
+    
+    xhr.send(formData); // Send the request
+});
 
     // Close modal functionality
     const closeModal = document.querySelector('.close'); // Ensure the close button is selected after DOM load
