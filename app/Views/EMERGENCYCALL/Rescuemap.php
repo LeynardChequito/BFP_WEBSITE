@@ -343,7 +343,7 @@
             <label for="hydrant-suggestions">Suggested Nearby Fire Hydrants: </label>
             <div id="hydrant-suggestions" name="hydrant-suggestions" class="hydrant-suggestions"></div>
             <div id="directions" style="display: none;">Click on the map to create a start and end for the route.</div>
-            <button id="directions" onclick="toggleDirections()">Show Steps</button>
+            <button id="directions" onclick="toggleDirections()">Show/Hide Steps</button>
         </div>
 
         <!-- Push Notification Button to open the New Reports modal -->

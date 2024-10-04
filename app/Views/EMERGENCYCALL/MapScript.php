@@ -722,39 +722,91 @@ function openModalOnHash() {
 }
 
 // Function to mark a report as submitted and trigger form submission
-function submitReportForm(lat, lng, communityreport_id) {
-    const form = document.getElementById('fireReportForm');
-    if (!form) {
-        console.error("Form with ID 'fireReportForm' does not exist.");
-        alert("The report form is currently unavailable. Please try again later.");
-        return;
+document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById('fireReportForm');
+
+        // Ensure the form exists
+        if (!form) {
+            console.error("Form with ID 'fireReportForm' does not exist.");
+            return;
+        }
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const formData = new FormData(form); // Create FormData object
+            const xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest
+            xhr.open('POST', form.action, true); // Prepare the request
+            
+            // Handle response
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // Show success modal if the response is OK
+                    document.getElementById('successModal').style.display = "block"; 
+                } else {
+                    alert('An error occurred while submitting the form. Please try again.');
+                }
+            };
+            
+            xhr.onerror = function () {
+                alert('An error occurred while submitting the form. Please try again.');
+            };
+            
+            xhr.send(formData); // Send the request
+        });
+
+        // Call other necessary functions here if needed
+        getRecentReports(); // Fetch recent reports when the page loads
+        openModalOnHash(); // Check if the page loads with #newReportModal in the URL hash
+    });
+
+    function submitReportForm(lat, lng, communityreport_id) {
+        const form = document.getElementById('fireReportForm');
+
+        if (!form) {
+            console.error("Form with ID 'fireReportForm' does not exist.");
+            alert("The report form is currently unavailable. Please try again later.");
+            return;
+        }
+
+        form.communityreport_id.value = communityreport_id; // Set the community report ID
+
+        // Use FormData to handle form submission
+        const formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json(); // Assuming server returns JSON
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+            console.log(data); // Log the server response
+            alert('Fire report submitted successfully!');
+            window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
+        })
+        .catch(error => {
+            console.error('Error submitting form:', error);
+            alert('An error occurred while submitting the form. Please try again.');
+        });
     }
 
-    form.communityreport_id.value = communityreport_id; // Set the community report ID
+    // Modal close functionality
+    const closeModal = document.querySelector('.close');
+    closeModal.onclick = function() {
+        document.getElementById('successModal').style.display = "none"; // Hide modal
+    };
 
-    // Use FormData to handle form submission
-    const formData = new FormData(form);
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json(); // Assuming server returns JSON
+    // Function to hide modal when clicking outside of it
+    window.onclick = function(event) {
+        const modal = document.getElementById('successModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
-        throw new Error('Network response was not ok.');
-    })
-    .then(data => {
-        console.log(data); // Log the server response
-        alert('Fire report submitted successfully!');
-        // Redirect or update the UI as needed
-        window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
-    })
-    .catch(error => {
-        console.error('Error submitting form:', error);
-        alert('An error occurred while submitting the form. Please try again.');
-    });
-}
+    };
+    
 // Fetch recent reports if communityreport_id is present in the URL
 if (communityreport_id) {
     fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
