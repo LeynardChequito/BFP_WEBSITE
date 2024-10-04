@@ -165,8 +165,6 @@ class CommunityReportController extends BaseController
         return $this->response->setJSON($reports);
     }
     
-    
-
     public function getLatestReports()
     {
         $communityReportModel = new CommunityReportModel();
@@ -174,7 +172,7 @@ class CommunityReportController extends BaseController
         // Get the current timestamp in Manila timezone
         $manilaTime = new \DateTime('now', new \DateTimeZone('Asia/Manila'));
     
-        // Get the reports, order by newest first
+        // Get the reports, ordered by newest first
         $reports = $communityReportModel->orderBy('timestamp', 'DESC')->findAll();
     
         // Prepare an array to store formatted reports
@@ -193,7 +191,7 @@ class CommunityReportController extends BaseController
             $formattedReports[] = [
                 'communityreport_id' => $report['communityreport_id'],  // Include this in the response
                 'fullName' => $report['fullName'],
-                'fileproof' => base_url('bfpcalapancity/public/community_report/' . $report['fileproof']),
+                'fileproof' => base_url('bfpcalapancity/public/community_report/' . $report['fileproof']), // Full URL path
                 'timestamp' => $timestamp->format('Y-m-d h:i A'),
                 'timeAgo' => $timeAgo,
             ];
@@ -203,7 +201,6 @@ class CommunityReportController extends BaseController
         return $this->response->setJSON($formattedReports);
     }
     
-
 /**
  * Helper function to format the time ago indicator.
  */

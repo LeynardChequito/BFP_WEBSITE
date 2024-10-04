@@ -769,31 +769,34 @@ function submitReportForm(lat, lng, communityreport_id) {
         window.location.href = 'fire-report/create';
     }
 
-    function displayFileProof(fileProofURL, containerId) {
-        const fileProofUrl = `${baseUrl}public/community_report/${fileproof}`;
-        const fullURL = baseURL + fileProofURL;
+    // Function to display the file proof
+function displayFileProof(fileProofURL, containerId) {
+    const fullURL = `${baseUrl}bfpcalapancity/public/community_report/${fileProofURL}`; // Construct full URL
 
-        const fileProofContainer = document.getElementById(containerId);
+    const fileProofContainer = document.getElementById(containerId);
 
-        if (!fileProofContainer) {
-            console.error(`Container with ID ${containerId} not found.`);
-            return;
-        }
-
-        if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
-            const video = document.createElement("video");
-            video.src = fullURL;
-            video.controls = true;
-            fileProofContainer.appendChild(video);
-        } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
-            const img = document.createElement("img");
-            img.src = fullURL;
-            img.alt = "File Proof";
-            fileProofContainer.appendChild(img);
-        } else {
-            fileProofContainer.innerHTML = "Unsupported file type";
-        }
+    if (!fileProofContainer) {
+        console.error(`Container with ID ${containerId} not found.`);
+        return;
     }
+
+    // Check for file type and display accordingly
+    if (fullURL.endsWith(".mp4") || fullURL.endsWith(".mov") || fullURL.endsWith(".avi")) {
+        const video = document.createElement("video");
+        video.src = fullURL;
+        video.controls = true;
+        fileProofContainer.appendChild(video);
+    } else if (fullURL.endsWith(".jpg") || fullURL.endsWith(".jpeg") || fullURL.endsWith(".png")) {
+        const img = document.createElement("img");
+        img.src = fullURL; // Use the constructed full URL
+        img.alt = "File Proof";
+        img.style.maxWidth = "100%"; // Optionally set style
+        fileProofContainer.appendChild(img);
+    } else {
+        fileProofContainer.innerHTML = "Unsupported file type";
+    }
+}
+
 
     function showRouteToRescuer(lat, lng) {
         endCoords = [lng, lat]; // Set the endCoords to the location of the report
