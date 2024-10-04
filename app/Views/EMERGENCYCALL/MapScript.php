@@ -754,11 +754,28 @@ document.addEventListener("DOMContentLoaded", function() {
             xhr.send(formData); // Send the request
         });
 
-        // Call other necessary functions here if needed
-        getRecentReports(); // Fetch recent reports when the page loads
+        // Close modal functionality
+        const closeModal = document.querySelector('.close'); // Ensure the close button is selected after DOM load
+        if (closeModal) {
+            closeModal.onclick = function() {
+                document.getElementById('successModal').style.display = "none"; // Hide modal
+            };
+        }
+
+        // Function to hide modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('successModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        // Fetch recent reports when the page loads
+        getRecentReports();
         openModalOnHash(); // Check if the page loads with #newReportModal in the URL hash
     });
 
+    // Submit report form
     function submitReportForm(lat, lng, communityreport_id) {
         const form = document.getElementById('fireReportForm');
 
@@ -792,21 +809,6 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('An error occurred while submitting the form. Please try again.');
         });
     }
-
-    // Modal close functionality
-    const closeModal = document.querySelector('.close');
-    closeModal.onclick = function() {
-        document.getElementById('successModal').style.display = "none"; // Hide modal
-    };
-
-    // Function to hide modal when clicking outside of it
-    window.onclick = function(event) {
-        const modal = document.getElementById('successModal');
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    };
-    
 // Fetch recent reports if communityreport_id is present in the URL
 if (communityreport_id) {
     fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
