@@ -46,9 +46,10 @@ const baseUrl = "<?= base_url() ?>";
 
     // Function to populate the report in the UI
     function populateReportList(reports) {
-        const newReportsList = document.getElementById('newReportsList');
-        newReportsList.innerHTML = ''; // Clear existing reports
+    const newReportsList = document.getElementById('newReportsList');
+    newReportsList.innerHTML = ''; // Clear existing reports
 
+    // Ensure reports is an array
     if (!Array.isArray(reports)) {
         reports = [reports]; // Wrap single report in an array if necessary
     }
@@ -69,10 +70,6 @@ const baseUrl = "<?= base_url() ?>";
             fileproof,
             timestamp
         } = report;
-
-        reports.forEach(report => {
-        const { communityreport_id, latitude, longitude, fullName, fileproof, timestamp } = report;
-
 
         // Convert latitude and longitude to numbers
         const lat = parseFloat(latitude);
@@ -99,21 +96,12 @@ const baseUrl = "<?= base_url() ?>";
     });
 }
 
-// Fetch the report if communityreport_id is present in the URL
 if (communityreport_id) {
     fetchReportByCommunityReportId(communityreport_id);
 }
-
 function gotoRescueMap() {
     window.location.href = '/rescuemap?openModal=true';
 }
-
-    // Call populateReportList when the modal is shown
-    document.addEventListener('DOMContentLoaded', function() {
-    populateReportList([]);
-});
-
-
 
     // Directions container
     const directions = document.createElement("div");
@@ -713,15 +701,10 @@ const routeLines = L.layerGroup().addTo(map);
             document.getElementById('newReportsList').innerHTML = '<p>No recent reports available</p>'; // Inform the user
         }
     } catch (error) {
-        // Handle JSON parsing error
-        if (error instanceof SyntaxError) {
-            console.error('Response was not valid JSON:', error);
-            document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please check the server response.</p>'; // Inform the user
-        } else {
-            console.error('Error fetching recent reports:', error);
-            document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>'; // Inform the user
-        }
+        console.error('Error fetching recent reports:', error);
+        document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>'; // Inform the user
     }
+
 
     // If communityreport_id exists, fetch specific report
     if (communityreport_id) {
@@ -918,8 +901,8 @@ function fetchReportByCommunityReportId(communityreport_id) {
 
 // Call this function on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
-        // Your existing JavaScript code
-        getRecentReports();
-        openModalOnHash();
-    });
+    updateTime(); // Start the clock
+    getRecentReports(); // Fetch recent reports when the page loads
+    openModalOnHash(); // Check if the page loads with #newReportModal in the URL hash
+});
 </script>
