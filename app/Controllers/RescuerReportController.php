@@ -30,7 +30,7 @@ class RescuerReportController extends BaseController
 
         // Save the data including the path to the file
         $data = [
-            'user_name' => $this->request->getPost('user_name'),
+            'rescuer_name' => $this->request->getPost('rescuer_name'),
             'report_date' => $this->request->getPost('report_date'),
             'start_time' => $this->request->getPost('start_time'),
             'end_time' => $this->request->getPost('end_time'),
@@ -65,7 +65,7 @@ class RescuerReportController extends BaseController
 
         // Save the data including the path to the file
         $data = [
-            'user_name' => $this->request->getPost('user_name'),
+            'rescuer_name' => $this->request->getPost('rescuer_name'),
             'report_date' => $this->request->getPost('report_date'),
             'start_time' => $this->request->getPost('start_time'),
             'end_time' => $this->request->getPost('end_time'),
