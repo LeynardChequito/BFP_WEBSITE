@@ -16,9 +16,9 @@ const baseUrl = "<?= base_url() ?>";
     }
     // Extract the latitude and longitude from the URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const lat = urlParams.get('lat');
-    const lng = urlParams.get('lng');
-    const communityreport_id = urlParams.get('communityreport_id'); // Get communityreport_id from URL
+const lat = urlParams.get('lat');
+const lng = urlParams.get('lng');
+const communityreport_id = urlParams.get('communityreport_id');
 
     // const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs"; //old api-key
     const apiKey = "AAPKac6c1269609841b2a00dd16b90f0ccb8iFjQh8pTb7aadJWaETJip3ISvXcpq_5cB296OQurtGW79gpbXuMKZPe9kx-6mGWl";
@@ -777,50 +777,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Submit report form
     function submitReportForm(lat, lng, communityreport_id) {
-        const form = document.getElementById('fireReportForm');
-
-        if (!form) {
-            console.error("Form with ID 'fireReportForm' does not exist.");
-            alert("The report form is currently unavailable. Please try again later.");
-            return;
-        }
-
-        form.communityreport_id.value = communityreport_id; // Set the community report ID
-
-        // Use FormData to handle form submission
-        const formData = new FormData(form);
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json(); // Assuming server returns JSON
-            }
-            throw new Error('Network response was not ok.');
-        })
-        .then(data => {
-            console.log(data); // Log the server response
-            alert('Fire report submitted successfully!');
-            window.location.href = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
-        })
-        .catch(error => {
-            console.error('Error submitting form:', error);
-            alert('An error occurred while submitting the form. Please try again.');
-        });
-    }
-// Fetch recent reports if communityreport_id is present in the URL
-if (communityreport_id) {
-    fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
-    .then(response => response.json())
-    .then(report => populateReportList([report]))
-    .catch(error => console.error('Error fetching report:', error));
+    // Construct the URL for the fire report form
+    const fireReportFormUrl = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
+    
+    // Redirect to the fire report form
+    window.location.href = fireReportFormUrl;
 }
 
-// On DOMContentLoaded, initialize the necessary functions
-document.addEventListener('DOMContentLoaded', function() {
-    updateTime(); // Start the clock
-});
 
   function toggleDirections() {
         const directionsDiv = document.getElementById("directions");

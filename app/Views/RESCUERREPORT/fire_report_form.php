@@ -120,11 +120,14 @@
 <div class="form-container">
     <h1>Fire Report Form</h1>
     <form id="fireReportForm" action="<?= site_url('fire-report/store') ?>" method="post" enctype="multipart/form-data">
-        <?= csrf_field() ?>
-        <input type="hidden" name="communityreport_id" id="communityreport_id" value="<?= isset($communityReport) ? $communityReport['communityreport_id'] : ''; ?>">
-
-        <label for="user_name">Name of Rescuer:</label>
-        <input type="text" name="user_name" id="user_name" placeholder="Enter Rescuer's Name" required>
+    <?= csrf_field() ?>
+    <input type="hidden" name="communityreport_id" id="communityreport_id">
+<input type="hidden" name="latitude" id="latitude">
+<input type="hidden" name="longitude" id="longitude">
+<input type="hidden" name="full_name" id="full_name" placeholder="Full Name">
+   
+    <label for="rescuer_name">Name of Rescuer:</label>
+<input type="text" name="rescuer_name" id="rescuer_name" placeholder="Enter Rescuer's Name" required>
 
         <label for="report_date">Date:</label>
         <input type="date" name="report_date" id="report_date" required>
@@ -150,12 +153,6 @@
             <option value="Natural">Natural</option>
             <option value="Other">Other</option>
         </select>
-
-        <!-- <label for="fire_undetermined">Is the fire under investigation or designate "undetermined"?</label>
-        <select name="fire_undetermined" id="fire_undetermined" required>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select> -->
 
         <label for="property_damage_cost">Select Property Damage Cost:</label>
         <select name="property_damage_cost" id="property_damage_cost" required onchange="toggleInputField()">
@@ -203,62 +200,100 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById('fireReportForm');
+const baseUrl = "<?= base_url(); ?>"; // Ensure this is defined before its first usage
 
-        if (!form) {
-            console.error("Form with ID 'fireReportForm' does not exist.");
-            return; // Stop execution if the form is not found
-        }
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById('fireReportForm');
 
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+    if (!form) {
+        console.error("Form with ID 'fireReportForm' does not exist.");
+        return; 
+    }
 
-            const formData = new FormData(form);
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', form.action, true); // Prepare the request
+    const communityReportId = new URLSearchParams(window.location.search).get('communityreport_id');
+    if (communityReportId) {
+        fetchCommunityReportData(communityReportId);
+    }
 
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    document.getElementById('successModal').style.display = "block"; // Show success modal
-                } else {
-                    alert('An error occurred while submitting the form. Please try again.');
-                }
-            };
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-            xhr.onerror = function () {
+        const formData = new FormData(form); 
+        console.log('Submitting Form Data:', Array.from(formData.entries())); 
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', form.action, true);
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                document.getElementById('successModal').style.display = "block"; 
+            } else {
+                console.error('Form submission failed:', xhr.responseText); 
                 alert('An error occurred while submitting the form. Please try again.');
-            };
-
-            xhr.send(formData); // Send the request
-        });
-
-        // Close modal functionality
-        const closeModal = document.querySelector('.close'); // Select the close button
-        if (closeModal) {
-            closeModal.onclick = function() {
-                document.getElementById('successModal').style.display = "none"; // Hide modal
-            };
-        }
-
-        // Handle clicking outside of the modal to close it
-        window.onclick = function(event) {
-            const modal = document.getElementById('successModal');
-            if (event.target == modal) {
-                modal.style.display = "none";
             }
         };
+
+        xhr.onerror = function() {
+            alert('An error occurred while submitting the form. Please try again.');
+        };
+
+        xhr.send(formData);
     });
 
-    function toggleInputField() {
-        const select = document.getElementById('property_damage_cost');
-        const customAmountField = document.getElementById('custom_amount_field');
+    const closeModal = document.querySelector('.close'); 
+    if (closeModal) {
+        closeModal.onclick = function () {
+            document.getElementById('successModal').style.display = "none"; 
+        };
+    }
 
-        if (select.value === 'other') {
-            customAmountField.style.display = 'block'; // Show custom amount field
-        } else {
-            customAmountField.style.display = 'none'; // Hide custom amount field
+    window.onclick = function (event) {
+        const modal = document.getElementById('successModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
+    };
+});
+
+
+// Function to fetch community report data
+document.addEventListener('DOMContentLoaded', function() {
+    const communityReportId = new URLSearchParams(window.location.search).get('communityreport_id');
+    if (communityReportId) {
+        fetchCommunityReportData(communityReportId); // Fetch report data on page load
+    }
+});
+
+function fetchCommunityReportData(communityReportId) {
+    fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityReportId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+                if (data) {
+                    document.getElementById('communityreport_id').value = data.communityreport_id || ''; 
+                    document.getElementById('latitude').value = data.latitude || '';
+                    document.getElementById('longitude').value = data.longitude || '';
+
+                    const fullNameInput = document.getElementById('full_name');
+                    if (fullNameInput) {
+                        fullNameInput.value = data.fullName || ''; 
+                    }
+
+                    const fileProofContainer = document.getElementById('fileProofContainer');
+                    if (fileProofContainer) {
+                        fileProofContainer.innerHTML = `
+                            <img src="${baseUrl}bfpcalapancity/public/community_report/${data.fileproof}" alt="File Proof" style="max-width: 100px; height: auto;">
+                        `;
+                    }
+                }
+            })
+            .catch(error => {
+            console.error('Error fetching community report data:', error);
+        });
     }
 </script>
 

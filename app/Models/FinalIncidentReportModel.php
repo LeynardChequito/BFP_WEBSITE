@@ -7,12 +7,12 @@ use CodeIgniter\Model;
 class FinalIncidentReportModel extends Model
 {
     protected $table            = 'final_incident_report';
-    protected $primaryKey       = 'final_report_id';
+    protected $primaryKey       = 'finalreport_id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['rescuerreport_id', 'communityreport_id', 'user_name', 'report_date', 
+    protected $allowedFields    = ['communityreport_id', 'rescuer_name', 'report_date', 
         'start_time', 'end_time', 'address', 'cause_of_fire', 'fire_undetermined', 
         'property_damage_cost', 'number_of_injuries', 'additional_information', 
         'photo', 'latitude', 'longitude', 'fullName', 'fileproof', 'timestamp'];
@@ -25,7 +25,20 @@ class FinalIncidentReportModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+  // In FinalIncidentReportModel
+protected $validationRules = [
+    'rescuer_name' => 'required|min_length[3]|max_length[50]',
+    'report_date' => 'required|valid_date',
+    'start_time' => 'required',
+    'end_time' => 'required',
+    'address' => 'required',
+    'cause_of_fire' => 'required',
+    'property_damage_cost' => 'required',
+    'number_of_injuries' => 'required|integer',
+    'additional_information' => 'permit_empty|max_length[255]',
+    'photo' => 'permit_empty|is_image[photo]|max_size[photo,2048]', // Adjust size limit as needed
+];
+
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;

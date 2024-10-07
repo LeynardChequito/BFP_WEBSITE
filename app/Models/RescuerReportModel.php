@@ -13,7 +13,7 @@ class RescuerReportModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'user_name',
+        'rescuer_name',
         'report_date',
         'start_time',
         'end_time',
