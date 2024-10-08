@@ -7,7 +7,7 @@ use CodeIgniter\Model;
 class FinalIncidentReportModel extends Model
 {
     protected $table            = 'final_incident_report';
-    protected $primaryKey       = 'finalreport_id';
+    protected $primaryKey       = 'final_report_id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
