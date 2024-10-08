@@ -23,7 +23,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
+            padding: 15px 15px;
             position: flex;
             top: 0;
             left: 0;
@@ -32,13 +32,37 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* Logo Styling */
-        .headerbar .logo {
-            max-width: 160px;
-            height: auto;
-            display: flex;
-            align-items: center;
-        }
+         /* Logo Styling */
+.headerbar .logo {
+    max-width: 80px; /* Limit the width to maintain aspect ratio */
+    height: auto;
+    display: flex;
+    align-items: center;
+}
+
+/* Logo Container (for additional spacing or alignment adjustments) */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 10px;
+}
+
+.logo-container img {
+    max-width: 80%; /* Ensures image doesn't exceed the container's width */
+    height: auto;
+    border-radius: 10px; /* Optional: add a slight rounding of corners */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for a modern look */
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    color: white;
+    font-weight: bold;
+    margin-left: 10px; /* Add some space between the image and the text */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Optional: add shadow to make text stand out */
+}
+
 
         /* Notification Container */
         .dropdown-menu {
@@ -90,38 +114,7 @@
             border-radius: 50%;
             font-size: 12px;
         }
-        /* Logo Styling */
-.headerbar .logo {
-    max-width: 160px; /* Limit the width to maintain aspect ratio */
-    height: auto;
-    display: flex;
-    align-items: center;
-}
-
-/* Logo Container (for additional spacing or alignment adjustments) */
-.logo-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0 15px;
-}
-
-.logo-container img {
-    max-width: 100%; /* Ensures image doesn't exceed the container's width */
-    height: 20px;
-    height: auto;
-    border-radius: 10px; /* Optional: add a slight rounding of corners */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for a modern look */
-}
-
-.logo-text {
-    font-size: 1.5rem;
-    color: white;
-    font-weight: bold;
-    margin-left: 10px; /* Add some space between the image and the text */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Optional: add shadow to make text stand out */
-}
-
+       
     </style>
 </head>
 
