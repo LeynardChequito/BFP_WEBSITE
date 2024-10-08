@@ -253,12 +253,25 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <script type="module">
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Ensure the location is obtained after DOM is fully loaded
             getLocation();
         });
-
-
 
         const firebaseConfig = {
             apiKey: "AIzaSyAiXnOQoNLOxLWEAw5h5JOTJ5Ad8Pcl6R8",
@@ -380,21 +393,6 @@
                     }
                 });
             }
-        }
-
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition);
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-        }
-
-        function showPosition(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
         }
 
         // Update Philippine time
