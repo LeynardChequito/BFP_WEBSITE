@@ -108,6 +108,7 @@
 
 .logo-container img {
     max-width: 100%; /* Ensures image doesn't exceed the container's width */
+    height: 20px;
     height: auto;
     border-radius: 10px; /* Optional: add a slight rounding of corners */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for a modern look */
@@ -128,8 +129,8 @@
 
     <div class="headerbar">
     <div class="logo-container">
-        <img src="<?= base_url(); ?>/bfpcalapancity/public/images/Banner03_18Aug2018.png" alt="BFP Logo" class="logo">
-        <div class="logo-text">BFP Admin Dashboard</div> <!-- Optional text next to the logo -->
+        <img src="<?= base_url(); ?>/bfpcalapancity/public/design/logo.png" alt="BFP Logo" class="logo">
+        <div class="logo-text">BFP Admin Dashboard</div> 
     </div>
 
         <!-- Notification Dropdown -->
