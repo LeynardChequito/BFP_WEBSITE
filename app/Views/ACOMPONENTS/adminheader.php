@@ -112,7 +112,7 @@
         </div>
 
         <!-- View Map button -->
-        <a class="view-map-btn" href="<?= site_url('rescuemap') ?>">View Map</a>
+        <!-- <a class="view-map-btn" href="<?= site_url('rescuemap') ?>">View Map</a> -->
 
         <!-- Philippine time -->
         <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
