@@ -79,11 +79,30 @@ const communityreport_id = urlParams.get('communityreport_id');
         listItem.className = 'list-group-item report-item';
         listItem.id = `report-${communityreport_id}`;
 
+        // Determine the file type of `fileproof` by its extension
+        const fileExtension = fileproof.split('.').pop().toLowerCase();
+        let fileDisplay = '';
+
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+            // Display image
+            fileDisplay = `<img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" style="max-width: 100px; height: auto;">`;
+        } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+            // Display video
+            fileDisplay = `
+                <video controls style="max-width: 200px; height: auto;">
+                    <source src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" type="video/${fileExtension}">
+                    Your browser does not support the video tag.
+                </video>`;
+        } else {
+            // Unknown file type
+            fileDisplay = `<p>Unsupported file type: ${fileproof}</p>`;
+        }
+
         listItem.innerHTML = `
             <h4>User in Need: ${fullName}</h4>
             <p><strong>Timestamp:</strong> ${timestamp}</p>
             <p><strong>File Proof:</strong></p>
-            <img src="${baseUrl}bfpcalapancity/public/community_report/${fileproof}" alt="File Proof" style="max-width: 100px; height: auto;">
+            ${fileDisplay}
             <button class="btn btn-primary" onclick="showRouteToRescuer(${latitude}, ${longitude})">Show Route</button>
             <button class="btn btn-secondary" onclick="submitReportForm(${latitude}, ${longitude}, ${communityreport_id})">Submit Fire Report</button>
         `;
