@@ -90,19 +90,53 @@
             border-radius: 50%;
             font-size: 12px;
         }
+        /* Logo Styling */
+.headerbar .logo {
+    max-width: 160px; /* Limit the width to maintain aspect ratio */
+    height: auto;
+    display: flex;
+    align-items: center;
+}
+
+/* Logo Container (for additional spacing or alignment adjustments) */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 15px;
+}
+
+.logo-container img {
+    max-width: 100%; /* Ensures image doesn't exceed the container's width */
+    height: auto;
+    border-radius: 10px; /* Optional: add a slight rounding of corners */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for a modern look */
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    color: white;
+    font-weight: bold;
+    margin-left: 10px; /* Add some space between the image and the text */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Optional: add shadow to make text stand out */
+}
+
     </style>
 </head>
 
 <body>
 
     <div class="headerbar">
-        <img src="<?= base_url(); ?>/bfpcalapancity/public/images/Banner03_18Aug2018.png" alt="Logo" class="logo">
+    <div class="logo-container">
+        <img src="<?= base_url(); ?>/bfpcalapancity/public/images/Banner03_18Aug2018.png" alt="BFP Logo" class="logo">
+        <div class="logo-text">BFP Admin Dashboard</div> <!-- Optional text next to the logo -->
+    </div>
 
         <!-- Notification Dropdown -->
         <div class="dropdown">
             <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-bell notification-icon"></i>
-                <span id="notification-counter" class="badge-counter">0</span>
+                <!-- <span id="notification-counter" class="badge-counter">0</span> -->
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                 <div id="notificationContainer">
