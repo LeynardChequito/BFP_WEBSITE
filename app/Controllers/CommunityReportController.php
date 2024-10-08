@@ -29,54 +29,58 @@ class CommunityReportController extends BaseController
     }
 
     public function submitCommunityReport()
-    {
-        helper(['form', 'url', 'session']);
-        
-        $rules = [
-            'fullName' => 'required|max_length[255]',
-            'latitude' => 'required|decimal',
-            'longitude' => 'required|decimal',
-            'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
-            'communityreport_id' => 'required|integer' // Add validation rule for communityreport_id
-        ];
-        
-        if ($this->validate($rules)) {
-            $communityReportModel = new CommunityReportModel();
-        
-            $fileproof = $this->request->getFile('fileproof');
-            if ($fileproof->isValid() && !$fileproof->hasMoved()) {
-                $fileproofName = $fileproof->getRandomName();
-                $fileproof->move(ROOTPATH . 'public/community_report/', $fileproofName);
-        
-                $data = [
-                    'communityreport_id' => $this->request->getVar('communityreport_id'), // Use the communityreport_id
-                    'fullName' => $this->request->getVar('fullName'),
-                    'latitude' => $this->request->getVar('latitude'),
-                    'longitude' => $this->request->getVar('longitude'),
-                    'fileproof' => $fileproofName, // Just store the filename
-                ];
-        
-                $communityReportModel->insert($data);
-        
-                // Additional logic like sending notifications...
+{
+    helper(['form', 'url', 'session']);
     
-                return $this->response->setStatusCode(200)->setJSON([
-                    'success' => true,
-                    'message' => 'Emergency Call successfully submitted!',
-                ]);
-            } else {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Failed to upload file proof.',
-                ]);
-            }
+    // Removed communityreport_id from rules
+    $rules = [
+        'fullName' => 'required|max_length[255]',
+        'latitude' => 'required|decimal',
+        'longitude' => 'required|decimal',
+        'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
+        // 'communityreport_id' => 'required|integer' // Removed this line
+    ];
+    
+    if ($this->validate($rules)) {
+        $communityReportModel = new CommunityReportModel();
+    
+        $fileproof = $this->request->getFile('fileproof');
+        if ($fileproof->isValid() && !$fileproof->hasMoved()) {
+            $fileproofName = $fileproof->getRandomName();
+            $fileproof->move(ROOTPATH . 'public/community_report/', $fileproofName);
+    
+            $data = [
+                // Removed communityreport_id from data
+                'fullName' => $this->request->getVar('fullName'),
+                'latitude' => $this->request->getVar('latitude'),
+                'longitude' => $this->request->getVar('longitude'),
+                'fileproof' => $fileproofName, // Just store the filename
+            ];
+    
+            $communityReportModel->insert($data);
+    
+            // Additional logic like sending notifications...
+            return $this->response->setStatusCode(200)->setJSON([
+                'success' => true,
+                'message' => 'Emergency Call successfully submitted!',
+            ]);
         } else {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => $this->validator->getErrors(),
+                'message' => 'Failed to upload file proof.',
             ]);
         }
+    } else {
+        // Collecting all errors
+        $errors = $this->validator->getErrors();
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Validation failed',
+            'errors' => $errors // Return detailed errors
+        ]);
     }
+}
+
     
     
     public function sendPushNotificationToUser($token, $title, $body, $imageUrl = null)

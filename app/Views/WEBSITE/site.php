@@ -221,12 +221,12 @@
                     <button type="button" class="close" onclick="closeModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
+                    <form id="emergencyForm" action="<?= site_url('communityreport/submit') ?>" enctype="multipart/form-data" method="post">
 
-                <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" /> 
-                
-                
-                    <div class="form-group">
+                        <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
+
+
+                        <div class="form-group">
                             <label for="fullName">Your Name:</label>
                             <input type="text" id="fullName" name="fullName" class="form-control readonly" value="<?= session('fullName') ?>" readonly>
                         </div>
@@ -253,10 +253,10 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <script type="module">
-document.addEventListener('DOMContentLoaded', function() {
-        // Ensure the location is obtained after DOM is fully loaded
-        getLocation();
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure the location is obtained after DOM is fully loaded
+            getLocation();
+        });
 
 
 
@@ -277,20 +277,22 @@ document.addEventListener('DOMContentLoaded', function() {
         let mToken;
 
         // Retrieve FCM token for the current device
-        messaging.getToken({
-                vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
-            })
-            .then((currentToken) => {
-                if (currentToken) {
-                    console.log('Token retrieved:', currentToken);
-                    mToken = currentToken;
-                } else {
-                    console.log('No registration token available.');
-                }
-            })
-            .catch((error) => {
-                console.error('Error retrieving token:', error);
-            });
+        function getToken() {
+            messaging.getToken({
+                    vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+                })
+                .then((currentToken) => {
+                    if (currentToken) {
+                        console.log('Token retrieved:', currentToken);
+                    } else {
+                        console.log('No registration token available.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error retrieving token:', error);
+                });
+        }
+
 
         // Handle incoming messages (while the app is in the foreground)
         messaging.onMessage((payload) => {
@@ -298,52 +300,70 @@ document.addEventListener('DOMContentLoaded', function() {
             displayNotification(payload.notification);
         });
 
+        window.openModal = function() {
+        document.getElementById("myModal").style.display = "block";
+        getLocation(); // Get the user's current location
+    };
+
+    window.closeModal = function() {
+        document.getElementById("myModal").style.display = "none";
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ensure the location is obtained after DOM is fully loaded
+        getLocation();
+
         // Form submission logic
-        document.addEventListener('DOMContentLoaded', function() {
-    const emergencyForm = document.getElementById('emergencyForm');
+        const emergencyForm = document.getElementById('emergencyForm');
 
-    if (emergencyForm) {
-        emergencyForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+        if (emergencyForm) {
+            emergencyForm.addEventListener('submit', function(event) {
+                event.preventDefault();
 
-            const formData = new FormData(this);
-            const xhr = new XMLHttpRequest();
-xhr.open("POST", "https://bfpcalapancity.online/communityreport/submit", true);
+                const formData = new FormData(this);
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "https://bfpcalapancity.online/communityreport/submit", true);
 
-xhr.onload = function() {
-    try {
-        const contentType = xhr.getResponseHeader("content-type");
+                xhr.onload = function() {
+                    try {
+                        const contentType = xhr.getResponseHeader("content-type");
 
-        if (contentType && contentType.includes("application/json")) {
-            const response = JSON.parse(xhr.responseText);
+                        if (contentType && contentType.includes("application/json")) {
+                            const response = JSON.parse(xhr.responseText);
 
-            if (response.success) {
-                alert(response.message);
-                triggerNotification("New Emergency Call", response.message);
-                closeModal();
-            } else {
-                alert("Form submission failed: " + response.message);
-            }
-        } else {
-            console.error("Unexpected response type:", xhr.responseText);
-            alert("Unexpected response from server. Please check logs.");
+                            if (response.success) {
+                                alert(response.message);
+                                triggerNotification("New Emergency Call", response.message);
+                                closeModal();
+                            } else {
+                                const errorMessages = response.errors
+                                    ? Object.values(response.errors).join(', ')
+                                    : 'Unknown error occurred';
+                                alert("Form submission failed: " + errorMessages);
+                            }
+                        } else {
+                            console.error("Unexpected response type:", xhr.responseText);
+                            alert("Unexpected response from server. Please check logs.");
+                        }
+                    } catch (error) {
+                        console.error("Error parsing the response as JSON:", error);
+                        alert("An error occurred. Please try again.");
+                    }
+                };
+
+                xhr.send(formData); // Don't forget to send the form data
+            });
         }
-    } catch (error) {
-        console.error("Error parsing the response as JSON:", error);
-        alert("An error occurred. Please try again.");
-    }
-};
 
-xhr.onerror = function() {
-    console.error("Request failed");
-    alert("An error occurred while submitting the form. Please check your connection and try again.");
-};
-
-xhr.send(formData);
-
-        });
-    }
-});
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch((error) => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        }
 
         // Trigger a notification
         function triggerNotification(title, body) {
@@ -363,36 +383,19 @@ xhr.send(formData);
         }
 
         function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            alert("Geolocation is not supported by this browser.");
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
         }
-    }
 
-    function showPosition(position) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        document.getElementById('latitude').value = lat;
-        document.getElementById('longitude').value = lng;
-    }
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Other form submission logic, Firebase initialization, etc.
-
-            // Make openModal globally accessible
-            window.openModal = function() {
-                document.getElementById("myModal").style.display = "block";
-                getLocation(); // Get the user's current location
-            };
-
-            // Make closeModal globally accessible
-            window.closeModal = function() {
-                document.getElementById("myModal").style.display = "none";
-            };
-        });
-
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+        }
 
         // Update Philippine time
         function updatePhilippineTime() {
@@ -407,6 +410,7 @@ xhr.send(formData);
         }
 
         setInterval(updatePhilippineTime, 1000);
+    });
     </script>
 
     <!-- Your other scripts -->
