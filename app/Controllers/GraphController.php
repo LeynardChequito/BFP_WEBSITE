@@ -4,37 +4,41 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\RescuerReportModel;
+use App\Models\FinalIncidentReportModel; 
 
 class GraphController extends BaseController
 {
     protected $rescuerReportModel;
+    protected $finalIncidentReportModel;
 
     public function __construct()
     {
         $this->rescuerReportModel = new RescuerReportModel();
+        $this->finalIncidentReportModel = new FinalIncidentReportModel(); 
     }
 
-    // Render the graph view
+
     public function graph()
     {
         return view('ACOMPONENTS/GRAPH/graph');
     }
 
-    // Fetch reports based on the time period (weekly, monthly, yearly)
+ 
     public function getReports()
     {
-        // Get the selected time period and month (if applicable)
-        $timePeriod = $this->request->getVar('timePeriod') ?? 'weekly';
-        $selectedMonth = $this->request->getVar('month') ?? null;
+        
+        $rescuerReports = $this->rescuerReportModel->findAll();
+        $finalIncidentReports = $this->finalIncidentReportModel->findAll();
 
-        $model = new RescuerReportModel();
-        $reports = $model->findAll(); // Ensure this fetches data from the database
+        // Merge both sets of reports into one array (assuming they have similar structure)
+        $reports = array_merge($rescuerReports, $finalIncidentReports);
 
+        // If no reports found, return an empty array
         if (empty($reports)) {
             return $this->response->setJSON([]); // Return an empty array if no reports are found
         }
-    
-        return $this->response->setJSON($reports);
+
+        return $this->response->setJSON($reports); // Return all merged reports as JSON
     }
 
     public function getReport()
@@ -43,8 +47,12 @@ class GraphController extends BaseController
         $timePeriod = $this->request->getVar('timePeriod') ?? 'weekly';
         $selectedMonth = $this->request->getVar('month') ?? null;
 
-        $model = new RescuerReportModel();
-        $reports = $model->findAll(); // Ensure this fetches data from the database
+        // Fetch all data from RescuerReportModel and FinalIncidentReportModel
+        $rescuerReports = $this->rescuerReportModel->findAll();
+        $finalIncidentReports = $this->finalIncidentReportModel->findAll();
+
+        // Merge both sets of reports into one array
+        $reports = array_merge($rescuerReports, $finalIncidentReports);
 
         // Process data based on the selected time period
         switch ($timePeriod) {
@@ -65,6 +73,7 @@ class GraphController extends BaseController
         // Return the processed data as JSON
         return $this->response->setJSON($data);
     }
+
     // Function to calculate weekly injuries for a specific month
     private function calculateWeeklyInjuries($reports, $selectedMonth)
     {
