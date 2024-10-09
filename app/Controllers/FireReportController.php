@@ -38,7 +38,13 @@ class FireReportController extends BaseController
         // Prepare final report data
         $finalData = [
             'communityreport_id' => $communityReportId,
-            'rescuer_name' => $this->request->getPost('rescuer_name'), // Correct field name
+            'fullName' => $communityReport['fullName'],
+            'latitude' => $communityReport['latitude'],
+            'longitude' => $communityReport['longitude'],
+            'fileproof' => $communityReport['fileproof'],
+            'timestamp' => $communityReport['timestamp'],
+            
+            'rescuer_name' => $this->request->getPost('rescuer_name'),
             'report_date' => $this->request->getPost('report_date'),
             'start_time' => $this->request->getPost('start_time'),
             'end_time' => $this->request->getPost('end_time'),
@@ -48,10 +54,7 @@ class FireReportController extends BaseController
             'number_of_injuries' => $this->request->getPost('number_of_injuries'),
             'additional_information' => $this->request->getPost('additional_information'),
             'photo' => $this->request->getFile('photo') ? $this->savePhoto($this->request->getFile('photo')) : null,
-            'latitude' => $communityReport['latitude'],
-            'longitude' => $communityReport['longitude'],
-            'fullName' => $communityReport['fullName'],
-            'fileproof' => $communityReport['fileproof']
+            
         ];
 
         // Validate data before insertion

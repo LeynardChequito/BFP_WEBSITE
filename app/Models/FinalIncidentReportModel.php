@@ -12,11 +12,24 @@ class FinalIncidentReportModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['communityreport_id', 'rescuer_name', 'report_date', 
-        'start_time', 'end_time', 'address', 'cause_of_fire', 'fire_undetermined', 
-        'property_damage_cost', 'number_of_injuries', 'additional_information', 
-        'photo', 'latitude', 'longitude', 'fullName', 'fileproof', 'timestamp'];
-
+    protected $allowedFields    = [
+        'communityreport_id', 
+        'fullName', 
+        'latitude', 
+        'longitude', 
+        'fileproof', 
+        'timestamp',
+        'rescuer_name',
+        'report_date', 
+        'start_time', 
+        'end_time', 
+        'address', 
+        'cause_of_fire',
+        'property_damage_cost', 
+        'number_of_injuries', 
+        'additional_information', 
+        'photo' ];
+        
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
