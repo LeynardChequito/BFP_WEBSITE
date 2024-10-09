@@ -118,5 +118,17 @@ $routes->get('rescuer-report/success', function () {
     return view('RESCUERREPORT/success');
 });
 
+$routes->group('rescuer', function($routes) {
+    $routes->get('final-incident-report', 'FinalIncidentReportController::finalreport');
+    $routes->get('final-incident-report/create', 'FinalIncidentReportController::create');
+    $routes->post('final-incident-report/store', 'FinalIncidentReportController::store');
+    $routes->get('final-incident-report/edit/(:num)', 'FinalIncidentReportController::edit/$1');
+    $routes->post('final-incident-report/update/(:num)', 'FinalIncidentReportController::update/$1');
+    $routes->post('final-incident-report/delete/(:num)', 'FinalIncidentReportController::delete/$1');
+    $routes->get('final-incident-report/export/pdf/(:num)', 'FinalIncidentReportController::exportPdf/$1');
+    $routes->get('final-incident-report/export/excel/(:num)', 'FinalIncidentReportController::exportExcel/$1');
+    $routes->get('final-incident-report/preview/pdf/(:num)', 'FinalIncidentReportController::previewPdf/$1');
+    $routes->get('final-incident-report/preview/excel/(:num)', 'FinalIncidentReportController::previewExcel/$1');
+});
 
 $routes->get('testemail', 'TestEmailController::index',);

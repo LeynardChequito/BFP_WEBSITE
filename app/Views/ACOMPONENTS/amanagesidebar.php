@@ -19,6 +19,11 @@
                     <i class="fas fa-images mr-2"></i>Manage Carousel
                 </a>
             </li>
+            <li>
+                <a href="<?= site_url('rescuer/final-incident-report') ?>">
+                    <i class="fas fa-images mr-2"></i>Manage Final Report
+                </a>
+            </li>
             <hr style="background-color: white; height: 2px; border: none;">
 
             
