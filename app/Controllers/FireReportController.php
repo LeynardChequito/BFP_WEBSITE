@@ -43,7 +43,6 @@ class FireReportController extends BaseController
             'longitude' => $communityReport['longitude'],
             'fileproof' => $communityReport['fileproof'],
             'timestamp' => $communityReport['timestamp'],
-            
             'rescuer_name' => $this->request->getPost('rescuer_name'),
             'report_date' => $this->request->getPost('report_date'),
             'start_time' => $this->request->getPost('start_time'),
@@ -54,11 +53,11 @@ class FireReportController extends BaseController
             'number_of_injuries' => $this->request->getPost('number_of_injuries'),
             'additional_information' => $this->request->getPost('additional_information'),
             'photo' => $this->request->getFile('photo') ? $this->savePhoto($this->request->getFile('photo')) : null,
-            
         ];
 
         // Validate data before insertion
         if (!$finalModel->insert($finalData)) {
+            // Log the validation errors
             log_message('error', 'Error inserting final incident report: ' . json_encode($finalModel->errors()));
             return $this->response->setJSON(['success' => false, 'message' => 'Error saving final incident report', 'errors' => $finalModel->errors()]);
         }
@@ -71,6 +70,7 @@ class FireReportController extends BaseController
         return $this->response->setJSON(['success' => false, 'message' => 'An internal error occurred. Please try again later.']);
     }
 }
+
 
 public function getReportByCommunityReportId($id)
 {

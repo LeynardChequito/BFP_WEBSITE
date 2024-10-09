@@ -39,7 +39,7 @@ class FinalIncidentReportModel extends Model
 
     // Validation
   // In FinalIncidentReportModel
-protected $validationRules = [
+  protected $validationRules = [
     'rescuer_name' => 'required|min_length[3]|max_length[50]',
     'report_date' => 'required|valid_date',
     'start_time' => 'required',
@@ -49,8 +49,9 @@ protected $validationRules = [
     'property_damage_cost' => 'required',
     'number_of_injuries' => 'required|integer',
     'additional_information' => 'permit_empty|max_length[255]',
-    'photo' => 'permit_empty|is_image[photo]|max_size[photo,2048]', // Adjust size limit as needed
+    'photo' => 'permit_empty|is_image[photo]|max_size[photo,2048]',
 ];
+
 
     protected $validationMessages   = [];
     protected $skipValidation       = false;
