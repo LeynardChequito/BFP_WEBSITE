@@ -703,26 +703,21 @@ const routeLines = L.layerGroup().addTo(map);
     try {
         const response = await fetch('https://bfpcalapancity.online/reports-recent');
 
-        // Check if the response is OK (status in the range 200-299)
         if (!response.ok) {
-            console.error('Error fetching recent reports:', response.statusText);
-            throw new Error('Failed to fetch recent reports');
+            throw new Error('Network response was not ok');
         }
 
-        // Try to parse JSON response
         const data = await response.json();
-
-        // If the data is not an array, handle it accordingly
         if (Array.isArray(data)) {
-            populateReportList(data); // Pass data to populateReportList
+            populateReportList(data);
         } else {
-            console.error('No recent reports available');
-            document.getElementById('newReportsList').innerHTML = '<p>No recent reports available</p>'; // Inform the user
+            document.getElementById('newReportsList').innerHTML = '<p>No recent reports available</p>';
         }
     } catch (error) {
         console.error('Error fetching recent reports:', error);
-        document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>'; // Inform the user
+        document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>';
     }
+
 
 
     // If communityreport_id exists, fetch specific report
