@@ -480,43 +480,38 @@ const routeLines = L.layerGroup().addTo(map);
     let endCoords = null;
 
     async function updateRoute() {
-        if (!startCoords || !endCoords) {
-            alert("Rescuer location or report location is missing. Please try again.");
-            return;
-        }
-
-        const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
-
-        try {
-            const response = await arcgisRest.solveRoute({
-                stops: [startCoords, endCoords],
-                endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
-                authentication
-            });
-
-            routeLines.clearLayers(); // Clear previous route
-            L.geoJSON(response.routes.geoJson).addTo(routeLines); // Add new route to map
-
-            // Display directions
-            const directionsHTML = response.directions[0].features.map(f => {
-                const {
-                    text,
-                    length,
-                    time
-                } = f.attributes;
-                return `<p>${text} (${length.toFixed(2)} km, ${time.toFixed(2)} minutes)</p>`;
-            }).join("");
-
-            // Show directions panel and add the route details
-            const directionsDiv = document.getElementById("directions");
-            directionsDiv.innerHTML = directionsHTML;
-            directionsDiv.style.display = "block"; // Show directions panel
-
-        } catch (error) {
-            console.error("Error calculating route:", error);
-            alert("There was a problem calculating the route. Please try again.");
-        }
+    if (!startCoords || !endCoords) {
+        alert("Rescuer location or report location is missing. Please try again.");
+        return;
     }
+
+    const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
+
+    try {
+        const response = await arcgisRest.solveRoute({
+            stops: [startCoords, endCoords],
+            endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
+            authentication
+        });
+
+        routeLines.clearLayers(); // Clear previous route
+        L.geoJSON(response.routes.geoJson).addTo(routeLines); // Add new route to map
+
+        // Display directions
+        const directionsHTML = response.directions[0].features.map(f => {
+            const { text, length, time } = f.attributes;
+            return `<p>${text} (${length.toFixed(2)} km, ${time.toFixed(2)} minutes)</p>`;
+        }).join("");
+
+        const directionsDiv = document.getElementById("directions");
+        directionsDiv.innerHTML = directionsHTML;
+        directionsDiv.style.display = "block"; // Show directions panel
+
+    } catch (error) {
+        console.error("Error calculating route:", error);
+        alert("There was a problem calculating the route. Please try again.");
+    }
+}
 
     function toggleDirections() {
         const directionsDiv = document.getElementById("directions");
@@ -700,32 +695,30 @@ const routeLines = L.layerGroup().addTo(map);
     }
   // Async function to fetch recent reports
   async function getRecentReports() {
-    try {
-        const response = await fetch('https://bfpcalapancity.online/reports-recent');
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        if (Array.isArray(data)) {
-            populateReportList(data);
-        } else {
-            document.getElementById('newReportsList').innerHTML = '<p>No recent reports available</p>';
-        }
-    } catch (error) {
-        console.error('Error fetching recent reports:', error);
-        document.getElementById('newReportsList').innerHTML = '<p>Error fetching reports. Please try again later.</p>';
+    const url = 'https://bfpcalapancity.online/reports-recent';
+    const data = await fetchData(url);
+    if (Array.isArray(data)) {
+        populateReportList(data); // Pass data to populateReportList
+    } else {
+        document.getElementById('newReportsList').innerHTML = '<p>No recent reports available</p>'; // Inform the user
     }
-
-
-
     // If communityreport_id exists, fetch specific report
     if (communityreport_id) {
         fetchReportByCommunityReportId(communityreport_id);
     }
 }
-
+async function fetchData(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('There was a problem fetching the data. Please try again later.');
+    }
+}
 // Function to open the modal when the URL contains #newReportModal
 function openModalOnHash() {
     if (window.location.hash === '#newReportModal') {
@@ -905,29 +898,14 @@ function getUrlParameter(name) {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 function fetchReportByCommunityReportId(communityreport_id) {
-    fetch(`https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`)
-        .then(response => {
-            if (!response.ok) {
-                console.error('Failed to fetch report data:', response.statusText);
-                throw new Error('No valid report data available');
-            }
-            return response.json();
-        })
-        .then(report => {
-            console.log('Fetched report:', report); // Log the entire report object
-
-            if (report && typeof report === 'object' && Object.keys(report).length > 0) {
-                populateReportList([report]); // Populate the modal with the specific report
-            } else {
-                console.error('Invalid report structure or empty report received', report);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching report:', error);
-            if (error.message.includes('404')) {
-                alert('Report not found. Please check the report ID.');
-            }
-        });
+    const url = `https://bfpcalapancity.online/getReportByCommunityReportId/${communityreport_id}`;
+    fetchData(url).then(report => {
+        if (report && typeof report === 'object' && Object.keys(report).length > 0) {
+            populateReportList([report]); // Populate the modal with the specific report
+        } else {
+            console.error('Invalid report structure or empty report received', report);
+        }
+    });
 }
 
 // Call this function on DOMContentLoaded
