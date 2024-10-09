@@ -124,7 +124,7 @@
     <input type="hidden" name="communityreport_id" id="communityreport_id">
 <input type="hidden" name="latitude" id="latitude">
 <input type="hidden" name="longitude" id="longitude">
-<input type="hidden" name="full_name" id="full_name" placeholder="Full Name">
+<input type="hidden" name="fullName" id="fullName" placeholder="Full Name">
    
     <label for="rescuer_name">Name of Rescuer:</label>
 <input type="text" name="rescuer_name" id="rescuer_name" placeholder="Enter Rescuer's Name" required>
@@ -155,19 +155,20 @@
         </select>
 
         <label for="property_damage_cost">Select Property Damage Cost:</label>
-        <select name="property_damage_cost" id="property_damage_cost" required onchange="toggleInputField()">
-            <option value="₱0 - ₱99">₱0 - ₱99</option>
-            <option value="₱100 - ₱999">₱100 - ₱999</option>
-            <option value="₱1000 - ₱9999">₱1,000 - ₱9,999</option>
-            <option value="₱10000 - ₱24999">₱10,000 - ₱24,999</option>
-            <option value="₱25000 - ₱49999">₱25,000 - ₱49,999</option>
-            <option value="₱50000 - ₱99999">₱50,000 - ₱99,999</option>
-            <option value="₱100000 - ₱249999">₱100,000 - ₱249,999</option>
-            <option value="₱250000 - ₱499999">₱250,000 - ₱499,999</option>
-            <option value="₱500000 - ₱999999">₱500,000 - ₱999,999</option>
-            <option value="₱1000000 - ₱1999999">₱1,000,000 - ₱1,999,999</option>
-            <option value="other">Other Amount</option>
-        </select>
+<select name="property_damage_cost" id="property_damage_cost" required onchange="toggleInputField()">
+    <option value="₱0 - ₱99">₱0 - ₱99</option>
+    <option value="₱100 - ₱999">₱100 - ₱999</option>
+    <option value="₱1000 - ₱9999">₱1,000 - ₱9,999</option>
+    <option value="₱10000 - ₱24999">₱10,000 - ₱24,999</option>
+    <option value="₱25000 - ₱49999">₱25,000 - ₱49,999</option>
+    <option value="₱50000 - ₱99999">₱50,000 - ₱99,999</option>
+    <option value="₱100000 - ₱249999">₱100,000 - ₱249,999</option>
+    <option value="₱250000 - ₱499999">₱250,000 - ₱499,999</option>
+    <option value="₱500000 - ₱999999">₱500,000 - ₱999,999</option>
+    <option value="₱1000000 - ₱1999999">₱1,000,000 - ₱1,999,999</option>
+    <option value="other">Other Amount</option>
+</select>
+
 
         <div id="custom_amount_field" style="display:none;">
             <label for="custom_amount">Enter Amount:</label>
@@ -200,7 +201,18 @@
 </div>
 
 <script>
-const baseUrl = "<?= base_url(); ?>"; // Ensure this is defined before its first usage
+const baseUrl = "<?= base_url(); ?>"; 
+function toggleInputField() {
+    const propertyDamageCostSelect = document.getElementById('property_damage_cost');
+    const customAmountField = document.getElementById('custom_amount_field');
+    
+    // Check if the selected value is 'other'
+    if (propertyDamageCostSelect.value === 'other') {
+        customAmountField.style.display = 'block'; // Show the custom amount input field
+    } else {
+        customAmountField.style.display = 'none'; // Hide it otherwise
+    }
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById('fireReportForm');
@@ -278,7 +290,7 @@ function fetchCommunityReportData(communityReportId) {
                     document.getElementById('latitude').value = data.latitude || '';
                     document.getElementById('longitude').value = data.longitude || '';
 
-                    const fullNameInput = document.getElementById('full_name');
+                    const fullNameInput = document.getElementById('fullName');
                     if (fullNameInput) {
                         fullNameInput.value = data.fullName || ''; 
                     }
