@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\FinalIncidentReportModel;
+use App\Models\RescuerReportModel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -12,14 +13,17 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class FinalIncidentReportController extends BaseController
 {
     protected $finalIncidentReportModel;
+    protected $rescuerReportModel;
 
     public function __construct()
     {
         $this->finalIncidentReportModel = new FinalIncidentReportModel();
+        $this->rescuerReportModel = new RescuerReportModel();
     }
 
     public function finalreport()
     {
+        $data['reports'] = $this->rescuerReportModel->findAll();
         $data['reports'] = $this->finalIncidentReportModel->findAll();
         return view('Areport/final_incident_report/finalreport', $data);
     }
