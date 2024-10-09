@@ -125,7 +125,8 @@
 <input type="hidden" name="latitude" id="latitude">
 <input type="hidden" name="longitude" id="longitude">
 <input type="hidden" name="fullName" id="fullName" placeholder="Full Name">
-   
+<input type="hidden" name="timestamp" id="timestamp">
+
     <label for="rescuer_name">Name of Rescuer:</label>
 <input type="text" name="rescuer_name" id="rescuer_name" placeholder="Enter Rescuer's Name" required>
 
@@ -285,12 +286,14 @@ function fetchCommunityReportData(communityReportId) {
             return response.json();
         })
         .then(data => {
-                if (data) {
-                    document.getElementById('communityreport_id').value = data.communityreport_id || ''; 
-                    document.getElementById('latitude').value = data.latitude || '';
-                    document.getElementById('longitude').value = data.longitude || '';
+            if (data) {
+                document.getElementById('communityreport_id').value = data.communityreport_id || ''; 
+                document.getElementById('latitude').value = data.latitude || '';
+                document.getElementById('longitude').value = data.longitude || '';
+                document.getElementById('timestamp').value = data.timestamp || '';
+                document.getElementById('fullName').value = data.fullName || ''; 
 
-                    const fullNameInput = document.getElementById('fullName');
+                const fullNameInput = document.getElementById('fullName');
                     if (fullNameInput) {
                         fullNameInput.value = data.fullName || ''; 
                     }
@@ -301,12 +304,13 @@ function fetchCommunityReportData(communityReportId) {
                             <img src="${baseUrl}bfpcalapancity/public/community_report/${data.fileproof}" alt="File Proof" style="max-width: 100px; height: auto;">
                         `;
                     }
-                }
-            })
-            .catch(error => {
+            }
+        })
+        .catch(error => {
             console.error('Error fetching community report data:', error);
         });
-    }
+}
+
 </script>
 
 </body>
