@@ -14,74 +14,57 @@ $imageSources = $carouselModel->findAll();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
     <style>
+       :root {
+            --primary-color: #EF3340;
+            --secondary-color: #343a40;
+            --background-gradient: linear-gradient(0deg, black, #480000, #f0f0f0);
+        }
         body {
-            background-image: linear-gradient(0deg, black, #480000, #f0f0f0);
-            color: #343a40;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-gradient);
+            color: var(--secondary-color);
         }
-
+        .navbar {
+            background-color: var(--primary-color);
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
         #carouselExample {
-            max-width: 1500px;
-            width: 100%;
-            height: 400px;
-            border: 2px solid #EF3340;
-            border-radius: 8px;
+            max-width: 100%;
+            height: 500px;
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 20px;
-            margin-right: auto;
-            margin-left: auto;
-            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
         }
-
-        .carousel-inner {
-            width: 100%;
-            height: 100%;
-            margin-top: 1px;
-        }
-
-        .carousel-inner img {
-            width: 100%;
+        .carousel-inner, .carousel-item, .carousel-item img {
             height: 100%;
             object-fit: cover;
-            transition: opacity 1s ease-in-out;
         }
-
         .btn-news {
-            margin-top: 20px;
-            text-align: center;
-            position: relative;
-            margin-bottom: 10px;
-            display: grid;
-            grid-template-columns: auto auto auto auto;
-            font-size: 12px;
-            justify-content: space-evenly;
-            gap: 10px; 
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
         }
-
-        .buttons-container {
-            position: relative;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            display: grid;
-            grid-template-columns: auto auto auto auto;
-            font-size: 12px;
-            height: 100px;
-            justify-content: space-evenly;
-            gap: 10px; 
+        .btn-news:hover {
+            background-color: #d62b36;
+            transform: translateY(-2px);
         }
-
-        footer {
-            margin-bottom: 0;
-        }
-
         .navigation-container {
-            position: relative;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            display: grid;
-            grid-template-columns: auto auto auto auto;
-            font-size: 12px;
-            height: 100px;
-            justify-content: space-evenly;
+            background-color: white;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
         }
     </style>
 </head>
@@ -93,8 +76,8 @@ $imageSources = $carouselModel->findAll();
     <div class="container">
         <div class="row justify-content-center">
             <!---------------------------------------  CAROUSEL IMAGES ----------------------------------------------->
-            <div class="col-md-16">
-                <div id="carouselExample" class="carousel slide" data-ride="carousel">
+            <div class="col-md-12">
+                <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <?php if (!empty($imageSources)): ?>
                             <?php foreach ($imageSources as $index => $imageSource): ?>
@@ -104,7 +87,7 @@ $imageSources = $carouselModel->findAll();
                             <?php endforeach; ?>
                         <?php else: ?>
                             <div class="carousel-item active">
-                                <img class="d-block w-100" src="<?= base_url('bfpcalapancity/public/images') ?>" alt="Default Image">
+                                <img class="d-block w-100" src="<?= base_url('public/images') ?>" alt="Default Image">
                             </div>
                         <?php endif; ?>
                     </div>
@@ -113,30 +96,26 @@ $imageSources = $carouselModel->findAll();
         </div>
 
         <div class="navigation-container">
-            <div class="row justify-content-center buttons-container">
+            <div class="row g-3">
                 <!--------------------------------------- NEWS PRESS RELEASE ----------------------------------------------->
-                <div class="col-md-1 offset-md-1">
-                    <a href="<?= site_url('news') ?>" class="btn btn-danger btn-news">News</a>
+                <div class="col-md-4 col-lg-2">
+                    <a href="<?= site_url('news') ?>" class="btn btn-news w-100"><i class="fas fa-newspaper me-2"></i>News</a>
                 </div>
-
                 <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-                <div class="col-md-2 offset-md-1">
-                    <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Announcements</a>
+                <div class="col-md-4 col-lg-2">
+                    <a href="<?= site_url('announcements') ?>" class="btn btn-news w-100"><i class="fas fa-bullhorn me-2"></i>Announcements</a>
                 </div>
-
                 <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-                <div class="col-md-1 offset-md-1">
-                    <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Safety Tips</a>
+                <div class="col-md-4 col-lg-2">
+                    <a href="<?= site_url('safety-tips') ?>" class="btn btn-news w-100"><i class="fas fa-shield-alt me-2"></i>Safety Tips</a>
                 </div>
-
                 <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-                <div class="col-md-1 offset-md-1">
-                    <a href="<?= site_url('') ?>" class="btn btn-danger btn-news">Holidays</a>
+                <div class="col-md-4 col-lg-2">
+                    <a href="<?= site_url('holidays') ?>" class="btn btn-news w-100"><i class="fas fa-calendar-alt me-2"></i>Holidays</a>
                 </div>
-
                 <!---------------------------------------  LINK TO OTHER AGENCIES ----------------------------------------------->
-                <div class="col-md-1 offset-md-1">
-                    <a href="<?= site_url('news') ?>" class="btn btn-danger btn-news">Link To Other Agencies</a>
+                <div class="col-md-4 col-lg-4">
+                    <a href="<?= site_url('agencies') ?>" class="btn btn-news w-100"><i class="fas fa-link me-2"></i>Link To Other Agencies</a>
                 </div>
             </div>
         </div>
