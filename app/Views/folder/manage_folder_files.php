@@ -137,7 +137,7 @@
                                     <td>
                                         <?php
                                             // Ensure the file path points to the correct directory in public/gallery
-                                            $filePath = base_url("public/gallery/{$mainFolder['name']}/{$subFolder['name']}/" . basename($file['file_path']));
+                                            $filePath = base_url("bfpcalapancity/public/gallery/{$mainFolder['name']}/{$subFolder['name']}/" . basename($file['file_path']));
                                             $fileExtension = strtolower(pathinfo($file['file_path'], PATHINFO_EXTENSION));
 
                                             if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])):

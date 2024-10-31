@@ -13,7 +13,7 @@ class FolderController extends BaseController
 {
     public function navigationfolders()
     {
-        $mainFolders = $this->getFoldersInDirectory(FCPATH . 'gallery');
+        $mainFolders = $this->getFoldersInDirectory(FCPATH . 'bfpcalapancity/public/gallery');
         
         return view('WEBSITE/home' || 'WEBSITE/site', ['mainFolders' => $mainFolders]);
     }
@@ -36,7 +36,7 @@ class FolderController extends BaseController
 
     public function viewFolder($mainFolder, $subFolder = null)
     {
-        $directory = FCPATH . "gallery/$mainFolder";
+        $directory = FCPATH . "bfpcalapancity/public/gallery/$mainFolder";
         if ($subFolder) {
             $directory .= "/$subFolder";
         }
@@ -102,7 +102,7 @@ class FolderController extends BaseController
         $subFolderName = $subFolder['name'];
 
         // Create the directory path if it doesn't exist
-        $directoryPath = FCPATH . "gallery/{$mainFolderName}/{$subFolderName}";
+        $directoryPath = FCPATH . "bfpcalapancity/public/gallery/{$mainFolderName}/{$subFolderName}";
         if (!is_dir($directoryPath)) {
             mkdir($directoryPath, 0777, true);
         }
@@ -117,7 +117,7 @@ class FolderController extends BaseController
                 $fileType = $file->getMimeType();
                 if (strpos($fileType, 'image/') === 0 || strpos($fileType, 'video/') === 0) {
                     // Define file path and move the file
-                    $filePath = "gallery/{$mainFolderName}/{$subFolderName}/" . $file->getName();
+                    $filePath = "bfpcalapancity/public/gallery/{$mainFolderName}/{$subFolderName}/" . $file->getName();
                     $file->move($directoryPath, $file->getName());
 
                     // Store each file path in the array
@@ -158,7 +158,7 @@ class FolderController extends BaseController
         $mainFolderId = $mainFolderModel->insertID;
 
         // Create main folder directory
-        mkdir(FCPATH . 'gallery/' . $mainFolderName, 0777, true);
+        mkdir(FCPATH . 'bfpcalapancity/public/gallery/' . $mainFolderName, 0777, true);
 
         // Save subfolder in the database
         $subFolderModel->save([
@@ -167,7 +167,7 @@ class FolderController extends BaseController
         ]);
 
         // Create subfolder directory
-        mkdir(FCPATH . 'gallery/' . $mainFolderName . '/' . $subFolderName, 0777, true);
+        mkdir(FCPATH . 'bfpcalapancity/public/gallery/' . $mainFolderName . '/' . $subFolderName, 0777, true);
 
         return redirect()->to('/folders/createFile')->with('message', 'Main folder and subfolder created successfully.');
     }

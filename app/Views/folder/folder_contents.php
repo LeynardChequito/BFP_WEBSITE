@@ -17,7 +17,7 @@
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <?php $filePath = base_url("public/gallery/$mainFolder" . ($subFolder ? "/$subFolder" : "") . "/$file"); ?>
+                        <?php $filePath = base_url("bfpcalapancity/public/gallery/$mainFolder" . ($subFolder ? "/$subFolder" : "") . "/$file"); ?>
                         <?php if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $file)): ?>
                             <img src="<?= $filePath ?>" class="card-img-top" alt="Image">
                         <?php elseif (preg_match('/\.(mp4|webm|ogg)$/i', $file)): ?>
