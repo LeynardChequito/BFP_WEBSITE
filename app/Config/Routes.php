@@ -41,6 +41,22 @@ $routes->get('contacts', 'HomeController::contacts', ['filter' => 'user']);
 $routes->get('activities', 'HomeController::activities', ['filter' => 'user']);
 $routes->get('/site', 'HomeController::site', ['filter' => 'user']);
 
+//FOLDERS
+$routes->get('/folders', 'FolderController::navigationfolders'); // Main navigation for folders
+$routes->get('/folders/view/(:segment)', 'FolderController::viewFolder/$1'); // View main folder
+$routes->get('/folders/view/(:segment)/(:segment)', 'FolderController::viewFolder/$1/$2'); // View subfolder within main folder
+
+$routes->get('/folders/manage', 'FolderController::manageFolderFiles'); // Manage all folders and files
+$routes->get('/folders/createFolder', 'FolderController::createFolder'); // Create main folder and subfolder form
+$routes->post('/folders/storeFolder', 'FolderController::storeFolder'); // Store new main folder and subfolder
+$routes->get('/folders/createFile', 'FolderController::createFile'); // Form to create a new file
+$routes->post('/folders/storeFile', 'FolderController::storeFile'); // Store new file
+
+$routes->get('/folders/editFile/(:num)', 'FolderController::editFile/$1'); // Edit file route
+$routes->get('/folders/toggleVisibility/(:num)', 'FolderController::toggleVisibility/$1'); // Toggle file visibility
+$routes->get('/folders/exportFilePDF/(:num)', 'FolderController::exportFilePDF/$1'); // Export file as PDF
+$routes->delete('/folders/deleteFile/(:num)', 'FolderController::deleteFile/$1'); // Delete file
+
 // ALBUM
 $routes->get('album', 'HomeController::album', ['filter' => 'user']);
 $routes->get('intern', 'HomeController::intern', ['filter' => 'user']);
@@ -130,5 +146,8 @@ $routes->group('rescuer', function($routes) {
     $routes->get('final-incident-report/preview/pdf/(:num)', 'FinalIncidentReportController::previewPdf/$1');
     $routes->get('final-incident-report/preview/excel/(:num)', 'FinalIncidentReportController::previewExcel/$1');
 });
+
+
+
 
 $routes->get('testemail', 'TestEmailController::index',);

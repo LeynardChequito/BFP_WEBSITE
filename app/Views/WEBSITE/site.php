@@ -172,7 +172,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-image: linear-gradient(150deg, black, red);">
         <a class="navbar-brand" href="#">
             <img src="<?= base_url(); ?>/bfpcalapancity/public/images/logo.png" alt="Logo">
-            <p class="d-inline-block text-white ml-2">Bureau of Fire Protection</p>
+            <p class="d-inline-block text-white ml-2" contenteditable="true">Bureau of Fire Protection</p>
         </a>
         <div class="ml-auto row align-items-center">
             <div class="col-auto">
@@ -189,27 +189,33 @@
 
     <!-- Second Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item <?php echo (current_url() == site_url('/home')) ? 'active' : ''; ?>">
-                    <a href="<?= site_url('/home') ?>" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item <?php echo (current_url() == site_url('/activities')) ? 'active' : ''; ?>">
-                    <a href="<?= site_url('/activities') ?>" class="nav-link">Activities</a>
-                </li>
-                <li class="nav-item <?php echo (current_url() == site_url('/achievements')) ? 'active' : ''; ?>">
-                    <a href="<?= site_url('/achievements') ?>" class="nav-link">Achievements</a>
-                </li>
-                <li class="nav-item <?php echo (current_url() == site_url('/contacts')) ? 'active' : ''; ?>">
-                    <a href="<?= site_url('/contacts') ?>" class="nav-link">Contact Us</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a href="<?= site_url('/home') ?>" class="nav-link">Home</a>
+            </li>
+            <?php if (isset($mainFolders) && is_array($mainFolders)): ?>
+                <?php foreach ($mainFolders as $mainFolder => $subFolders): ?>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown<?= esc($mainFolder) ?>" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <?= esc($mainFolder) ?>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown<?= esc($mainFolder) ?>">
+                            <?php foreach ($subFolders as $subFolder): ?>
+                                <a class="dropdown-item" href="<?= site_url("folders/view/$mainFolder/$subFolder") ?>">
+                                    <?= esc($subFolder) ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </ul>
+    </div>
+</nav>
 
 
     <!-- Modal for Emergency Form -->
@@ -335,7 +341,7 @@
 
                 const formData = new FormData(this);
                 const xhr = new XMLHttpRequest();
-                xhr.open("POST", "https://bfpcalapancity.online/communityreport/submit", true);
+                xhr.open("POST", "https://bafpcalapancity.online/communityreport/submit", true);
 
                 xhr.onload = function() {
                     try {
