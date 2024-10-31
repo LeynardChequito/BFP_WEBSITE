@@ -96,29 +96,39 @@ $imageSources = $carouselModel->findAll();
         </div>
 
         <div class="navigation-container">
-            <div class="row g-3">
-                <!--------------------------------------- NEWS PRESS RELEASE ----------------------------------------------->
+    <div class="row g-3">
+        <?php if (!empty($mainFolders) && is_array($mainFolders)): ?>
+            <?php foreach ($mainFolders as $mainFolder => $subFolders): ?>
                 <div class="col-md-4 col-lg-2">
-                    <a href="<?= site_url('news') ?>" class="btn btn-news w-100"><i class="fas fa-newspaper me-2"></i>News</a>
+                    <div class="dropdown">
+                        <a href="<?= site_url("folders/view/{$mainFolder}") ?>" 
+                           class="btn btn-news w-100 dropdown-toggle" 
+                           id="dropdown<?= esc($mainFolder) ?>" 
+                           role="button" 
+                           data-bs-toggle="dropdown" 
+                           aria-expanded="false">
+                            <?= esc($mainFolder) ?>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdown<?= esc($mainFolder) ?>">
+                            <?php foreach ($subFolders as $subFolder): ?>
+                                <li>
+                                    <a class="dropdown-item" href="<?= site_url("folders/view/{$mainFolder}/{$subFolder}") ?>">
+                                        <?= esc($subFolder) ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
                 </div>
-                <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-                <div class="col-md-4 col-lg-2">
-                    <a href="<?= site_url('announcements') ?>" class="btn btn-news w-100"><i class="fas fa-bullhorn me-2"></i>Announcements</a>
-                </div>
-                <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-                <div class="col-md-4 col-lg-2">
-                    <a href="<?= site_url('safety-tips') ?>" class="btn btn-news w-100"><i class="fas fa-shield-alt me-2"></i>Safety Tips</a>
-                </div>
-                <!--------------------------------------- SAFETY TIPS  ----------------------------------------------->
-                <div class="col-md-4 col-lg-2">
-                    <a href="<?= site_url('holidays') ?>" class="btn btn-news w-100"><i class="fas fa-calendar-alt me-2"></i>Holidays</a>
-                </div>
-                <!---------------------------------------  LINK TO OTHER AGENCIES ----------------------------------------------->
-                <div class="col-md-4 col-lg-4">
-                    <a href="<?= site_url('agencies') ?>" class="btn btn-news w-100"><i class="fas fa-link me-2"></i>Link To Other Agencies</a>
-                </div>
-            </div>
-        </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No folders available.</p>
+        <?php endif; ?>
+    </div>
+</div>
+
+
+
     </div>
 
     <?= view('hf/footer'); ?>

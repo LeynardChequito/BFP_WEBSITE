@@ -39,7 +39,6 @@
 </head>
 
 <body>
-    <?= $this->renderSection('content') ?>
     
     <!-- First Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark default-color" style="background-color: red;">

@@ -1,48 +1,120 @@
-<div class="col-lg-2">
-    <div class="sidebar">
-        <h2 class="text-center mb-4">BFP Admin</h2>
-        <ul class="list-unstyled components">
-            <hr style="background-color: white; height: 2px; border: none;">
+<?php
+// Define the sidebar items
+$sidebarItems = [
+    ['url' => '/admin-home', 'icon' => 'fas fa-home', 'text' => 'Home'],
+    ['url' => '/newscreate', 'icon' => 'fas fa-newspaper', 'text' => 'Manage News'],
+    ['url' => 'carousel', 'icon' => 'fas fa-images', 'text' => 'Manage Carousel'],
+    ['url' => 'rescuer/final-incident-report', 'icon' => 'fas fa-file-alt', 'text' => 'Manage Final Report'],
+    // ['url' => 'rescuer-report/form', 'icon' => 'fas fa-file-alt', 'text' => 'Add Fire Report'],
+    // ['url' => 'rescuer/final-incident-report', 'icon' => 'fas fa-print', 'text' => 'File Printing'],
+    ['url' => 'graph', 'icon' => 'fas fa-chart-pie', 'text' => 'Dashboard'],
+    ['url' => '/folders/manage', 'icon' => 'fas fa-folder', 'text' => 'Manage Folders'], // New entry for Manage Folders
+];
 
-            <li>
-                <a href="<?= site_url('/admin-home') ?>">
-                    <i class="fas fa-home mr-2"></i>Home
-                </a>
-            </li>
-            <li>
-                <a href="<?= site_url('/newscreate') ?>">
-                    <i class="fas fa-newspaper mr-2"></i>Manage News
-                </a>
-            </li>
-            <li>
-                <a href="<?= site_url('carousel') ?>">
-                    <i class="fas fa-images mr-2"></i>Manage Carousel
-                </a>
-            </li>
-            <li>
-                <a href="<?= site_url('rescuer/final-incident-report') ?>">
-                    <i class="fas fa-images mr-2"></i>Manage Final Report
-                </a>
-            </li>
-            <hr style="background-color: white; height: 2px; border: none;">
+// Helper function to check if the current page matches the menu item
+function isActive($url) {
+    return strpos(current_url(), $url) !== false ? 'active' : '';
+}
+?>
 
-            
-            <li>
-                <a href="<?= site_url('rescuer-report/form') ?>">
-                   <i class="fas fa-file-alt mr-2"></i> Add Fire Report
-                </a>
-            </li>
-            <hr style="background-color: white; height: 2px; border: none;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFP Admin Sidebar</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: #EF3340; /* Red color */
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
 
-            <li>
-                <a href="<?= site_url('graph') ?>">
-                    <i class="fas fa-chart-pie mr-2"></i>Dashboard
-                </a>
-            </li>
-        </ul>
-        <hr style="background-color: white; height: 2px; border: none;">
+        .sidebar a {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            transition: background-color 0.2s;
+            text-decoration: none;
+        }
 
-        <a href="<?= site_url('/admin-registration') ?>" class="create-account-btn btn btn-danger btn-block mt-4">Create an Account</a>
-        <a class="btn btn-danger btn-block mt-4" href="<?= site_url('/admin-logout') ?>">Logout</a>
-    </div>
-</div>
+        .sidebar a:hover {
+            background-color: #D12D34; /* Darker shade of red */
+        }
+
+        .sidebar .active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem;
+        }
+
+        /* Content Alignment */
+        .content {
+            margin-left: 240px; /* Space for sidebar */
+            padding: 20px;
+            margin-top: 60px; /* Space for header */
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .content {
+                margin-left: 0;
+                margin-top: 80px; /* Space for header on small screens */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="sidebar text-white">
+        <div class="p-4">
+            <h2 class="font-bold">BFP Admin</h2>
+        </div>
+        <nav class="flex-1 overflow-y-auto">
+            <ul class="mt-4 space-y-2">
+                <?php foreach ($sidebarItems as $item): ?>
+                    <li>
+                        <a href="<?= site_url($item['url']) ?>" class="flex items-center px-4 py-2 hover:bg-red-700 <?= isActive($item['url']) ?>">
+                            <i class="<?= $item['icon'] ?> w-5 h-5 mr-2"></i>
+                            <span><?= $item['text'] ?></span>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="<?= site_url('/admin-registration') ?>" class="block w-full text-center bg-red-700 hover:bg-red-800 py-2 rounded mb-2">
+                Create an Account
+            </a>
+            <a href="<?= site_url('/admin-logout') ?>" class="block w-full text-center bg-red-700 hover:bg-red-800 py-2 rounded">
+                Logout
+            </a>
+        </div>
+    </aside>
+</body>
+</html>
