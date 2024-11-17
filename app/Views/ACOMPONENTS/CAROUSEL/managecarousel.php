@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
     <!-- Full jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
     <!-- Popper.js and Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -39,17 +39,17 @@
             text-decoration: none;
         }
 
-        .container-fluid {
+        /* .container-fluid {
             margin-left: 10px;
             margin-top: 1px;
             margin-bottom: 5px;
             padding: 10px;
-            z-index: 1; /* Ensure container has a lower z-index */
-        }
+            z-index: 1;
+        } */
 
-        .container-fluid h3 {
+        /* .container-fluid h3 {
             margin-bottom: 20px;
-        }
+        } */
 
         .content {
             max-width: 1200px;
@@ -121,6 +121,7 @@
 
 <body>
     <?= view('ACOMPONENTS/adminheader'); ?>
+    <?= view('ACOMPONENTS/amanagesidebar'); ?>
 
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
@@ -140,7 +141,6 @@
 
     <div class="container-fluid">
         <div class="row">
-            <?= view('ACOMPONENTS/amanagesidebar'); ?>
 
             <div class="col-md-10">
                 <div class="content">

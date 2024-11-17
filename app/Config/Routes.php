@@ -32,7 +32,7 @@ $routes->get('verify', 'LoginController::verify');
 $routes->get('admin/verify', 'ARegistrationController::verify');
 
 // NAVIGATION BAR
-$routes->get('home', 'HomeController::home', ['filter' => 'user']);
+// $routes->get('home', 'HomeController::home', ['filter' => 'user']);
 $routes->get('contact-us', 'HomeController::contactUs', ['filter' => 'user']);
 $routes->get('banner', 'HomeController::banner', ['filter' => 'user']);
 $routes->get('logout', 'HomeController::logout', ['filter' => 'user']);
@@ -42,20 +42,41 @@ $routes->get('activities', 'HomeController::activities', ['filter' => 'user']);
 $routes->get('/site', 'HomeController::site', ['filter' => 'user']);
 
 //FOLDERS
-$routes->get('/folders', 'FolderController::navigationfolders'); // Main navigation for folders
-$routes->get('/folders/view/(:segment)', 'FolderController::viewFolder/$1'); // View main folder
-$routes->get('/folders/view/(:segment)/(:segment)', 'FolderController::viewFolder/$1/$2'); // View subfolder within main folder
-
-$routes->get('/folders/manage', 'FolderController::manageFolderFiles'); // Manage all folders and files
-$routes->get('/folders/createFolder', 'FolderController::createFolder'); // Create main folder and subfolder form
-$routes->post('/folders/storeFolder', 'FolderController::storeFolder'); // Store new main folder and subfolder
-$routes->get('/folders/createFile', 'FolderController::createFile'); // Form to create a new file
-$routes->post('/folders/storeFile', 'FolderController::storeFile'); // Store new file
-
-$routes->get('/folders/editFile/(:num)', 'FolderController::editFile/$1'); // Edit file route
-$routes->get('/folders/toggleVisibility/(:num)', 'FolderController::toggleVisibility/$1'); // Toggle file visibility
-$routes->get('/folders/exportFilePDF/(:num)', 'FolderController::exportFilePDF/$1'); // Export file as PDF
-$routes->delete('/folders/deleteFile/(:num)', 'FolderController::deleteFile/$1'); // Delete file
+    // General Folder Routes
+        $routes->get('/folders', 'FolderController::navigationFolders'); // Main navigation for folders
+        $routes->get('/folders/view/(:segment)', 'FolderController::viewFolder/$1'); // View main folder
+        $routes->get('/folders/view/(:segment)/(:segment)', 'FolderController::viewFolder/$1/$2'); // View subfolder within main folder
+        $routes->get('/home', 'FolderController::navigationFolders');
+        $routes->get('/folders/view_sub_folders/(:num)', 'FolderController::viewSubFolders/$1');
+        $routes->get('/folders/file_details/(:num)', 'FolderController::fileDetails/$1');
+    
+    // Folder Management Routes
+        $routes->get('/folders/manage', 'FolderController::manageFolderFiles'); // Manage all folders and files
+        $routes->get('/folders/createFolder', 'FolderController::createFolder'); // Create main folder and subfolder form
+        $routes->post('/folders/storeFolder', 'FolderController::storeFolder'); // Store new main folder and subfolder
+        $routes->get('/folders/createFile', 'FolderController::createFile'); // Form to create a new file
+        $routes->post('/folders/storeFile', 'FolderController::storeFile'); // Store new file
+    
+    // Edit and Update Routes
+        $routes->get('/folders/editFile/(:num)', 'FolderController::editFile/$1'); // Edit File form
+        $routes->post('/folders/updateFile/(:num)', 'FolderController::updateFile/$1'); // Update file data
+        
+        $routes->get('/folders/editMainFolder/(:num)', 'FolderController::editMainFolder/$1'); // Edit Main Folder form
+        $routes->post('/folders/updateMainFolder/(:num)', 'FolderController::updateMainFolder/$1'); // Update Main Folder
+        
+        $routes->get('/folders/editSubFolder/(:num)', 'FolderController::editSubFolder/$1'); // Edit Sub Folder form
+        $routes->post('/folders/updateSubFolder/(:num)', 'FolderController::updateSubFolder/$1'); // Update Sub Folder
+    
+    // Delete Routes
+        $routes->delete('/folders/deleteMainFolder/(:num)', 'FolderController::deleteMainFolder/$1'); // Delete Main Folder
+        $routes->delete('/folders/deleteSubFolder/(:num)', 'FolderController::deleteSubFolder/$1'); // Delete Sub Folder
+        $routes->delete('/folders/deleteFile/(:num)', 'FolderController::deleteFile/$1'); // Delete File
+    
+    // Additional Routes
+        $routes->get('/folders/toggleVisibility/(:num)', 'FolderController::toggleVisibility/$1'); // Toggle file visibility
+        $routes->get('/folders/exportAsPDF/(:num)', 'FolderController::exportAsPDF/$1'); // Export file as PDF
+        $routes->get('/folders/previewFile/(:num)', 'FolderController::previewFile/$1');
+        
 
 // ALBUM
 $routes->get('album', 'HomeController::album', ['filter' => 'user']);
@@ -122,10 +143,15 @@ $routes->get('getReportByCommunityReportId/(:num)', 'CommunityReportController::
 
 
 // RESCUER REPORT
-$routes->get('fire-report/create', 'FireReportController::firereportform',);
-$routes->post('fire-report/store', 'FireReportController::storeFinalReport');
-
-$routes->get('getReportByCommunityReportId/(:num)', 'FireReportController::getReportByCommunityReportId/$1');
+$routes->get('fire-report/create', 'FireReportController::firereportform');
+$routes->post('fire-report/store', 'FireReportController::store',);
+$routes->get('rescuer-report/form', 'FireReportController::reportform');
+$routes->post('rescuer-report/save', 'FireReportController::save');
+$routes->get('rescuer-report/success', function () {
+    return view('RESCUERREPORT/success');
+});
+// $routes->get('fire-report/create', 'FireReportController::fire_report_form');
+// $routes->post('fire-report/store', 'FireReportController::store');
 
 
 $routes->get('rescuer-report/form', 'RescuerReportController::reportform');

@@ -23,84 +23,79 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 15px;
-            position: flex;
-            top: 0;
-            left: 0;
+            padding: 15px;
             width: 100%;
-            z-index: 1000;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-         /* Logo Styling */
-.headerbar .logo {
-    max-width: 80px; /* Limit the width to maintain aspect ratio */
-    height: auto;
-    display: flex;
-    align-items: center;
-}
+        /* Logo Styling */
+        .headerbar .logo {
+            max-width: 80px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-/* Logo Container (for additional spacing or alignment adjustments) */
-.logo-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0 10px;
-}
+        .logo-container {
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
 
-.logo-container img {
-    max-width: 80%; /* Ensures image doesn't exceed the container's width */
-    height: auto;
-    border-radius: 10px; /* Optional: add a slight rounding of corners */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for a modern look */
-}
+        .logo-text {
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+            margin-left: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
 
-.logo-text {
-    font-size: 1.5rem;
-    color: white;
-    font-weight: bold;
-    margin-left: 10px; /* Add some space between the image and the text */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Optional: add shadow to make text stand out */
-}
-
-
-        /* Notification Container */
+        /* Notification Dropdown */
         .dropdown-menu {
             max-height: 400px;
             overflow-y: auto;
+            padding: 0;
+            width: 300px; /* Adjust width as needed */
+            right: 0; /* Align to the right of the bell icon */
+            left: auto; /* Prevent dropdown from stretching across the viewport */
+        }
+
+        .dropdown-toggle::after {
+            display: none; /* Remove default dropdown arrow */
         }
 
         .notification-item {
-            padding: 15px;
+            padding: 10px; /* Reduce padding for a more compact look */
             border-bottom: 1px solid #ddd;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             background-color: white;
+            transition: background-color 0.2s;
+        }
+
+        .notification-item:hover {
+            background-color: #f8f8f8; /* Slight background change on hover */
         }
 
         .notification-item img,
         .notification-item video {
-            max-width: 80px;
-            max-height: 80px;
-            margin-right: 15px;
+            width: 50px; /* Reduce image and video size */
+            height: 50px;
+            margin-right: 10px;
             border-radius: 5px;
             object-fit: cover;
         }
 
         .notification-item h4 {
             margin: 0;
-            font-size: 16px;
+            font-size: 14px; /* Slightly smaller font size */
             color: #333;
         }
 
         .notification-item p {
-            margin: 5px 0 0 0;
+            margin: 3px 0 0 0; /* Reduce spacing */
             font-size: 12px;
             color: #555;
-        }
-
-        .notification-item:last-child {
-            border-bottom: none;
         }
 
         /* Badge Counter */
@@ -114,44 +109,35 @@
             border-radius: 50%;
             font-size: 12px;
         }
-       
     </style>
 </head>
 
 <body>
 
     <div class="headerbar">
-    <div class="logo-container">
-        <img src="<?= base_url(); ?>/bfpcalapancity/public/design/logo.png" alt="BFP Logo" class="logo">
-        <div class="logo-text">BFP Admin Dashboard</div> 
-    </div>
+        <div class="logo-container">
+            <img src="<?= base_url(); ?>/bfpcalapancity/public/design/logo.png" alt="BFP Logo" class="logo">
+            <div class="logo-text">BFP Admin Dashboard</div>
+        </div>
 
         <!-- Notification Dropdown -->
         <div class="dropdown">
             <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-bell notification-icon"></i>
-                <!-- <span id="notification-counter" class="badge-counter">0</span> -->
+                <span id="notification-counter" class="badge-counter">5</span> <!-- Example count -->
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                 <div id="notificationContainer">
-                    
+                    <!-- Notifications will be injected here dynamically -->
                 </div>
             </div>
         </div>
 
-        <!-- View Map button -->
-        <!-- <a class="view-map-btn" href="<?= site_url('rescuemap') ?>">View Map</a> -->
-
         <!-- Philippine time -->
-        <span id="philippineTime" class="philippine-time">Philippine Standard Time: <span id="current-time"></span></span>
+        <span id="philippineTime" class="text-white">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
-    <!-- External scripts -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
-    <!-- Firebase and Push Notification -->
+    <!-- Firebase and Notification Scripts -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
@@ -166,16 +152,15 @@
             measurementId: "G-XMBH6JJ3M6"
         };
 
-        // Initialize Firebase
+
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
         Notification.requestPermission().then((permission) => {
             if (permission === 'granted') {
                 console.log('Notification permission granted.');
-
                 messaging.getToken({
-                    vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+                    vapidKey: 'YOUR_VAPID_KEY'
                 }).then((currentToken) => {
                     if (currentToken) {
                         console.log('Token retrieved:', currentToken);
@@ -190,114 +175,101 @@
             }
         });
 
-// Load the alarm sound
-const sirenSound = new Audio('https://bfpcalapancity.online/bfpcalapancity/public/45secs_alarm.mp3');
-sirenSound.preload = 'auto';
+        // Load the alarm sound
+        const sirenSound = new Audio('https://bfpcalapancity.online/public/45secs_alarm.mp3');
+        sirenSound.preload = 'auto';
 
-// Variable to track if the user has interacted with the page
-let userInteracted = false;
+        let userInteracted = false;
+        document.addEventListener('click', function() {
+            userInteracted = true;
+        });
 
-// Add event listener to track user interaction
-document.addEventListener('click', function() {
-    userInteracted = true;
-});
+        messaging.onMessage((payload) => {
+            console.log('Message received: ', payload);
 
-// Firebase Message Listener for Notifications
-messaging.onMessage((payload) => {
-    console.log('Message received: ', payload);
-
-    if (payload && payload.notification) {
-        const notificationContainer = document.getElementById('notificationContainer');
-        const notification = document.createElement('div');
-        notification.classList.add('notification-item');
-        notification.innerHTML = `<h4>${payload.notification.title}</h4><p>${payload.notification.body}</p>`;
-        notificationContainer.appendChild(notification);
-
-        // Play the siren sound only if user interaction has occurred
-        if (userInteracted) {
-            sirenSound.play().catch(error => {
-                console.error('Error playing siren sound:', error);
-            });
-        } else {
-            console.log('Siren sound not played. Waiting for user interaction.');
-        }
-    } else {
-        console.error('Payload does not contain expected notification data.');
-    }
-});
-
-
-let lastReportCount = 0;
-
-function fetchLatestReports() {
-    fetch("https://bfpcalapancity.online/getLatestReports")
-        .then(response => response.json())
-        .then(data => {
-            const notificationContainer = document.getElementById('notificationContainer');
-            notificationContainer.innerHTML = ''; // Clear previous notifications
-
-            // Loop through the reports and create notification items
-            data.forEach(report => {
+            if (payload && payload.notification) {
+                const notificationContainer = document.getElementById('notificationContainer');
                 const notification = document.createElement('div');
                 notification.classList.add('notification-item');
-                notification.setAttribute('data-communityreport-id', report.communityreport_id);
-                
-                // Create content based on whether fileproof is an image or video
-                const mediaContent = (report.fileproof.endsWith('.jpg') || report.fileproof.endsWith('.png')) 
-                    ? `<img src="${report.fileproof}" alt="File Proof">` 
-                    : `<video src="${report.fileproof}" controls></video>`;
-
-                notification.innerHTML = `
-                    ${mediaContent}
-                    <div>
-                        <h4>${report.fullName}</h4>
-                        <p><strong>Submitted:</strong> ${report.timestamp}</p>
-                    </div>
-                `;
-
-                // Add click event listener to show report details
-                notification.addEventListener('click', () => showReportDetails(report));
+                notification.innerHTML = `<h4>${payload.notification.title}</h4><p>${payload.notification.body}</p>`;
                 notificationContainer.appendChild(notification);
-            });
-        })
-        .catch(error => console.error('Error fetching reports:', error));
-}
 
-function showReportDetails(report) {
-    // Redirect to the rescuemap with the communityreport_id
-    window.location.href = `/rescuemap?communityreport_id=${report.communityreport_id}`;
-}
+                if (userInteracted) {
+                    sirenSound.play().catch(error => {
+                        console.error('Error playing siren sound:', error);
+                    });
+                } else {
+                    console.log('Siren sound not played. Waiting for user interaction.');
+                }
+            } else {
+                console.error('Payload does not contain expected notification data.');
+            }
+        });
 
+        function fetchLatestReports() {
+            fetch("https://bfpcalapancity.online/getLatestReports")
+                .then(response => response.json())
+                .then(data => {
+                    const notificationContainer = document.getElementById('notificationContainer');
+                    notificationContainer.innerHTML = '';
+                    let notificationCount = data.length;
+                    
+                    if (notificationCount > 0) {
+                        document.getElementById('notification-counter').textContent = notificationCount;
+                    } else {
+                        document.getElementById('notification-counter').textContent = '0';
+                    }
 
-// Call this function periodically to refresh the notifications
-setInterval(fetchLatestReports, 60000); // Refresh every 60 seconds
-fetchLatestReports(); // Initial call to load notifications on page load
+                    data.forEach(report => {
+                        const notification = document.createElement('div');
+                        notification.classList.add('notification-item');
+                        notification.setAttribute('data-communityreport-id', report.communityreport_id);
+                        
+                        const mediaContent = (report.fileproof.endsWith('.jpg') || report.fileproof.endsWith('.png'))
+                            ? `<img src="${report.fileproof}" alt="File Proof" class="w-16 h-16 mr-3 rounded-md">`
+                            : `<video src="${report.fileproof}" class="w-16 h-16 mr-3 rounded-md" controls></video>`;
 
-function updatePhilippineTime() {
-    const now = new Date();
-    const options = {
-        timeZone: 'Asia/Manila',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-    };
-    const philippineTime = now.toLocaleTimeString('en-US', options);
-    document.getElementById('current-time').innerText = philippineTime;
-}
+                        notification.innerHTML = `
+                            ${mediaContent}
+                            <div>
+                                <h4>${report.fullName}</h4>
+                                <p><strong>Submitted:</strong> ${report.timestamp}</p>
+                            </div>
+                        `;
 
-setInterval(updatePhilippineTime, 1000); // Update time every second
-updatePhilippineTime(); // Initial call to display time immediately
+                        notification.addEventListener('click', () => {
+                            window.location.href = `/rescuemap?communityreport_id=${report.communityreport_id}`;
+                        });
 
+                        notificationContainer.appendChild(notification);
+                    });
+                })
+                .catch(error => console.error('Error fetching reports:', error));
+        }
+
+        setInterval(fetchLatestReports, 60000);
+        fetchLatestReports();
+
+        function updatePhilippineTime() {
+            const now = new Date();
+            const options = {
+                timeZone: 'Asia/Manila',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            const philippineTime = now.toLocaleTimeString('en-US', options);
+            document.getElementById('current-time').innerText = philippineTime;
+        }
+
+        setInterval(updatePhilippineTime, 1000);
+        updatePhilippineTime();
     </script>
 
-    <!-- jQuery -->
+    <!-- jQuery and Bootstrap Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Popper.js (necessary for Bootstrap dropdowns in Bootstrap 4) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-
-    <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 </body>

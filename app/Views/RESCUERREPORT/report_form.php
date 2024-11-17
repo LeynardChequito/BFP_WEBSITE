@@ -23,9 +23,9 @@
             font-family: 'Arial', sans-serif;
         }
 
-        .container-fluid {
+        /* .container-fluid {
             padding: 20px;
-        }
+        } */
 
         .form-container {
             background-color: #fff;

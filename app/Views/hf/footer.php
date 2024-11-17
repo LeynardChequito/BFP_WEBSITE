@@ -4,16 +4,17 @@ $currentYear = date('Y');
 
 <style>
     body {
-        margin: 0;
+        /* margin: 0; */
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        width: auto;
     }
 
     .footer {
         background-image: linear-gradient(to bottom, #000000, #2F4F4F);
         color: #A0A0A0;
-        padding: 20px;
+        width: auto;
         margin-top: auto;
     }
 
@@ -21,7 +22,7 @@ $currentYear = date('Y');
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-        max-width: 1200px;
+        width: auto;
         margin: 0 auto;
     }
 

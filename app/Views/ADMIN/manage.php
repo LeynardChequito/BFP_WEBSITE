@@ -38,10 +38,10 @@
         }
 
         .container-fluid {
-            margin-left: 10px;
-            margin-top: 1px;
-            margin-bottom: 5px;
-            padding: 10px;
+            padding-right: 0px !important;
+            padding-left: 0px !important;
+            margin-right: 0px !important;
+            margin-left: 0px !important;
         }
 
         .container-fluid h3 {
@@ -116,8 +116,8 @@
 <body>
     <div class="container-fluid">
         <?= view('ACOMPONENTS/adminheader'); ?>
-
-        <div style="margin-bottom: 20px;"></div>
+        <!-- 
+        <div style="margin-bottom: 20px;"></div> -->
 
         <div class="row">
 
@@ -134,7 +134,7 @@
                     <?= session('error') ?>
                 </div>
             <?php endif; ?>
-            
+
             <!------------- MAIN CONTENT ---------------------->
             <div class="col-md-9">
                 <div class="content">
@@ -142,12 +142,12 @@
                         <svg class="bd-placeholder-img card-img-top" width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
                             <title>Welcome Admin</title>
                             <rect width="100%" height="100%" fill="#2F363F"></rect>
-                            <text x="50%" y="40%" fill="#ffffff" dy=".3em" text-anchor="middle" font-size="40" font-family="Sofia, sans-serif" text-shadow="2px 2px 5px #9900cc" class="font-effect-outline" >
-    <tspan x="50%" dy="-.3em">Good Day!</tspan>
-    <tspan x="50%" dy="1.2em">Welcome, Admin! Keep up the great work </tspan>
-    <tspan x="50%" dy="1.2em">and let's achieve success today!</tspan>
-</text>
- 
+                            <text x="50%" y="40%" fill="#ffffff" dy=".3em" text-anchor="middle" font-size="40" font-family="Sofia, sans-serif" text-shadow="2px 2px 5px #9900cc" class="font-effect-outline">
+                                <tspan x="50%" dy="-.3em">Good Day!</tspan>
+                                <tspan x="50%" dy="1.2em">Welcome, Admin! Keep up the great work </tspan>
+                                <tspan x="50%" dy="1.2em">and let's achieve success today!</tspan>
+                            </text>
+
                         </svg>
 
                         <div class="card-body">
@@ -157,12 +157,12 @@
                                     <p class="card-text">Our vision is to create a better future by providing quality education to all students.</p>
                                 </div>
                                 <div class="col">
-                                    <h3 class="card-title"  style="text-align:center;">Mission</h3>
+                                    <h3 class="card-title" style="text-align:center;">Mission</h3>
                                     <p class="card-text">Our mission is to empower individuals with the knowledge and skills to succeed in their chosen fields.</p>
                                 </div>
                             </div>
                         </div>
-    
+
                         <hr style="background-color: #ff6666; height: 2px; border: none;">
 
                         <ul class="list-group list-group-flush" id="task-list">
@@ -185,12 +185,12 @@
     <?= view('ACOMPONENTS/NEWS/NewsCreate'); ?>
 
     <script>
-         // Function to add task to the DOM
-function addTaskToDOM(taskText, checked = false) {
-    const taskList = document.getElementById('task-list');
-    const newTask = document.createElement('li');
-    newTask.className = 'list-group-item d-flex justify-content-between align-items-center';
-    newTask.innerHTML = `
+        // Function to add task to the DOM
+        function addTaskToDOM(taskText, checked = false) {
+            const taskList = document.getElementById('task-list');
+            const newTask = document.createElement('li');
+            newTask.className = 'list-group-item d-flex justify-content-between align-items-center';
+            newTask.innerHTML = `
         <span>${taskText}</span>
         <div>
             <label class="me-2" style="margin-left: 30px;">
@@ -199,72 +199,70 @@ function addTaskToDOM(taskText, checked = false) {
             <button class="btn btn-danger btn-sm" style="margin-left: 10px;" onclick="removeTask(this)">Done</button>
         </div>
     `;
-    taskList.appendChild(newTask);
-}
+            taskList.appendChild(newTask);
+        }
 
-// Function to add a new task
-function addTask() {
-    const taskText = document.getElementById('new-task').value;
-    if (taskText === '') {
-        alert('Please enter a task');
-        return;
-    }
-    addTaskToDOM(taskText);
-    saveTasks(); // Save tasks to localStorage
-    document.getElementById('new-task').value = ''; // Clear input field
-}
+        // Function to add a new task
+        function addTask() {
+            const taskText = document.getElementById('new-task').value;
+            if (taskText === '') {
+                alert('Please enter a task');
+                return;
+            }
+            addTaskToDOM(taskText);
+            saveTasks(); // Save tasks to localStorage
+            document.getElementById('new-task').value = ''; // Clear input field
+        }
 
-// Function to remove a task with confirmation
-function removeTask(button) {
-    // Show confirmation dialog
-    const confirmation = confirm("Are you sure you want to mark this task as done?");
-    if (confirmation) {
-        const taskItem = button.closest('li');
-        taskItem.remove();
-        saveTasks(); // Save tasks to localStorage after removal
-    }
-}
+        // Function to remove a task with confirmation
+        function removeTask(button) {
+            // Show confirmation dialog
+            const confirmation = confirm("Are you sure you want to mark this task as done?");
+            if (confirmation) {
+                const taskItem = button.closest('li');
+                taskItem.remove();
+                saveTasks(); // Save tasks to localStorage after removal
+            }
+        }
 
-// Function to save tasks to localStorage
-function saveTasks() {
-    const taskList = document.querySelectorAll('#task-list li');
-    const tasks = [];
-    taskList.forEach(task => {
-        tasks.push({
-            text: task.querySelector('span').textContent,
-            checked: task.querySelector('input').checked
+        // Function to save tasks to localStorage
+        function saveTasks() {
+            const taskList = document.querySelectorAll('#task-list li');
+            const tasks = [];
+            taskList.forEach(task => {
+                tasks.push({
+                    text: task.querySelector('span').textContent,
+                    checked: task.querySelector('input').checked
+                });
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        // Function to load tasks from localStorage
+        function loadTasks() {
+            const savedTasks = localStorage.getItem('tasks');
+            if (savedTasks) {
+                const tasks = JSON.parse(savedTasks);
+                tasks.forEach(task => {
+                    addTaskToDOM(task.text, task.checked);
+                });
+            }
+        }
+
+        // Listen for changes to checkboxes and save state
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.type === 'checkbox') {
+                saveTasks(); // Save tasks to localStorage on checkbox toggle
+            }
         });
-    });
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-}
 
-// Function to load tasks from localStorage
-function loadTasks() {
-    const savedTasks = localStorage.getItem('tasks');
-    if (savedTasks) {
-        const tasks = JSON.parse(savedTasks);
-        tasks.forEach(task => {
-            addTaskToDOM(task.text, task.checked);
+        // Load tasks when the page is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTasks();
         });
-    }
-}
-
-// Listen for changes to checkboxes and save state
-document.addEventListener('change', function(e) {
-    if (e.target && e.target.type === 'checkbox') {
-        saveTasks(); // Save tasks to localStorage on checkbox toggle
-    }
-});
-
-// Load tasks when the page is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    loadTasks();
-});
-
-
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 

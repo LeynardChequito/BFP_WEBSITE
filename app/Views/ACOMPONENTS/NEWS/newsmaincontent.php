@@ -38,13 +38,13 @@
             display: block;
         }
 
-        .container-fluid {
+        /* .container-fluid {
             margin-left: 10px;
             margin-top: 1px;
             margin-bottom: 5px;
             padding: 10px;
             
-        }
+        } */
 
         .container-fluid h3 {
             margin-bottom: 20px;

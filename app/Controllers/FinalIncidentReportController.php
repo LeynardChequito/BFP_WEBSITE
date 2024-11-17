@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\FinalIncidentReportModel;
-use App\Models\RescuerReportModel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -18,12 +17,10 @@ class FinalIncidentReportController extends BaseController
     public function __construct()
     {
         $this->finalIncidentReportModel = new FinalIncidentReportModel();
-        $this->rescuerReportModel = new RescuerReportModel();
     }
 
     public function finalreport()
     {
-        $data['reports'] = $this->rescuerReportModel->findAll();
         $data['reports'] = $this->finalIncidentReportModel->findAll();
         return view('Areport/final_incident_report/finalreport', $data);
     }
@@ -36,9 +33,24 @@ class FinalIncidentReportController extends BaseController
     public function store()
     {
         $data = $this->request->getPost();
+    
+        // Check for duplicate entry
+        $existingReport = $this->finalIncidentReportModel
+            ->where('rescuer_name', $data['rescuer_name'])
+            ->where('address', $data['address'])
+            ->where('report_date', $data['report_date'])
+            ->first();
+    
+        if ($existingReport) {
+            return redirect()->back()->with('error', 'Duplicate report already exists for this rescuer, address, and date.');
+        }
+    
+        // Save new report if no duplicate found
         $this->finalIncidentReportModel->save($data);
-        return redirect()->to('rescue/final-incident-report');
+    
+        return redirect()->to('rescuer/final-incident-report')->with('success', 'Report saved successfully!');
     }
+    
 
     public function edit($id)
     {

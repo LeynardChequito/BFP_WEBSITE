@@ -1,210 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Manage Folder Files</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <style>
-        /* Dark theme styling */
-        body {
-            background-color: #121212;
-            color: #e0e0e0;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Container styling */
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            padding-top: 30px;
-            min-height: calc(100vh - 200px);
-            box-sizing: border-box;
-        }
-
-        .container {
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
-        }
-
-        .main-content h1 {
-            font-size: 2.5rem;
-            color: #ffffff;
-            margin-bottom: 20px;
-        }
-
-        /* Button styling */
-        .btn-custom {
-            background-color: #0070f3;
-            color: #ffffff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .btn-custom:hover {
-            background-color: #005bb5;
-        }
-
-        /* Folder header styling */
-        .folder-header {
-            font-size: 1.2rem;
-            color: #58a6ff;
-            cursor: pointer;
-            font-weight: 500;
-            margin: 20px 0;
-        }
-
-        /* Table styling */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #2c2c2c;
-        }
-        th {
-            background-color: #2d2d2d;
-            color: #b0b0b0;
-        }
-
-        /* Action buttons with better visibility */
-        .actions button {
-            margin: 2px;
-            padding: 6px 10px;
-            font-size: 0.875rem;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .actions .btn-edit { background-color: #5bc0de; }
-        .actions .btn-toggle { background-color: #5cb85c; }
-        .actions .btn-preview { background-color: #f0ad4e; }
-        .actions .btn-export { background-color: #d9534f; }
-        .actions .btn-delete { background-color: #d9534f; }
-
-        /* Media preview styling */
-        .thumbnail, .video-preview {
-            max-width: 80px;
-            max-height: 80px;
-            border-radius: 5px;
-            border: 1px solid #333;
-            margin: 5px 0;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
 
-<?= view('ACOMPONENTS/adminheader'); ?>
-<?= view('ACOMPONENTS/amanagesidebar'); ?>
+<body class="bg-gray-900 text-gray-200 font-sans">
+    <?= view('ACOMPONENTS/adminheader'); ?>
+    <?= view('ACOMPONENTS/amanagesidebar'); ?>
+    <div class="main-content ml-64 p-8">
 
-<div class="main-content">
-    <h1>Manage Folder Files</h1>
-    <div class="container">
-        <button class="btn btn-custom" onclick="window.location.href='/folders/createFolder'">Create Main Folder and Subfolder</button>
-        <button class="btn btn-custom" onclick="window.location.href='/folders/createFile'">Create File</button>
+        <h1 class="text-4xl font-bold text-white mb-8">Manage Folder Files</h1>
+        <div class="container bg-gray-800 p-6 rounded-lg shadow-lg">
+            <button class="bg-blue-500 text-white py-2 px-4 rounded mb-4 hover:bg-blue-700" onclick="window.location.href='/folders/createFolder'">Create Main Folder and Subfolder</button>
+            <button class="bg-blue-500 text-white py-2 px-4 rounded mb-4 hover:bg-blue-700" onclick="window.location.href='/folders/createFile'">Create File</button>
 
-        <?php foreach ($mainFolders as $mainFolder): ?>
-            <div class="folder-section">
-                <div class="folder-header" onclick="toggleTable('table_<?= $mainFolder['main_folder_id'] ?>')">
-                    <?= $mainFolder['name'] ?> Folder
-                </div>
+            <?php foreach ($mainFolders as $mainFolder): ?>
+                <div class="folder-section my-6">
+                    <h3 class="folder-header text-lg text-blue-400 font-medium cursor-pointer flex items-center" onclick="toggleTable('table_<?= $mainFolder['main_folder_id'] ?>')">
+                        <?= $mainFolder['name'] ?> Folder
+                        <button class="ml-3 bg-yellow-500 text-white text-sm py-1 px-2 rounded hover:bg-yellow-600" onclick="event.stopPropagation(); openEditFolderModal('main', <?= $mainFolder['main_folder_id'] ?>, '<?= $mainFolder['name'] ?>')">Edit</button>
+                        <button class="ml-1 bg-red-500 text-white text-sm py-1 px-2 rounded hover:bg-red-700" onclick="event.stopPropagation(); deleteFolder('main', <?= $mainFolder['main_folder_id'] ?>)">Delete</button>
+                    </h3>
 
-                <table id="table_<?= $mainFolder['main_folder_id'] ?>" class="table" style="display:none;">
-                    <thead>
-                        <tr>
-                            <th>File ID</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Preview</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($mainFolder['subfolders'] as $subFolder): ?>
-                            <?php foreach ($subFolder['files'] as $file): ?>
+                    <table id="table_<?= $mainFolder['main_folder_id'] ?>" class="w-full border-collapse mt-4 hidden">
+                        <thead>
+                            <tr class="bg-gray-700 text-gray-300">
+                                <th class="p-3">Subfolder ID</th>
+                                <th class="p-3">Title</th>
+                                <th class="p-3">Description</th>
+                                <th class="p-3">Preview</th>
+                                <th class="p-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($mainFolder['subfolders'] as $subFolder): ?>
                                 <tr>
-                                    <td><?= $file['file_id'] ?></td>
-                                    <td><?= $file['title'] ?></td>
-                                    <td><?= $file['description'] ?></td>
-                                    <td>
-                                        <?php
-                                            // Ensure the file path points to the correct directory in public/gallery
-                                            $filePath = base_url("bfpcalapancity/public/gallery/{$mainFolder['name']}/{$subFolder['name']}/" . basename($file['file_path']));
-                                            $fileExtension = strtolower(pathinfo($file['file_path'], PATHINFO_EXTENSION));
-
-                                            if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])):
-                                        ?>
-                                            <img src="<?= $filePath ?>" alt="Image Preview" class="thumbnail">
-                                        <?php elseif (in_array($fileExtension, ['mp4', 'webm', 'ogg'])): ?>
-                                            <video controls class="video-preview">
-                                                <source src="<?= $filePath ?>" type="video/<?= $fileExtension ?>">
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        <?php else: ?>
-                                            <span>File format not supported for preview</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="actions">
-                                        <button class="btn-edit" onclick="editFile(<?= $file['file_id'] ?>)">Edit</button>
-                                        <button class="btn-toggle" onclick="toggleVisibility(<?= $file['file_id'] ?>)">
-                                            <?= $file['is_visible'] ? 'Hide' : 'Show' ?>
-                                        </button>
-                                        <button class="btn-preview" onclick="previewFile('<?= $filePath ?>')">Preview PDF</button>
-                                        <button class="btn-export" onclick="exportToPDF(<?= $file['file_id'] ?>)">Export PDF</button>
-                                        <button class="btn-delete" onclick="deleteFile(<?= $file['file_id'] ?>)">Delete</button>
+                                    <td colspan="5" class="text-blue-400 font-semibold p-4">
+                                        <?= $subFolder['name'] ?> Subfolder
+                                        <button class="ml-2 bg-yellow-500 text-white text-sm py-1 px-2 rounded hover:bg-yellow-600" onclick="openEditFolderModal('sub', <?= $subFolder['sub_folder_id'] ?>, '<?= $subFolder['name'] ?>')">Edit</button>
+                                        <button class="ml-1 bg-red-500 text-white text-sm py-1 px-2 rounded hover:bg-red-700" onclick="deleteFolder('sub', <?= $subFolder['sub_folder_id'] ?>)">Delete</button>
                                     </td>
                                 </tr>
+                                <?php foreach ($subFolder['files'] as $file): ?>
+                                    <tr class="bg-gray-800">
+                                        <td class="p-3"><?= $file['file_id'] ?></td>
+                                        <td class="p-3"><?= $file['title'] ?></td>
+                                        <td class="p-3"><?= $file['description'] ?></td>
+                                        <td class="p-3">
+                                            <?php
+                                                $filePaths = json_decode($file['file_path'], true);
+                                                foreach ($filePaths as $path) {
+                                                    $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                                                    if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])):
+                                            ?>
+                                                    <img src="<?= base_url($path) ?>" alt="Image Preview" class="w-20 h-20 object-cover rounded mb-2">
+                                            <?php else: ?>
+                                                    <span>File format not supported for preview</span>
+                                            <?php endif; } ?>
+                                        </td>
+
+                                        <td class="actions p-3 space-x-2">
+                                            <?php
+$fileId = $file['file_id'];
+$title = htmlspecialchars($file['title'], ENT_QUOTES, 'UTF-8');
+$description = htmlspecialchars($file['description'], ENT_QUOTES, 'UTF-8');
+?>
+                                            <button class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600" onclick="editFile(<?= $fileId ?>, '<?= $title ?>', '<?= $description ?>')">Edit</button>
+                                            <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-700" onclick="deleteFile(<?= $file['file_id'] ?>)">Delete</button>
+                                            <button class="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600" onclick="previewFile(<?= $file['file_id'] ?>)">Preview</button>
+                                            <button class="bg-purple-500 text-white py-1 px-3 rounded hover:bg-purple-600" onclick="exportFile('pdf', <?= $file['file_id'] ?>)">Export PDF</button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
                             <?php endforeach; ?>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+
+    <!-- Edit File Modal -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center" id="editFileModal">
+    <div class="bg-gray-800 p-6 rounded-lg w-full max-w-md">
+        <h5 class="text-2xl font-bold text-white mb-4">Edit File</h5>
+        <form id="editFileForm" enctype="multipart/form-data">
+            <!-- Title Input -->
+            <input type="text" id="fileTitle" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" placeholder="File Title" required>
+            
+            <!-- Description Input -->
+            <textarea id="fileDescription" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" placeholder="File Description" required></textarea>
+            
+            <!-- Image/Video Upload -->
+            <label for="fileUpload" class="block text-sm font-medium text-gray-300 mb-2">Upload Image/Video</label>
+            <input type="file" id="fileUpload" class="w-full text-white p-2 mb-4 bg-gray-700 rounded" accept="image/*,video/*" multiple>
+            
+            <!-- Hidden File ID Input -->
+            <input type="hidden" id="fileId">
+
+            <!-- Save and Cancel Buttons -->
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">Save Changes</button>
+            <button type="button" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 ml-2" onclick="closeEditFileModal()">Cancel</button>
+        </form>
     </div>
 </div>
 
-<?= view('hf/footer'); ?>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script>
-    function toggleTable(tableId) {
-        const table = document.getElementById(tableId);
-        table.style.display = (table.style.display === 'none') ? 'table' : 'none';
-    }
-
-    function editFile(fileId) {
-        window.location.href = `/folders/editFile/${fileId}`;
-    }
-
-    function toggleVisibility(fileId) {
-        fetch(`/folders/toggleVisibility/${fileId}`)
-            .then(response => location.reload());
-    }
-
-    function previewFile(filePath) {
-        const win = window.open(filePath, '_blank');
-        win.focus();
-    }
-
-    function exportToPDF(fileId) {
-        window.location.href = `/folders/exportFilePDF/${fileId}`;
-    }
-
-    function deleteFile(fileId) {
-        if (confirm("Are you sure you want to delete this file?")) {
-            fetch(`/folders/deleteFile/${fileId}`, { method: 'DELETE' })
-                .then(response => location.reload());
+    <?= view('hf/footer'); ?>
+    <script>
+        function toggleTable(tableId) {
+            const table = document.getElementById(tableId);
+            table.classList.toggle('hidden');
         }
+
+        function previewFile(fileId) {
+            window.location.href = `/folders/previewFile/${fileId}`;
+        }
+
+        function exportFile(format, fileId) {
+            if (format === 'pdf') {
+                window.location.href = `/folders/exportFilePDF/${fileId}`;
+            }
+        }
+
+        function openEditFolderModal(type, id, name) {
+            document.getElementById('folderName').value = name;
+            document.getElementById('folderType').value = type;
+            document.getElementById('folderId').value = id;
+            document.getElementById('editFolderModal').classList.remove('hidden');
+            document.getElementById('editFolderModal').classList.add('flex');
+        }
+
+        function closeEditFolderModal() {
+            document.getElementById('editFolderModal').classList.add('hidden');
+            document.getElementById('editFolderModal').classList.remove('flex');
+        }
+
+          function openEditFileModal(fileId, title, description) {
+    // Check if elements exist before setting values to avoid the null error
+    const titleElement = document.getElementById('fileTitle');
+    const descriptionElement = document.getElementById('fileDescription');
+    const fileIdElement = document.getElementById('fileId');
+
+    if (titleElement && descriptionElement && fileIdElement) {
+        // Populate the form with current file information
+        titleElement.value = title;
+        descriptionElement.value = description;
+        fileIdElement.value = fileId;
+
+        // Show the modal
+        document.getElementById('editFileModal').classList.remove('hidden');
+        document.getElementById('editFileModal').classList.add('flex');
+    } else {
+        console.error('Edit file elements not found.');
     }
-</script>
+}
+
+function closeEditFileModal() {
+    // Hide the modal
+    document.getElementById('editFileModal').classList.add('hidden');
+    document.getElementById('editFileModal').classList.remove('flex');
+}
+
+        function editFile(fileId, title, description) {
+            openEditFileModal(fileId, title, description);
+        }
+
+        document.getElementById('editFileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const fileId = document.getElementById('fileId').value;
+        const title = document.getElementById('fileTitle').value;
+        const description = document.getElementById('fileDescription').value;
+        const files = document.getElementById('fileUpload').files;
+
+        // Prepare form data to send with the request
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('fileId', fileId);
+
+        // Append files to formData
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files[]', files[i]);
+        }
+
+        // Send the data to the server
+        fetch(`/folders/updateFile/${fileId}`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.error(`Error: ${response.status} ${response.statusText}`);
+                throw new Error('Failed to update file');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                location.reload(); // Reload page to reflect changes
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating file:', error);
+            alert('An error occurred while updating the file. Please try again.');
+        });
+    });
+        function deleteFolder(type, id) {
+            if (confirm(`Are you sure you want to delete this ${type === 'main' ? 'main folder' : 'subfolder'}?`)) {
+                const url = type === 'main'
+                    ? `/folders/deleteMainFolder/${id}`
+                    : `/folders/deleteSubFolder/${id}`;
+
+                fetch(url, { method: 'DELETE' })
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error(`Error: ${response.status} ${response.statusText}`);
+                            throw new Error('Failed to delete folder');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting folder:', error);
+                        alert('An error occurred while deleting the folder. Please try again.');
+                    });
+            }
+        }
+
+        function deleteFile(fileId) {
+            if (confirm("Are you sure you want to delete this file?")) {
+                fetch(`/folders/deleteFile/${fileId}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error(`Error: ${response.status} ${response.statusText}`);
+                            throw new Error('Failed to delete file');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting file:', error);
+                        alert('An error occurred while deleting the file. Please try again.');
+                    });
+            }
+        }
+    </script>
 
 </body>
+
 </html>

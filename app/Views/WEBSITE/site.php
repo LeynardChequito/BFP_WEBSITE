@@ -187,8 +187,8 @@
     </nav>
 
 
-    <!-- Second Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+<!-- Second Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -197,21 +197,30 @@
             <li class="nav-item">
                 <a href="<?= site_url('/home') ?>" class="nav-link">Home</a>
             </li>
-            <?php if (isset($mainFolders) && is_array($mainFolders)): ?>
-                <?php foreach ($mainFolders as $mainFolder => $subFolders): ?>
+            <!-- Dynamic Main Folders in Dropdown -->
+            <?php if (!empty($mainFolders) && is_array($mainFolders)): ?>
+                <?php foreach ($mainFolders as $mainFolder): ?>
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown<?= esc($mainFolder) ?>" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <?= esc($mainFolder) ?>
+                        <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown<?= esc($mainFolder['main_folder_id']) ?>" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <?= esc($mainFolder['name']) ?>
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown<?= esc($mainFolder) ?>">
-                            <?php foreach ($subFolders as $subFolder): ?>
-                                <a class="dropdown-item" href="<?= site_url("folders/view/$mainFolder/$subFolder") ?>">
-                                    <?= esc($subFolder) ?>
-                                </a>
-                            <?php endforeach; ?>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown<?= esc($mainFolder['main_folder_id']) ?>">
+                            <?php if (!empty($mainFolder['subfolders']) && is_array($mainFolder['subfolders'])): ?>
+                                <?php foreach ($mainFolder['subfolders'] as $subFolder): ?>
+                                    <a class="dropdown-item" href="<?= site_url("folders/view_sub_folders/{$subFolder['sub_folder_id']}") ?>">
+                                        <?= esc($subFolder['name']) ?>
+                                    </a>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <span class="dropdown-item text-muted">No Subfolders</span>
+                            <?php endif; ?>
                         </div>
                     </li>
                 <?php endforeach; ?>
+            <?php else: ?>
+                <li class="nav-item">
+                    <a href="#" class="nav-link disabled">No folders available</a>
+                </li>
             <?php endif; ?>
         </ul>
     </div>
@@ -296,21 +305,23 @@
         let mToken;
 
         // Retrieve FCM token for the current device
-        function getToken() {
-            messaging.getToken({
-                    vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
-                })
-                .then((currentToken) => {
-                    if (currentToken) {
-                        console.log('Token retrieved:', currentToken);
-                    } else {
-                        console.log('No registration token available.');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error retrieving token:', error);
-                });
-        }
+function getToken() {
+    messaging.getToken({
+            vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
+        })
+        .then((currentToken) => {
+            if (currentToken) {
+                console.log('Token retrieved:', currentToken);
+                localStorage.setItem('rescuerToken', currentToken); // Store token for later use
+            } else {
+                console.log('No registration token available.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error retrieving token:', error);
+        });
+}
+
 
 
         // Handle incoming messages (while the app is in the foreground)
@@ -341,7 +352,7 @@
 
                 const formData = new FormData(this);
                 const xhr = new XMLHttpRequest();
-                xhr.open("POST", "https://bafpcalapancity.online/communityreport/submit", true);
+                xhr.open("POST", "https://bfpcalapancity.online/communityreport/submit", true);
 
                 xhr.onload = function() {
                     try {
