@@ -10,7 +10,8 @@ $sidebarItems = [
 
 // Helper function to check if the current page matches the menu item
 if (!function_exists('isActive')) {
-    function isActive($url) {
+    function isActive($url)
+    {
         return strpos(current_url(), $url) !== false ? 'active' : '';
     }
 }
@@ -18,6 +19,7 @@ if (!function_exists('isActive')) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +29,8 @@ if (!function_exists('isActive')) {
     <style>
         /* Sidebar Styles */
         .sidebar {
-            background-color: #EF3340; /* Red color */
+            background-color: #EF3340;
+            /* Red color */
             height: 100vh;
             width: 240px;
             display: flex;
@@ -45,7 +48,8 @@ if (!function_exists('isActive')) {
         }
 
         .sidebar a:hover {
-            background-color: #D12D34; /* Darker shade of red */
+            background-color: #D12D34;
+            /* Darker shade of red */
         }
 
         .sidebar .active {
@@ -72,7 +76,8 @@ if (!function_exists('isActive')) {
         .content {
             flex: 1;
             padding: 20px;
-            margin-top: 60px; /* Space for header */
+            margin-top: 60px;
+            /* Space for header */
         }
 
         @media (max-width: 768px) {
@@ -82,11 +87,13 @@ if (!function_exists('isActive')) {
             }
 
             .content {
-                margin-top: 80px; /* Space for header on small screens */
+                margin-top: 80px;
+                /* Space for header on small screens */
             }
         }
     </style>
 </head>
+
 <body class="bg-gray-100">
     <div class="main-container">
         <!-- Sidebar -->
@@ -115,6 +122,7 @@ if (!function_exists('isActive')) {
                 </a>
             </div>
         </aside>
-</div>
+    </div>
 </body>
+
 </html>
