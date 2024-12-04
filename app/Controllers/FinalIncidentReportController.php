@@ -66,39 +66,60 @@ class FinalIncidentReportController extends BaseController
     {
         $data = $this->request->getPost();
         $this->finalIncidentReportModel->update($id, $data);
-        return redirect()->to('rescue/final-incident-report');
+        return redirect()->to('rescuer/final-incident-report');
     }
 
     public function delete($id)
     {
         $this->finalIncidentReportModel->delete($id);
-        return redirect()->to('rescue/final-incident-report');
+        return redirect()->to('rescuer/final-incident-report');
     }
 
-    public function exportPdf($id)
-    {
-        $report = $this->finalIncidentReportModel->find($id);
-        if (!$report) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Report not found');
-        }
+public function exportPdf($id)
+{
+    date_default_timezone_set('Asia/Manila');
 
-        // Load PDF library and configure
-        $options = new Options();
-        $options->set('defaultFont', 'Courier');
-        $dompdf = new Dompdf($options);
-
-        // Create HTML content for the PDF
-        $html = view('Areport/final_incident_report/pdf', ['report' => $report]);
-
-        // Load content and render
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-        $dompdf->stream('report_' . $report['final_report_id'] . '.pdf', ['Attachment' => true]);
+    $report = $this->finalIncidentReportModel->find($id);
+    if (!$report) {
+        throw new \CodeIgniter\Exceptions\PageNotFoundException('Report not found');
     }
+
+    // Generate Base64-encoded logo
+    $path = FCPATH . 'bfpcalapancity/public/design/logo.png'; // Ensure this path points to your logo file
+    if (file_exists($path)) {
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+        $base64Logo = 'data:image/' . $type . ';base64,' . base64_encode($data);
+    } else {
+        // Fallback for missing logo
+        $base64Logo = ''; // Leave empty or set a placeholder if needed
+    }
+
+    // Configure Dompdf
+    $options = new \Dompdf\Options();
+    $options->set('isRemoteEnabled', true); // Enable remote resources
+    $options->set('defaultFont', 'Arial');
+    $dompdf = new \Dompdf\Dompdf($options);
+
+    // Render the HTML with the Base64 logo passed to the view
+    $html = view('Areport/final_incident_report/pdf', [
+        'report' => $report,
+        'base64Logo' => $base64Logo, // Pass the Base64 logo to the view
+    ]);
+
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('Folio', 'portrait');
+    $dompdf->render();
+
+    // Output the PDF
+    $dompdf->stream('Final Incident Report No.' . $report['final_report_id'] . '.pdf', ['Attachment' => true]);
+}
+
 
     public function exportExcel($id)
     {
+        date_default_timezone_set('Asia/Manila');
+
         $report = $this->finalIncidentReportModel->find($id);
         if (!$report) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Report not found');
@@ -108,70 +129,122 @@ class FinalIncidentReportController extends BaseController
         $sheet = $spreadsheet->getActiveSheet();
 
         // Set header row
-        $sheet->setCellValue('A1', 'Community Report ID');
-        $sheet->setCellValue('B1', 'Full Name');
-        $sheet->setCellValue('C1', 'Address');
-        $sheet->setCellValue('D1', 'Cause of Fire');
-        // Add other columns as needed...
+        $sheet->setCellValue('A1', 'Report ID')
+              ->setCellValue('B1', 'Rescuer Name')
+              ->setCellValue('C1', 'Address')
+              ->setCellValue('D1', 'Report Date')
+              ->setCellValue('E1', 'Start Time')
+              ->setCellValue('F1', 'End Time')
+              ->setCellValue('G1', 'Cause of Fire')
+              ->setCellValue('H1', 'Property Damage Cost');
 
-        // Fill data
-        $sheet->setCellValue('A2', $report['communityreport_id']);
-        $sheet->setCellValue('B2', $report['fullName']);
-        $sheet->setCellValue('C2', $report['address']);
-        $sheet->setCellValue('D2', $report['cause_of_fire']);
-        // Add other data as needed...
+        // Add data
+        $sheet->setCellValue('A2', $report['final_report_id'])
+              ->setCellValue('B2', $report['rescuer_name'])
+              ->setCellValue('C2', $report['address'])
+              ->setCellValue('D2', $report['report_date'])
+              ->setCellValue('E2', $report['start_time'])
+              ->setCellValue('F2', $report['end_time'])
+              ->setCellValue('G2', $report['cause_of_fire'])
+              ->setCellValue('H2', number_format((float)$report['property_damage_cost_estimate'], 2));
 
-        // Create Writer
+        // Style header row
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '007bff']
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+            ]
+        ];
+        $sheet->getStyle('A1:H1')->applyFromArray($headerStyle);
+
+        // Auto-size columns
+        foreach (range('A', 'H') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        // Save and download
         $writer = new Xlsx($spreadsheet);
-        $fileName = 'report_' . $report['final_report_id'] . '.xlsx';
-        $writer->save($fileName);
+        $filePath = WRITEPATH . 'exports/Final_Incident_Report_' . $report['final_report_id'] . '.xlsx';
+        $writer->save($filePath);
 
-        return $this->response->download($fileName, null)->setFileName($fileName);
+        return $this->response->download($filePath, null)->setFileName('Final_Incident_Report_' . $report['final_report_id'] . '.xlsx');
     }
 
-    public function previewPdf($id)
+
+public function previewPdf($id)
 {
+    date_default_timezone_set('Asia/Manila');
+
     $report = $this->finalIncidentReportModel->find($id);
     if (!$report) {
         throw new \CodeIgniter\Exceptions\PageNotFoundException('Report not found');
     }
 
-    // Load the PDF preview view
-    return view('Areport/final_incident_report/pdf', ['report' => $report]);
+    // Generate Base64-encoded logo
+    $path = FCPATH . 'bfpcalapancity/public/design/logo.png'; // Ensure this path is correct
+    if (file_exists($path)) {
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+        $base64Logo = 'data:image/' . $type . ';base64,' . base64_encode($data);
+    } else {
+        // Handle missing image gracefully
+        $base64Logo = ''; // You can add a placeholder here
+    }
+
+    // Load PDF library and configure
+    $options = new \Dompdf\Options();
+    $options->set('isRemoteEnabled', true); // Enable remote images
+    $dompdf = new \Dompdf\Dompdf($options);
+
+    // Pass the report and Base64 logo to the view
+    $html = view('Areport/final_incident_report/pdf', [
+        'report' => $report,
+        'base64Logo' => $base64Logo
+    ]);
+
+    // Load content and render
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('Folio', 'portrait');
+    $dompdf->render();
+
+    // Stream the PDF inline (same tab)
+    $dompdf->stream('Final Incident Report No.' . $report['final_report_id'] . '.pdf', [
+        'Attachment' => false // Inline view
+    ]);
+
+    // Prevent further processing
+    exit;
 }
 
 public function previewExcel($id)
 {
+    date_default_timezone_set('Asia/Manila');
+
     $report = $this->finalIncidentReportModel->find($id);
     if (!$report) {
         throw new \CodeIgniter\Exceptions\PageNotFoundException('Report not found');
     }
 
-    // Create a new Spreadsheet for previewing Excel content
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
 
-    // Set header row
-    $sheet->setCellValue('A1', 'Community Report ID');
-    $sheet->setCellValue('B1', 'Full Name');
-    $sheet->setCellValue('C1', 'Address');
-    $sheet->setCellValue('D1', 'Cause of Fire');
-    // Add other columns as needed...
+    // Set column headers and populate data
+    $sheet->setCellValue('A1', 'Report ID')->setCellValue('B1', 'Rescuer Name')->setCellValue('C1', 'Address');
+    $sheet->setCellValue('A2', $report['final_report_id'])->setCellValue('B2', $report['rescuer_name'])->setCellValue('C2', $report['address']);
 
-    // Fill data
-    $sheet->setCellValue('A2', $report['communityreport_id']);
-    $sheet->setCellValue('B2', $report['fullName']);
-    $sheet->setCellValue('C2', $report['address']);
-    $sheet->setCellValue('D2', $report['cause_of_fire']);
-    // Add other data as needed...
-
-    // Prepare output for preview
+    // Stream the Excel file inline
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: inline; filename="report_preview.xlsx"');
-    
+
     $writer = new Xlsx($spreadsheet);
     $writer->save('php://output');
     exit;
 }
+
+
 
 }

@@ -23,7 +23,9 @@ class FinalIncidentReportModel extends Model
         'property_damage_cost_estimate',
         'number_of_injuries',
         'additional_information',
-        'photo'
+        'photo',
+        'latitude',
+        'longitude'
     ];
     public function getEstimatedValue($enumValue)
     {

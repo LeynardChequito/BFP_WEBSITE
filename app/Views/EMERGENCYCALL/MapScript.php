@@ -6,7 +6,7 @@
     }
 
     // Set interval to reload the site every 10 minutes (10minutes * 60 * 1000 milliseconds)
-    setInterval(reloadSite, 5 * 60 * 1000);
+    setInterval(reloadSite, 10 * 60 * 1000);
 
     // Function to update time display every second 
     function updateTime() {
@@ -20,7 +20,7 @@
     const communityreport_id = urlParams.get('communityreport_id');
 
     // const apiKey = "AAPKb07ff7b9da8148cd89a46acc88c3c668OJ1KYSZifeA8-33Ign-Rw9GTSTMh1yjCUysmmuS7xd1_ydOreuns29W-y8JC5gBs"; //old api-key
-    const apiKey = "AAPKac6c1269609841b2a00dd16b90f0ccb8iFjQh8pTb7aadJWaETJip3ISvXcpq_5cB296OQurtGW79gpbXuMKZPe9kx-6mGWl";
+    const apiKey = "AAPKac6c1269609841b2a00dd16b90f0ccb8iFjQh8pTb7aadJWaETJip3ISvXcpq_5cB296OQurtGW79gpbXuMKZPe9kx-6mGWl"; //new api-key
     const basemapEnum = "arcgis/navigation";
     const map = L.map("map", {
         zoom: 19
@@ -786,7 +786,7 @@
     // Submit report form
         function submitReportForm(lat, lng, communityreport_id) {
         // Construct the URL for the fire report form
-        const fireReportFormUrl = `fire-report/create?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
+        const fireReportFormUrl = `rescuer-report/form?lat=${lat}&lng=${lng}&communityreport_id=${communityreport_id}`;
 
         // Redirect to the fire report form
         window.location.href = fireReportFormUrl;
@@ -800,7 +800,7 @@
     // }
 
     function accessFireReportForm() {
-        window.location.href = 'fire-report/create';
+        window.location.href = 'rescuer-report/form';
     }
 
     // Function to display the file proof

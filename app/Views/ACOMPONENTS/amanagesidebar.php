@@ -6,6 +6,7 @@ $sidebarItems = [
     ['url' => 'rescuer/final-incident-report', 'icon' => 'fas fa-file-alt', 'text' => 'Manage Final Report'],
     ['url' => 'graph', 'icon' => 'fas fa-chart-pie', 'text' => 'Dashboard'],
     ['url' => '/folders/manage', 'icon' => 'fas fa-folder', 'text' => 'Manage Folders'], // New entry for Manage Folders
+    ['url' => 'heatmap', 'icon' => 'fas fa-map', 'text' => 'Heatmap'], // Added Heatmap entry
 ];
 
 // Helper function to check if the current page matches the menu item

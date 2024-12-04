@@ -60,9 +60,9 @@ class FireReportController extends BaseController
             // Handle photo upload
             $photo = $this->request->getFile('photo');
             if ($photo && $photo->isValid()) {
-                log_message('debug', 'Temp file: ' . $photo->getTempName());
-                log_message('debug', 'Original file name: ' . $photo->getName());
-                log_message('debug', 'Error code: ' . $photo->getError());
+                // log_message('debug', 'Temp file: ' . $photo->getTempName());
+                // log_message('debug', 'Original file name: ' . $photo->getName());
+                // log_message('debug', 'Error code: ' . $photo->getError());
 
                 if (!$photo->hasMoved()) {
                     $newPhotoName = $photo->getRandomName();

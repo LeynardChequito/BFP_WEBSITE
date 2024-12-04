@@ -5,17 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Incident Report</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-
-<div class="container mt-5">
-    <?= view('ACOMPONENTS/amanagesidebar'); ?>
-    <h2 class="form-header">Add New Incident Report</h2>
+    <?= view('ACOMPONENTS/adminheader'); ?>
+    <div class="container-fluid">
+        <div class="row">
+            <?= view('ACOMPONENTS/amanagesidebar'); ?>
+            <div class="col-md-10">
     <div class="form-container card">
         <div class="card-body">
             <form action="<?= site_url('rescuer/final-incident-report/store') ?>" method="POST" enctype="multipart/form-data">
                 <?= csrf_field() ?>
-
+                
+<div class="row align-items-center mb-4">
+                            <div class="col-md-4 text-left">
+                                <a href="<?= site_url('rescuer/final-incident-report') ?>" class="btn btn-secondary">Back to Reports</a>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h1>Add Incident Report</h1>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <button type="submit" class="btn btn-primary btn-block">Submit Report</button>
+                            </div>
+                        </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -129,12 +149,13 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block">Submit Report</button>
             </form>
         </div>
     </div>
 </div>
-
+</div>
+</div>
+</div>
 <?= view('hf/footer'); ?>
 
 <!-- <script>

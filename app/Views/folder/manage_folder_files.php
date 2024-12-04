@@ -5,109 +5,119 @@
     <meta charset="UTF-8">
     <title>Manage Folder Files</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .app-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            min-width: 250px; /* Adjust width as needed */
+            background-color: #dc3545; /* Sidebar color */
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 16px;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #343a40; /* Header color */
+            color: #fff;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-900 text-gray-200 font-sans">
-    <?= view('ACOMPONENTS/adminheader'); ?>
-    <?= view('ACOMPONENTS/amanagesidebar'); ?>
-    <div class="main-content ml-64 p-8">
+<body>
+    <div class="header">
+        <?= view('ACOMPONENTS/adminheader'); ?>
+    </div>
 
-        <h1 class="text-4xl font-bold text-white mb-8">Manage Folder Files</h1>
-        <div class="container bg-gray-800 p-6 rounded-lg shadow-lg">
-            <button class="bg-blue-500 text-white py-2 px-4 rounded mb-4 hover:bg-blue-700" onclick="window.location.href='/folders/createFolder'">Create Main Folder and Subfolder</button>
-            <button class="bg-blue-500 text-white py-2 px-4 rounded mb-4 hover:bg-blue-700" onclick="window.location.href='/folders/createFile'">Create File</button>
+    <div class="app-container">
+        <div class="sidebar">
+            <?= view('ACOMPONENTS/amanagesidebar'); ?>
+        </div>
 
-            <?php foreach ($mainFolders as $mainFolder): ?>
-                <div class="folder-section my-6">
-                    <h3 class="folder-header text-lg text-blue-400 font-medium cursor-pointer flex items-center" onclick="toggleTable('table_<?= $mainFolder['main_folder_id'] ?>')">
-                        <?= $mainFolder['name'] ?> Folder
-                        <button class="ml-3 bg-yellow-500 text-white text-sm py-1 px-2 rounded hover:bg-yellow-600" onclick="event.stopPropagation(); openEditFolderModal('main', <?= $mainFolder['main_folder_id'] ?>, '<?= $mainFolder['name'] ?>')">Edit</button>
-                        <button class="ml-1 bg-red-500 text-white text-sm py-1 px-2 rounded hover:bg-red-700" onclick="event.stopPropagation(); deleteFolder('main', <?= $mainFolder['main_folder_id'] ?>)">Delete</button>
-                    </h3>
+        <div class="main-content">
+            <h1 class="text-4xl font-bold text-white mb-8">Manage Folder Files</h1>
+            <div class="container bg-gray-800 p-6 rounded-lg shadow-lg">
+                <button class="bg-blue-500 text-white py-2 px-4 rounded mb-4 hover:bg-blue-700" onclick="window.location.href='/folders/createFolder'">Create Main Folder and Subfolder</button>
+                <button class="bg-blue-500 text-white py-2 px-4 rounded mb-4 hover:bg-blue-700" onclick="window.location.href='/folders/createFile'">Create File</button>
 
-                    <table id="table_<?= $mainFolder['main_folder_id'] ?>" class="w-full border-collapse mt-4 hidden">
-                        <thead>
-                            <tr class="bg-gray-700 text-gray-300">
-                                <th class="p-3">Subfolder ID</th>
-                                <th class="p-3">Title</th>
-                                <th class="p-3">Description</th>
-                                <th class="p-3">Preview</th>
-                                <th class="p-3">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($mainFolder['subfolders'] as $subFolder): ?>
-                                <tr>
-                                    <td colspan="5" class="text-blue-400 font-semibold p-4">
-                                        <?= $subFolder['name'] ?> Subfolder
-                                        <button class="ml-2 bg-yellow-500 text-white text-sm py-1 px-2 rounded hover:bg-yellow-600" onclick="openEditFolderModal('sub', <?= $subFolder['sub_folder_id'] ?>, '<?= $subFolder['name'] ?>')">Edit</button>
-                                        <button class="ml-1 bg-red-500 text-white text-sm py-1 px-2 rounded hover:bg-red-700" onclick="deleteFolder('sub', <?= $subFolder['sub_folder_id'] ?>)">Delete</button>
-                                    </td>
+                <?php foreach ($mainFolders as $mainFolder): ?>
+                    <div class="folder-section my-6">
+                        <h3 class="folder-header text-lg text-blue-400 font-medium cursor-pointer flex items-center" onclick="toggleTable('table_<?= $mainFolder['main_folder_id'] ?>')">
+                            <?= $mainFolder['name'] ?> Folder
+                            <button class="ml-3 bg-yellow-500 text-white text-sm py-1 px-2 rounded hover:bg-yellow-600" onclick="event.stopPropagation(); openEditFolderModal('main', <?= $mainFolder['main_folder_id'] ?>, '<?= $mainFolder['name'] ?>')">Edit</button>
+                            <button class="ml-1 bg-red-500 text-white text-sm py-1 px-2 rounded hover:bg-red-700" onclick="event.stopPropagation(); deleteFolder('main', <?= $mainFolder['main_folder_id'] ?>)">Delete</button>
+                        </h3>
+
+                        <table id="table_<?= $mainFolder['main_folder_id'] ?>" class="w-full border-collapse mt-4 hidden">
+                            <thead>
+                                <tr class="bg-gray-700 text-gray-300">
+                                    <th class="p-3">Subfolder ID</th>
+                                    <th class="p-3">Title</th>
+                                    <th class="p-3">Description</th>
+                                    <th class="p-3">Preview</th>
+                                    <th class="p-3">Actions</th>
                                 </tr>
-                                <?php foreach ($subFolder['files'] as $file): ?>
-                                    <tr class="bg-gray-800">
-                                        <td class="p-3"><?= $file['file_id'] ?></td>
-                                        <td class="p-3"><?= $file['title'] ?></td>
-                                        <td class="p-3"><?= $file['description'] ?></td>
-                                        <td class="p-3">
-                                            <?php
-                                                $filePaths = json_decode($file['file_path'], true);
-                                                foreach ($filePaths as $path) {
-                                                    $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-                                                    if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])):
-                                            ?>
-                                                    <img src="<?= base_url($path) ?>" alt="Image Preview" class="w-20 h-20 object-cover rounded mb-2">
-                                            <?php else: ?>
-                                                    <span>File format not supported for preview</span>
-                                            <?php endif; } ?>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($mainFolder['subfolders'] as $subFolder): ?>
+                                    <tr>
+                                        <td colspan="5" class="text-blue-400 font-semibold p-4">
+                                            <?= $subFolder['name'] ?> Subfolder
+                                            <button class="ml-2 bg-yellow-500 text-white text-sm py-1 px-2 rounded hover:bg-yellow-600" onclick="openEditFolderModal('sub', <?= $subFolder['sub_folder_id'] ?>, '<?= $subFolder['name'] ?>')">Edit</button>
+                                            <button class="ml-1 bg-red-500 text-white text-sm py-1 px-2 rounded hover:bg-red-700" onclick="deleteFolder('sub', <?= $subFolder['sub_folder_id'] ?>)">Delete</button>
                                         </td>
+                                    </tr>
+                                    <?php foreach ($subFolder['files'] as $file): ?>
+                                        <tr class="bg-gray-800">
+                                            <td class="p-3"><?= $file['file_id'] ?></td>
+                                            <td class="p-3"><?= $file['title'] ?></td>
+                                            <td class="p-3"><?= $file['description'] ?></td>
+                                            <td class="p-3">
+                                                <?php
+                                                    $filePaths = json_decode($file['file_path'], true);
+                                                    foreach ($filePaths as $path) {
+                                                        $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                                                        if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])):
+                                                ?>
+                                                        <img src="<?= base_url($path) ?>" alt="Image Preview" class="w-20 h-20 object-cover rounded mb-2">
+                                                <?php else: ?>
+                                                        <span>File format not supported for preview</span>
+                                                <?php endif; } ?>
+                                            </td>
 
-                                        <td class="actions p-3 space-x-2">
-                                            <?php
+                                            <td class="actions p-3 space-x-2">
+                                                <?php
 $fileId = $file['file_id'];
 $title = htmlspecialchars($file['title'], ENT_QUOTES, 'UTF-8');
 $description = htmlspecialchars($file['description'], ENT_QUOTES, 'UTF-8');
 ?>
-                                            <button class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600" onclick="editFile(<?= $fileId ?>, '<?= $title ?>', '<?= $description ?>')">Edit</button>
-                                            <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-700" onclick="deleteFile(<?= $file['file_id'] ?>)">Delete</button>
-                                            <button class="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600" onclick="previewFile(<?= $file['file_id'] ?>)">Preview</button>
-                                            <button class="bg-purple-500 text-white py-1 px-3 rounded hover:bg-purple-600" onclick="exportFile('pdf', <?= $file['file_id'] ?>)">Export PDF</button>
-                                        </td>
-                                    </tr>
+                                                <button class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600" onclick="editFile(<?= $fileId ?>, '<?= $title ?>', '<?= $description ?>')">Edit</button>
+                                                <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-700" onclick="deleteFile(<?= $file['file_id'] ?>)">Delete</button>
+                                                <button class="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600" onclick="previewFile(<?= $file['file_id'] ?>)">Preview</button>
+                                                <button class="bg-purple-500 text-white py-1 px-3 rounded hover:bg-purple-600" onclick="exportFile('pdf', <?= $file['file_id'] ?>)">Export PDF</button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 <?php endforeach; ?>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
-
-
-    <!-- Edit File Modal -->
-  <div class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center" id="editFileModal">
-    <div class="bg-gray-800 p-6 rounded-lg w-full max-w-md">
-        <h5 class="text-2xl font-bold text-white mb-4">Edit File</h5>
-        <form id="editFileForm" enctype="multipart/form-data">
-            <!-- Title Input -->
-            <input type="text" id="fileTitle" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" placeholder="File Title" required>
-            
-            <!-- Description Input -->
-            <textarea id="fileDescription" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" placeholder="File Description" required></textarea>
-            
-            <!-- Image/Video Upload -->
-            <label for="fileUpload" class="block text-sm font-medium text-gray-300 mb-2">Upload Image/Video</label>
-            <input type="file" id="fileUpload" class="w-full text-white p-2 mb-4 bg-gray-700 rounded" accept="image/*,video/*" multiple>
-            
-            <!-- Hidden File ID Input -->
-            <input type="hidden" id="fileId">
-
-            <!-- Save and Cancel Buttons -->
-            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">Save Changes</button>
-            <button type="button" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 ml-2" onclick="closeEditFileModal()">Cancel</button>
-        </form>
-    </div>
-</div>
 
     <?= view('hf/footer'); ?>
     <script>

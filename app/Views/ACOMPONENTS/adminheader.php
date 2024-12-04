@@ -123,7 +123,7 @@
         <!-- Notification Dropdown -->
         <div class="dropdown">
             <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-bell notification-icon"></i>
+                <i class="fas fa-bell notification-icon" style="color:blue;"></i>
                 <span id="notification-counter" class="badge-counter">5</span> <!-- Example count -->
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">

@@ -170,6 +170,7 @@
     </div>
     <br>
     <button id="btnLogin" type="submit" class="bfp-btn">Login</button>
+    <button class="btn btn-primary" onclick="loginBiometric()">Login with Biometrics</button>
 </form>
 
         <a href="<?= site_url('/forgot-password') ?>" class="bfp-link">Forgot Password?</a>
@@ -186,6 +187,49 @@
             var passwordInput = document.querySelector('input[name="password"]');
             passwordInput.type = this.checked ? 'text' : 'password';
         });
+        
+        async function loginBiometric() {
+    const publicKey = {
+        challenge: new Uint8Array(32), // Replace with a server-generated random challenge
+        allowCredentials: [{
+            id: Uint8Array.from(window.userCredentialId, c => c.charCodeAt(0)), // Replace with the stored credential ID
+            type: "public-key"
+        }],
+        timeout: 60000,
+        userVerification: "required"
+    };
+
+    try {
+        const assertion = await navigator.credentials.get({ publicKey });
+        const authenticatorData = btoa(String.fromCharCode(...new Uint8Array(assertion.response.authenticatorData)));
+        const clientDataJSON = btoa(String.fromCharCode(...new Uint8Array(assertion.response.clientDataJSON)));
+        const signature = btoa(String.fromCharCode(...new Uint8Array(assertion.response.signature)));
+
+        // Send to backend
+        const response = await fetch("/biometric/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                id: assertion.id,
+                rawId: btoa(String.fromCharCode(...new Uint8Array(assertion.rawId))),
+                type: assertion.type,
+                authenticatorData,
+                clientDataJSON,
+                signature
+            })
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+            alert("Biometric login successful!");
+            window.location.href = "/home";
+        } else {
+            alert("Biometric login failed: " + result.message);
+        }
+    } catch (error) {
+        console.error("Error during biometric login:", error);
+    }
+}
     </script>
 
 </body>

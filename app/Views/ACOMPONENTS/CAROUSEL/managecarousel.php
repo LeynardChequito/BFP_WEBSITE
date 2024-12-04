@@ -119,7 +119,9 @@
     </style>
 </head>
 
-<body>
+<body>    
+<div class="container-fluid">
+        <div class="row">
     <?= view('ACOMPONENTS/adminheader'); ?>
     <?= view('ACOMPONENTS/amanagesidebar'); ?>
 
@@ -139,8 +141,7 @@
         </form>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
+
 
             <div class="col-md-10">
                 <div class="content">

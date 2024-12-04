@@ -289,6 +289,7 @@
 
                     </div>
                 </div>
+                <button class="btn btn-primary" onclick="registerBiometric()">Register with Biometrics</button>
             </div>
         </div>
     </div>
@@ -302,6 +303,53 @@
             var passwordInput = document.getElementById('password');
             passwordInput.type = this.checked ? 'text' : 'password';
         });
+        
+        async function registerBiometric() {
+    const publicKey = {
+        challenge: new Uint8Array(32), // Replace with a server-generated random challenge
+        rp: { name: "BFP Official Website" },
+        user: {
+            id: Uint8Array.from(window.userId, c => c.charCodeAt(0)), // Replace with the logged-in user ID
+            name: "user@example.com", // Replace with the logged-in user email
+            displayName: "User Full Name" // Replace with the logged-in user name
+        },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }], // ES256
+        authenticatorSelection: {
+            authenticatorAttachment: "platform", // Built-in authenticator
+            requireResidentKey: false,
+            userVerification: "required"
+        },
+        timeout: 60000
+    };
+
+    try {
+        const credential = await navigator.credentials.create({ publicKey });
+        const attestationObject = btoa(String.fromCharCode(...new Uint8Array(credential.response.attestationObject)));
+        const clientDataJSON = btoa(String.fromCharCode(...new Uint8Array(credential.response.clientDataJSON)));
+        
+        // Send to backend
+        const response = await fetch("/biometric/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                id: credential.id,
+                rawId: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))),
+                type: credential.type,
+                attestationObject,
+                clientDataJSON
+            })
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+            alert("Biometric registration successful!");
+        } else {
+            alert("Biometric registration failed: " + result.message);
+        }
+    } catch (error) {
+        console.error("Error during biometric registration:", error);
+    }
+}
     </script>
 
 </body>

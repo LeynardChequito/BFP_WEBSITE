@@ -22,7 +22,12 @@
             flex-direction: column;
             justify-content: center;
         }
-
+        .container-fluid {
+            padding-right: 0px !important;
+            padding-left: 0px !important;
+            margin-right: 0px !important;
+            margin-left: 0px !important;
+        }
         .chart-container.standard-size {
             height: 300px;
         }
@@ -54,10 +59,10 @@
 </head>
 
 <body>
-    <?= view('ACOMPONENTS/NEWS/adminnewsheader'); ?>
-    <?= view('ACOMPONENTS/adminheader'); ?>
+   
 
     <div class="container-fluid">
+         <?= view('ACOMPONENTS/adminheader'); ?>
         <div class="row">
             <?= view('ACOMPONENTS/amanagesidebar'); ?>
 

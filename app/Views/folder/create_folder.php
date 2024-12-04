@@ -3,85 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <title>Create Main Folder and Subfolder</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        /* Dark theme styling */
         body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             background-color: #121212;
             color: #e0e0e0;
             font-family: 'Inter', sans-serif;
         }
 
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            padding-top: 30px;
-            min-height: calc(100vh - 100px);
-            box-sizing: border-box;
+        .app-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
         }
 
-        .container {
+        .sidebar {
+            min-width: 250px;
+            background-color: #dc3545;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #343a40;
+            color: #fff;
+            padding: 16px;
+        }
+
+        .form-container {
             background-color: #1e1e1e;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
         }
 
-        h1 {
-            font-size: 2rem;
-            color: #ffffff;
-            margin-bottom: 20px;
+        .btn {
+            transition: all 0.3s;
         }
 
-        label {
-            color: #b0b0b0;
-        }
-
-        .form-control {
-            background-color: #2c2c2c;
-            color: #e0e0e0;
-            border: none;
-            margin-bottom: 15px;
-            border-radius: 5px;
-        }
-
-        .btn-custom {
-            background-color: #0070f3;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.2s;
-            width: 100%;
-        }
-
-        .btn-custom:hover {
-            background-color: #005bb5;
+        .btn:hover {
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
 
-<?= view('ACOMPONENTS/adminheader'); ?>
-<?= view('ACOMPONENTS/amanagesidebar'); ?>
+        <?= view('ACOMPONENTS/adminheader'); ?>
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+            <?= view('ACOMPONENTS/amanagesidebar'); ?>
 
-<div class="main-content">
-    <div class="container">
-        <h1>Create Main Folder and Subfolder</h1>
-
-        <form action="/folders/storeFolder" method="post">
-            <label for="main_folder_name">Main Folder Name:</label>
-            <input type="text" name="main_folder_name" class="form-control" required>
-
-            <label for="sub_folder_name">Subfolder Name:</label>
-            <input type="text" name="sub_folder_name" class="form-control" required>
-
-            <button type="submit" class="btn btn-custom">Create Folder and Subfolder</button>
-        </form>
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1 class="text-4xl font-bold text-black mb-8">Create Main Folder and Subfolder</h1>
+            <div class="form-container">
+                <form action="/folders/storeFolder" method="post">
+                    <div class="mb-4">
+                        <label for="main_folder_name" class="block text-gray-400 mb-2">Main Folder Name:</label>
+                        <input type="text" name="main_folder_name" id="main_folder_name" class="w-full p-3 bg-gray-800 text-white rounded border border-gray-600" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="sub_folder_name" class="block text-gray-400 mb-2">Subfolder Name:</label>
+                        <input type="text" name="sub_folder_name" id="sub_folder_name" class="w-full p-3 bg-gray-800 text-white rounded border border-gray-600" required>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-500 text-white py-3 px-4 rounded hover:bg-blue-700">Create Folder and Subfolder</button>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
 
-<?= view('hf/footer'); ?>
-
+    <?= view('hf/footer'); ?>
 </body>
 </html>

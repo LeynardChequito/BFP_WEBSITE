@@ -1,4 +1,3 @@
-<!-- app\Views\RESCUERREPORT\fire_report_form.php -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,9 +17,18 @@
         </div>
     <?php endif; ?>
 
-    <form id="fireReportForm" action="<?= site_url('fire-report/store') ?>" method="post" enctype="multipart/form-data" class="bg-white p-8 rounded-lg shadow-md max-w-lg mx-auto">
+    <form id="fireReportForm" action="<?= site_url('rescuer-report/save') ?>" method="post" enctype="multipart/form-data" class="bg-white p-8 rounded-lg shadow-md max-w-lg mx-auto">
         <?= csrf_field() ?>
+        <div class="mb-4">
+            <label for="latitude" class="block text-gray-700 font-bold mb-2">Latitude:</label>
+            <input type="text" id="latitude" name="latitude" readonly class="w-full p-2 border border-gray-300 rounded bg-gray-100">
+        </div>
 
+        <div class="mb-4">
+            <label for="longitude" class="block text-gray-700 font-bold mb-2">Longitude:</label>
+            <input type="text" id="longitude" name="longitude" readonly class="w-full p-2 border border-gray-300 rounded bg-gray-100">
+        </div>
+        
         <div class="mb-4">
             <label for="rescuer_name" class="block text-gray-700 font-bold mb-2">Name of Rescuer:</label>
             <input type="text" name="rescuer_name" id="rescuer_name" placeholder="Enter Rescuer's Name" required class="w-full p-2 border border-gray-300 rounded">
@@ -46,6 +54,8 @@
             <textarea name="address" id="address" placeholder="Enter the Complete Address of Fire Incident" required class="w-full p-2 border border-gray-300 rounded"></textarea>
         </div>
 
+        <div id="location-error" class="text-red-500 font-bold hidden mb-4"></div>
+
         <div class="mb-4">
             <label for="cause_of_fire" class="block text-gray-700 font-bold mb-2">Cause of Fire:</label>
             <select name="cause_of_fire" id="cause_of_fire" required class="w-full p-2 border border-gray-300 rounded">
@@ -60,8 +70,7 @@
                 <option value="Other">Other</option>
             </select>
         </div>
-
-        <div class="mb-4">
+<div class="mb-4">
             <label for="property_damage_cost" class="block text-gray-700 font-bold mb-2">Select Property Damage Cost:</label>
             <select name="property_damage_cost" id="property_damage_cost" required class="w-full p-2 border border-gray-300 rounded" onchange="toggleInputField()">
                 <option value="₱0 - ₱99">₱0 - ₱99</option>
@@ -77,15 +86,6 @@
                 <!-- <option value="other">Other Amount</option> -->
             </select>
         </div>
-
-        <!-- <div id="custom_amount_field" class="mb-4" style="display:none;">
-            <label for="custom_amount" class="block text-gray-700 font-bold mb-2">Enter Amount:</label>
-            <div class="flex items-center">
-                <span class="mr-2 text-gray-700">₱</span>
-                <input type="number" id="custom_amount" name="custom_amount" placeholder="Enter amount" class="w-full p-2 border border-gray-300 rounded" />
-            </div>
-        </div> -->
-
         <div class="mb-4">
             <label for="number_of_injuries" class="block text-gray-700 font-bold mb-2">Number of Casualties:</label>
             <input type="number" name="number_of_injuries" id="number_of_injuries" placeholder="Enter the Number of Casualties" class="w-full p-2 border border-gray-300 rounded">
@@ -104,82 +104,39 @@
         <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Submit</button>
     </form>
 
-    <div id="successModal" class="modal hidden fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
-        <div class="bg-white p-6 rounded-lg text-center max-w-sm">
-            <span class="close text-gray-500 hover:text-gray-700 cursor-pointer">&times;</span>
-            <div class="text-lg font-semibold text-green-600 mb-4">Fire Report Submitted Successfully!</div>
-            <a href="<?= site_url('fire-report/create') ?>" class="block text-blue-500 hover:underline mb-2">Submit another report</a>
-            <a href="<?= site_url('admin-home') ?>" class="block text-blue-500 hover:underline">Return to Admin Dashboard</a>
-        </div>
-    </div>
-
     <script>
-        function toggleInputField() {
-            const selectElement = document.getElementById("property_damage_cost");
-            const customAmountField = document.getElementById("custom_amount_field");
-            customAmountField.style.display = selectElement.value === "other" ? "block" : "none";
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-
-            const form = document.getElementById('fireReportForm');
-
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                const formData = new FormData(form);
-
-
-                // Debug: Log FormData key-value pairs
-                // console.log('Form data being sent:');
-                // for (let [key, value] of formData.entries()) {
-                //     console.log(`${key}:`, value);
-                // }
-
-
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', form.action, true);
-                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // Optional for AJAX detection
-
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        try {
-                            const response = JSON.parse(xhr.responseText); // Parse JSON response
-
-                            if (response.success) {
-                                console.log('Data received from server:', response.data);
-                                document.getElementById('successModal').classList.remove('hidden');
-                            } else if (response.errors) {
-                                console.error('Validation errors:', response.errors);
-                                console.log('Data received from server:', response.data);
-                                alert('Validation failed. Check the console for details.');
-                            } else {
-                                console.error('Unexpected server response:', response);
-                                console.log('Data received from server:', response.data);
-                                alert('Unexpected server response.');
-                            }
-                        } catch (e) {
-                            console.error('Error parsing server response:', e);
-                            console.error('Raw response:', xhr.responseText);
-                            alert('An error occurred while processing the response.');
+        // Automatically fetch location on page load
+        document.addEventListener("DOMContentLoaded", function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        // Populate latitude and longitude fields
+                        document.getElementById('latitude').value = position.coords.latitude;
+                        document.getElementById('longitude').value = position.coords.longitude;
+                    },
+                    function (error) {
+                        let errorMessage = "";
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = "Permission denied. Please allow access to location services.";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = "Location information is unavailable.";
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = "The request to get user location timed out.";
+                                break;
+                            default:
+                                errorMessage = "An unknown error occurred.";
                         }
-                    } else {
-                        console.error('Server error:', xhr.status, xhr.statusText);
-                        alert('An error occurred on the server. Please try again.');
+                        document.getElementById('location-error').classList.remove('hidden');
+                        document.getElementById('location-error').textContent = errorMessage;
                     }
-                };
-
-                xhr.onerror = function() {
-                    console.error('Network error occurred during the request.');
-                    alert('A network error occurred. Please check your internet connection.');
-                };
-
-                xhr.send(formData);
-            });
-
-            document.querySelector('.close').onclick = function() {
-                document.getElementById('successModal').classList.add('hidden');
-            };
+                );
+            } else {
+                document.getElementById('location-error').classList.remove('hidden');
+                document.getElementById('location-error').textContent = "Geolocation is not supported by this browser.";
+            }
         });
     </script>
 </body>

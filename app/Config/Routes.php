@@ -7,6 +7,9 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // USER WEBSITE
+$routes->post('/biometric/register', 'BiometricController::register');
+$routes->post('/biometric/login', 'BiometricController::login');
+
 // LOGIN
 $routes->get('/', 'LoginController::loadingpage');
 $routes->get('login', 'LoginController::login');
@@ -143,22 +146,25 @@ $routes->get('getReportByCommunityReportId/(:num)', 'CommunityReportController::
 
 
 // RESCUER REPORT
-$routes->get('fire-report/create', 'FireReportController::firereportform');
-$routes->post('fire-report/store', 'FireReportController::store',);
-$routes->get('rescuer-report/form', 'FireReportController::reportform');
-$routes->post('rescuer-report/save', 'FireReportController::save');
-$routes->get('rescuer-report/success', function () {
-    return view('RESCUERREPORT/success');
-});
+// $routes->get('fire-report/create', 'FireReportController::firereportform');
+// $routes->post('fire-report/store', 'FireReportController::store',);
+// $routes->get('rescuer-report/form', 'FireReportController::reportform');
+// $routes->post('rescuer-report/save', 'FireReportController::save');
+// $routes->get('rescuer-report/success', function () {
+//     return view('RESCUERREPORT/success');
+// });
 // $routes->get('fire-report/create', 'FireReportController::fire_report_form');
 // $routes->post('fire-report/store', 'FireReportController::store');
 
 
 $routes->get('rescuer-report/form', 'RescuerReportController::reportform');
-$routes->post('rescuer-report/save', 'RescuerReportController::save');
+$routes->post('rescuer-report/save', 'RescuerReportController::store');
 $routes->get('rescuer-report/success', function () {
     return view('RESCUERREPORT/success');
 });
+$routes->get('heatmap', 'RescuerReportController::heatmap');
+$routes->get('rescuer-report/getHeatmapData', 'RescuerReportController::getHeatmapData');
+
 
 $routes->group('rescuer', function($routes) {
     $routes->get('final-incident-report', 'FinalIncidentReportController::finalreport');
