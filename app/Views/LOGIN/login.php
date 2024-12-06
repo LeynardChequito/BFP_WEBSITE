@@ -170,7 +170,8 @@
     </div>
     <br>
     <button id="btnLogin" type="submit" class="bfp-btn">Login</button>
-    <button class="btn btn-primary" onclick="loginBiometric()">Login with Biometrics</button>
+    <!-- <button class="btn btn-primary" onclick="loginBiometric()">Login with Biometrics</button> -->
+
 </form>
 
         <a href="<?= site_url('/forgot-password') ?>" class="bfp-link">Forgot Password?</a>
@@ -189,10 +190,15 @@
         });
         
         async function loginBiometric() {
+    // Step 1: Fetch challenge from server
+    const response = await fetch('/generate-challenge');
+    const { challenge } = await response.json();
+
+    // Step 2: Request WebAuthn assertion
     const publicKey = {
-        challenge: new Uint8Array(32), // Replace with a server-generated random challenge
+        challenge: Uint8Array.from(atob(challenge), c => c.charCodeAt(0)),
         allowCredentials: [{
-            id: Uint8Array.from(window.userCredentialId, c => c.charCodeAt(0)), // Replace with the stored credential ID
+            id: Uint8Array.from("credential-id", c => c.charCodeAt(0)), // Replace with stored credential ID
             type: "public-key"
         }],
         timeout: 60000,
@@ -205,29 +211,22 @@
         const clientDataJSON = btoa(String.fromCharCode(...new Uint8Array(assertion.response.clientDataJSON)));
         const signature = btoa(String.fromCharCode(...new Uint8Array(assertion.response.signature)));
 
-        // Send to backend
-        const response = await fetch("/biometric/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                id: assertion.id,
-                rawId: btoa(String.fromCharCode(...new Uint8Array(assertion.rawId))),
-                type: assertion.type,
-                authenticatorData,
-                clientDataJSON,
-                signature
-            })
+        // Step 3: Send assertion to server
+        const loginResponse = await fetch('/biometric/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: assertion.id, clientDataJSON, authenticatorData, signature })
         });
 
-        const result = await response.json();
+        const result = await loginResponse.json();
         if (result.status === "success") {
             alert("Biometric login successful!");
             window.location.href = "/home";
         } else {
             alert("Biometric login failed: " + result.message);
         }
-    } catch (error) {
-        console.error("Error during biometric login:", error);
+    } catch (err) {
+        console.error("Login failed:", err);
     }
 }
     </script>

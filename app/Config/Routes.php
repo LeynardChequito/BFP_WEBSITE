@@ -7,8 +7,10 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // USER WEBSITE
-$routes->post('/biometric/register', 'BiometricController::register');
-$routes->post('/biometric/login', 'BiometricController::login');
+$routes->get('/generate-challenge', 'BiometricController::generateChallenge');
+$routes->post('/biometric/register', 'BiometricController::registerBiometric');
+$routes->post('/biometric/login', 'BiometricController::loginBiometric');
+
 
 // LOGIN
 $routes->get('/', 'LoginController::loadingpage');

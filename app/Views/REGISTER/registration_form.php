@@ -289,7 +289,8 @@
 
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="registerBiometric()">Register with Biometrics</button>
+                <!-- <button class="btn btn-primary" onclick="registerBiometric()">Register with Biometrics</button> -->
+
             </div>
         </div>
     </div>
@@ -305,49 +306,38 @@
         });
         
         async function registerBiometric() {
+    // Step 1: Fetch challenge from server
+    const response = await fetch('/generate-challenge');
+    const { challenge } = await response.json();
+
+    // Step 2: Create WebAuthn credential
     const publicKey = {
-        challenge: new Uint8Array(32), // Replace with a server-generated random challenge
-        rp: { name: "BFP Official Website" },
+        challenge: Uint8Array.from(atob(challenge), c => c.charCodeAt(0)),
+        rp: { name: "BFP Community Official Website" },
         user: {
-            id: Uint8Array.from(window.userId, c => c.charCodeAt(0)), // Replace with the logged-in user ID
-            name: "user@example.com", // Replace with the logged-in user email
-            displayName: "User Full Name" // Replace with the logged-in user name
+            id: Uint8Array.from("user_id", c => c.charCodeAt(0)), // Replace with user ID
+            name: "", // Replace with user email
+            displayName: ""
         },
-        pubKeyCredParams: [{ type: "public-key", alg: -7 }], // ES256
-        authenticatorSelection: {
-            authenticatorAttachment: "platform", // Built-in authenticator
-            requireResidentKey: false,
-            userVerification: "required"
-        },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+        authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
         timeout: 60000
     };
 
     try {
         const credential = await navigator.credentials.create({ publicKey });
         const attestationObject = btoa(String.fromCharCode(...new Uint8Array(credential.response.attestationObject)));
-        const clientDataJSON = btoa(String.fromCharCode(...new Uint8Array(credential.response.clientDataJSON)));
-        
-        // Send to backend
-        const response = await fetch("/biometric/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                id: credential.id,
-                rawId: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))),
-                type: credential.type,
-                attestationObject,
-                clientDataJSON
-            })
+
+        // Step 3: Send credential to server
+        await fetch('/biometric/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: credential.id, attestationObject })
         });
 
-        const result = await response.json();
-        if (result.status === "success") {
-            alert("Biometric registration successful!");
-        } else {
-            alert("Biometric registration failed: " + result.message);
-        }
-    } catch (error) {
-        console.error("Error during biometric registration:", error);
+        alert("Biometric registration successful!");
+    } catch (err) {
+        console.error("Registration failed:", err);
     }
 }
     </script>
