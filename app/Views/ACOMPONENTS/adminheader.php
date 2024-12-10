@@ -52,13 +52,16 @@
 
         /* Notification Dropdown */
         .dropdown-menu {
-        max-height: 400px;
-        overflow-y: auto;
-        padding: 0;
-        width: 300px; /* Adjust width as needed */
-        right: -20px; /* Adjust position slightly to the right */
-        left: auto; /* Prevent dropdown from stretching across the viewport */
-    }
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 0;
+            width: 300px;
+            /* Adjust width as needed */
+            right: 0;
+            /* Align to the right of the bell icon */
+            left: auto;
+            /* Prevent dropdown from stretching across the viewport */
+        }
 
         .dropdown-toggle::after {
             display: none;
@@ -106,23 +109,43 @@
 
         /* Badge Counter */
         .badge-counter {
-        position: absolute;
-        top: -5px; /* Adjust position vertically */
-        right: -10px; /* Adjust position horizontally */
-        background-color: blue; /* Background color */
-        color: white; /* Text color */
-        border-radius: 50%; /* Make it circular */
-        width: 20px; /* Fixed width */
-        height: 20px; /* Fixed height */
-        display: flex; /* Center content */
-        justify-content: center;
-        align-items: center;
-        font-size: 12px; /* Font size for number */
-        font-weight: bold; /* Make the text bold */
-    }
-    .dropdown .btn {
-        position: relative; /* Make the bell icon a positioning reference */
-    }
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: blue;
+            /* Background color set to blue */
+            color: white;
+            padding: 5px;
+            /* Adjusted padding */
+            border-radius: 50%;
+            /* Makes the badge circular */
+            font-size: 12px;
+            width: 20px;
+            /* Ensures a fixed width */
+            height: 20px;
+            /* Ensures a fixed height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: blue;
+            /* Background color set to blue */
+            color: white;
+            padding: 5px;
+            /* Adjusted padding */
+            border-radius: 50%;
+            /* Makes the badge circular */
+            font-size: 12px;
+            width: 20px;
+            /* Ensures a fixed width */
+            height: 20px;
+            /* Ensures a fixed height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 
@@ -136,17 +159,16 @@
 
         <!-- Notification Dropdown -->
         <div class="dropdown">
-    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-bell notification-icon" style="color:lightblue; font-size: 24px;"></i>
-        <span id="notification-counter" class="badge-counter">5</span> <!-- Example count -->
-    </button>
-    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-        <div id="notificationContainer">
-            <!-- Notifications will be injected here dynamically -->
+            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell notification-icon" style="color:blue;"></i>
+                <span id="notification-counter" class="badge-counter">5</span> <!-- Example count -->
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                <div id="notificationContainer">
+                    <!-- Notifications will be injected here dynamically -->
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-
 
         <!-- Philippine time -->
         <span id="philippineTime" class="text-white">Philippine Standard Time: <span id="current-time"></span></span>
