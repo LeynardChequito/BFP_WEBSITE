@@ -99,9 +99,9 @@ if (!function_exists('isActive')) {
     <div class="main-container">
         <!-- Sidebar -->
         <aside class="sidebar text-white">
-            <div class="p-4">
+            <!-- <div class="p-4">
                 <h2 class="font-bold">BFP Admin</h2>
-            </div>
+            </div> -->
             <nav class="flex-1 overflow-y-auto">
                 <ul class="mt-4 space-y-2">
                     <?php foreach ($sidebarItems as $item): ?>
