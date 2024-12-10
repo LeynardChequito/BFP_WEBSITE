@@ -55,17 +55,22 @@
             max-height: 400px;
             overflow-y: auto;
             padding: 0;
-            width: 300px; /* Adjust width as needed */
-            right: 0; /* Align to the right of the bell icon */
-            left: auto; /* Prevent dropdown from stretching across the viewport */
+            width: 300px;
+            /* Adjust width as needed */
+            right: 0;
+            /* Align to the right of the bell icon */
+            left: auto;
+            /* Prevent dropdown from stretching across the viewport */
         }
 
         .dropdown-toggle::after {
-            display: none; /* Remove default dropdown arrow */
+            display: none;
+            /* Remove default dropdown arrow */
         }
 
         .notification-item {
-            padding: 10px; /* Reduce padding for a more compact look */
+            padding: 10px;
+            /* Reduce padding for a more compact look */
             border-bottom: 1px solid #ddd;
             display: flex;
             align-items: center;
@@ -74,12 +79,14 @@
         }
 
         .notification-item:hover {
-            background-color: #f8f8f8; /* Slight background change on hover */
+            background-color: #f8f8f8;
+            /* Slight background change on hover */
         }
 
         .notification-item img,
         .notification-item video {
-            width: 50px; /* Reduce image and video size */
+            width: 50px;
+            /* Reduce image and video size */
             height: 50px;
             margin-right: 10px;
             border-radius: 5px;
@@ -88,12 +95,14 @@
 
         .notification-item h4 {
             margin: 0;
-            font-size: 14px; /* Slightly smaller font size */
+            font-size: 14px;
+            /* Slightly smaller font size */
             color: #333;
         }
 
         .notification-item p {
-            margin: 3px 0 0 0; /* Reduce spacing */
+            margin: 3px 0 0 0;
+            /* Reduce spacing */
             font-size: 12px;
             color: #555;
         }
@@ -103,11 +112,39 @@
             position: absolute;
             top: -5px;
             right: -10px;
-            background-color: red;
+            background-color: blue;
+            /* Background color set to blue */
             color: white;
-            padding: 5px 8px;
+            padding: 5px;
+            /* Adjusted padding */
             border-radius: 50%;
+            /* Makes the badge circular */
             font-size: 12px;
+            width: 20px;
+            /* Ensures a fixed width */
+            height: 20px;
+            /* Ensures a fixed height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: blue;
+            /* Background color set to blue */
+            color: white;
+            padding: 5px;
+            /* Adjusted padding */
+            border-radius: 50%;
+            /* Makes the badge circular */
+            font-size: 12px;
+            width: 20px;
+            /* Ensures a fixed width */
+            height: 20px;
+            /* Ensures a fixed height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
@@ -213,7 +250,7 @@
                     const notificationContainer = document.getElementById('notificationContainer');
                     notificationContainer.innerHTML = '';
                     let notificationCount = data.length;
-                    
+
                     if (notificationCount > 0) {
                         document.getElementById('notification-counter').textContent = notificationCount;
                     } else {
@@ -224,10 +261,10 @@
                         const notification = document.createElement('div');
                         notification.classList.add('notification-item');
                         notification.setAttribute('data-communityreport-id', report.communityreport_id);
-                        
-                        const mediaContent = (report.fileproof.endsWith('.jpg') || report.fileproof.endsWith('.png'))
-                            ? `<img src="${report.fileproof}" alt="File Proof" class="w-16 h-16 mr-3 rounded-md">`
-                            : `<video src="${report.fileproof}" class="w-16 h-16 mr-3 rounded-md" controls></video>`;
+
+                        const mediaContent = (report.fileproof.endsWith('.jpg') || report.fileproof.endsWith('.png')) ?
+                            `<img src="${report.fileproof}" alt="File Proof" class="w-16 h-16 mr-3 rounded-md">` :
+                            `<video src="${report.fileproof}" class="w-16 h-16 mr-3 rounded-md" controls></video>`;
 
                         notification.innerHTML = `
                             ${mediaContent}
