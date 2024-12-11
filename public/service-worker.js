@@ -20,6 +20,6 @@ self.addEventListener('push', function (event) {
 self.addEventListener('notificationclick', function (event) {
     event.notification.close();
     if (event.action === 'view') {
-        clients.openWindow('/admin-home'); // Replace with your admin dashboard path
+        clients.openWindow('https://bfpcalapancity.online/admin-home'); // Replace with your admin dashboard path
     }
 });
