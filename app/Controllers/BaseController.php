@@ -55,4 +55,11 @@ abstract class BaseController extends Controller
         $authentication = \Config\Services::authentication();
         // E.g.: $this->session = \Config\Services::session();
     }
+    protected function initialize()
+{
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+}
+
 }

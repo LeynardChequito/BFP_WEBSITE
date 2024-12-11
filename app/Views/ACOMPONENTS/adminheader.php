@@ -174,9 +174,11 @@
         <span id="philippineTime" class="text-white">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
+<script src="/js/notification.js"></script>
     <!-- Firebase and Notification Scripts -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+    
 
     <script>
         const firebaseConfig = {
@@ -197,7 +199,7 @@
             if (permission === 'granted') {
                 console.log('Notification permission granted.');
                 messaging.getToken({
-                    vapidKey: 'YOUR_VAPID_KEY'
+                    vapidKey: 'BNEXDb7w8VzvQt3rD2pMcO4vnJ4Q5pBRILpb3WMtZ3PSfoFpb6CmI5p05Gar3Lq1tDQt5jC99tLo9Qo3Qz7_aLc'
                 }).then((currentToken) => {
                     if (currentToken) {
                         console.log('Token retrieved:', currentToken);
@@ -213,7 +215,7 @@
         });
 
         // Load the alarm sound
-        const sirenSound = new Audio('https://bfpcalapancity.online/public/45secs_alarm.mp3');
+        const sirenSound = new Audio('https://bfpcalapancity.online/bfpcalapancity/public/45secs_alarm.mp3');
         sirenSound.preload = 'auto';
 
         let userInteracted = false;
@@ -302,6 +304,25 @@
 
         setInterval(updatePhilippineTime, 1000);
         updatePhilippineTime();
+
+        if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+            console.log('Service Worker Registered:', registration);
+        }).catch(function (error) {
+            console.log('Service Worker Registration Failed:', error);
+        });
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                subscribeUser(); // Call the subscribe function
+            } else {
+                console.error('Notification permission denied.');
+            }
+        });
+    });
     </script>
 
     <!-- jQuery and Bootstrap Scripts -->

@@ -19,6 +19,7 @@ class Filters extends BaseConfig
      *                                                     or [filter_name => [classname1, classname2, ...]]
      */
     public array $aliases = [
+        'CorsFilter' => \App\Filters\CorsFilter::class,
         'csrf'          => CSRF::class,
         'toolbar'       => DebugToolbar::class,
         'honeypot'      => Honeypot::class,
@@ -36,6 +37,7 @@ class Filters extends BaseConfig
      */
     public array $globals = [
         'before' => [
+            'CorsFilter'
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
@@ -68,14 +70,20 @@ class Filters extends BaseConfig
      * 'isLoggedIn' => ['before' => ['account/*', 'profiles/*']]
      */
     public $filters = [
+        'CorsFilter' => [
+        'before' => [
+            'save-subscription',  // Example route
+            'send-notification', // Another example route
+        ],
+    ],
         'user' => ['before' => [
-             'contact-us', 'banner', 'logout', 'achievements', 'contacts', 'activities',
+            'home', 'contact-us', 'banner', 'logout', 'achievements', 'contacts', 'activities',
             '/site', 'album', 'intern', 'pfv', 'fdas', 'inspection', 'news', 'news/(:segment)',
             'carouselhome', 'user-location', 'submitcall', 'communityreport/*',
               
         ]],
         'admin' => ['before' => [
-            'admin-home', 'admin-logout', 'admin-dashboard', 'admin-notif', 'admin/processlogin',
+            '/admin-home', 'admin-logout', 'admin-dashboard', 'admin-notif', 'admin/processlogin',
             'admin-registration', 'admin-registration/*','news-store', 'news-edit', 'news-update', 'delete/*', 'carouselImages', 'carousel/*', 
              'fetchCommunityReports', 'getEmergencyCallCoordinates', 'reports-recent','fire-report/create', 'fire-report/store', 
         ]],

@@ -4,23 +4,24 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CommunityReportModel;
-use App\Models\AdminModel;
+use App\Models\NDRRMCModel;
 use Config\Services;
 use CodeIgniter\API\ResponseTrait;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Messaging\CloudMessage;
+use Minishlink\WebPush\WebPush;
+use Minishlink\WebPush\Subscription;
 
 class CommunityReportController extends BaseController
 {
     use ResponseTrait;
 
     protected $session;
-    protected $firebaseServerKey = 'AAAAMdjqKPk:APA91bH4dQbOlZJbcnrviv8Cak23oGKjVbzs3O0V9s1jEo_SLynqGa-XqxLa4rXtXAWn7eSeeyuqjf9fexjsxzJJVPXmU3GzY8sjddKyRqiFoZdr14ryMhvpGD2I-KmfRjL2rVWVVPnV';
+    protected $subscriptionModel;
 
     public function __construct()
     {
         $this->session = Services::session();
         date_default_timezone_set('Asia/Manila');
+        $this->subscriptionModel = new NDRRMCModel();
     }
 
     public function submitcall()
@@ -29,112 +30,56 @@ class CommunityReportController extends BaseController
     }
 
     public function submitCommunityReport()
-{
-    helper(['form', 'url', 'session']);
-    
-    // Removed communityreport_id from rules
-    $rules = [
-        'fullName' => 'required|max_length[255]',
-        'latitude' => 'required|decimal',
-        'longitude' => 'required|decimal',
-        'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
-        // 'communityreport_id' => 'required|integer' // Removed this line
-    ];
-    
-    if ($this->validate($rules)) {
-        $communityReportModel = new CommunityReportModel();
-    
-        $fileproof = $this->request->getFile('fileproof');
-        if ($fileproof->isValid() && !$fileproof->hasMoved()) {
-            $fileproofName = $fileproof->getRandomName();
-            $fileproof->move(ROOTPATH . 'public/community_report/', $fileproofName);
-    
-            $data = [
-                // Removed communityreport_id from data
-                'fullName' => $this->request->getVar('fullName'),
-                'latitude' => $this->request->getVar('latitude'),
-                'longitude' => $this->request->getVar('longitude'),
-                'fileproof' => $fileproofName, // Just store the filename
-            ];
-    
-            $communityReportModel->insert($data);
-    
-            // Additional logic like sending notifications...
-            return $this->response->setStatusCode(200)->setJSON([
-                'success' => true,
-                'message' => 'Emergency Call successfully submitted!',
-            ]);
+    {
+        helper(['form', 'url', 'session']);
+
+        $rules = [
+            'fullName' => 'required|max_length[255]',
+            'latitude' => 'required|decimal',
+            'longitude' => 'required|decimal',
+            'fileproof' => 'uploaded[fileproof]|max_size[fileproof,50000]|ext_in[fileproof,jpg,jpeg,png,mp4,mov,avi]',
+        ];
+
+        if ($this->validate($rules)) {
+            $communityReportModel = new CommunityReportModel();
+
+            $fileproof = $this->request->getFile('fileproof');
+            if ($fileproof->isValid() && !$fileproof->hasMoved()) {
+                $fileproofName = $fileproof->getRandomName();
+                $fileproof->move(ROOTPATH . 'public/community_report/', $fileproofName);
+
+                $data = [
+                    'fullName' => $this->request->getVar('fullName'),
+                    'latitude' => $this->request->getVar('latitude'),
+                    'longitude' => $this->request->getVar('longitude'),
+                    'fileproof' => $fileproofName,
+                ];
+
+                // Save the emergency report
+                $communityReportModel->insert($data);
+
+                // Trigger notification sending
+                $this->sendNotificationToAdmins($data);
+
+                return $this->response->setStatusCode(200)->setJSON([
+                    'success' => true,
+                    'message' => 'Emergency Call successfully submitted!',
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Failed to upload file proof.',
+                ]);
+            }
         } else {
+            $errors = $this->validator->getErrors();
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Failed to upload file proof.',
+                'message' => 'Validation failed',
+                'errors' => $errors,
             ]);
         }
-    } else {
-        // Collecting all errors
-        $errors = $this->validator->getErrors();
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Validation failed',
-            'errors' => $errors // Return detailed errors
-        ]);
     }
-}
-
-    
-    
-    public function sendPushNotificationToUser($token, $title, $body, $imageUrl = null)
-    {
-        // Prepare the payload for the push notification
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        $headers = [
-            'Authorization: key=' . $this->firebaseServerKey,
-            'Content-Type: application/json'
-        ];
-
-        $notification = [
-            'title' => $title,
-            'body' => $body,
-        ];
-
-        if ($imageUrl) {
-            $notification['image'] = $imageUrl;
-        }
-
-        $fields = [
-            'to' => $token,
-            'notification' => $notification,
-            'data' => [
-                'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
-                'title' => $title,
-                'body' => $body,
-                'image' => $imageUrl
-            ]
-        ];
-
-        // Initialize cURL and send the notification
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-        $result = curl_exec($ch);
-        curl_close($ch);
-
-        return json_decode($result, true);
-    }
-
-    private function notifyAllAdmins($title, $body, $imageUrl = null)
-    {
-        $adminModel = new AdminModel();
-        $admins = $adminModel->where('token IS NOT NULL')->findAll();
-
-        foreach ($admins as $admin) {
-            $this->sendPushNotificationToUser($admin['token'], $title, $body, $imageUrl);
-        }
-    }
-
     public function getEmergencyCallCoordinates()
     {
         $communityReportModel = new CommunityReportModel();
@@ -239,5 +184,119 @@ public function getReportByCommunityReportId($communityreport_id)
         return $this->failNotFound('Report not found');
     }
 }
+public function saveSubscription()
+{
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST');
+    header('Access-Control-Allow-Headers: Content-Type');
+    try {
+        // Get JSON data from the request
+        $data = $this->request->getJSON(true);
 
+        // Validate required fields
+        if (
+            !$data ||
+            !isset($data['endpoint'], $data['keys']['p256dh'], $data['keys']['auth'])
+        ) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid subscription data.',
+            ])->setStatusCode(400);
+        }
+
+        // Prepare subscription data for insertion
+        $subscriptionData = [
+            'endpoint' => $data['endpoint'],
+            'public_key' => $data['keys']['p256dh'],
+            'auth_key' => $data['keys']['auth'],
+        ];
+
+        // Insert subscription into the database
+        if ($this->subscriptionModel->insert($subscriptionData)) {
+            return $this->response->setJSON(['status' => 'success']);
+        }
+
+        return $this->response->setJSON([
+            'status' => 'error',
+            'message' => 'Failed to save subscription.',
+        ])->setStatusCode(500);
+    } catch (\Exception $e) {
+        log_message('error', 'Error saving subscription: ' . $e->getMessage());
+        return $this->response->setJSON([
+            'status' => 'error',
+            'message' => 'Server error.',
+        ])->setStatusCode(500);
+    }
+}
+
+    public function sendNotification()
+    {
+        $subscriptions = $this->subscriptionModel->findAll();
+
+        $auth = [
+            'VAPID' => [
+                'subject' => 'mailto:bfpcalapancity@gmail.com',
+                'publicKey' => getenv('VAPID_PUBLIC_KEY'),
+                'privateKey' => getenv('VAPID_PRIVATE_KEY'),
+            ],
+        ];
+
+        $webPush = new WebPush($auth);
+
+        foreach ($subscriptions as $sub) {
+            $subscription = Subscription::create([
+                'endpoint' => $sub['endpoint'],
+                'publicKey' => $sub['public_key'],
+                'authToken' => $sub['auth_key'],
+            ]);
+
+            // Queue the notification
+            $webPush->queueNotification(
+                $subscription,
+                json_encode([
+                    'title' => 'Emergency Alert!',
+                    'body' => 'An emergency has been reported! Please check the system.',
+                ])
+            );
+        }
+
+        // Send all notifications
+        $webPush->flush();
+
+        return $this->response->setJSON(['status' => 'notifications_sent']);
+    }
+
+    private function sendNotificationToAdmins($emergencyData)
+    {
+        $subscriptions = $this->subscriptionModel->findAll();
+
+        $auth = [
+            'VAPID' => [
+                'subject' => 'mailto:bfpcalapancity@gmail.com',
+                'publicKey' => getenv('VAPID_PUBLIC_KEY'),
+                'privateKey' => getenv('VAPID_PRIVATE_KEY'),
+            ],
+        ];
+
+        $webPush = new WebPush($auth);
+
+        foreach ($subscriptions as $sub) {
+            $subscription = Subscription::create([
+                'endpoint' => $sub['endpoint'],
+                'publicKey' => $sub['public_key'],
+                'authToken' => $sub['auth_key'],
+            ]);
+
+            $webPush->queueNotification(
+                $subscription,
+                json_encode([
+                    'title' => 'Emergency Alert!',
+                    'body' => 'An emergency has been reported! Please check the system.',
+                ])
+            );
+        }
+
+        // Flush notifications to ensure they are sent
+        $webPush->flush();
+    }
 }

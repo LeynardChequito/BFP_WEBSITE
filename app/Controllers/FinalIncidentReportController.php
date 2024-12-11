@@ -96,10 +96,10 @@ public function exportPdf($id)
     }
 
     // Configure Dompdf
-    $options = new \Dompdf\Options();
+    $options = new Options();
     $options->set('isRemoteEnabled', true); // Enable remote resources
     $options->set('defaultFont', 'Arial');
-    $dompdf = new \Dompdf\Dompdf($options);
+    $dompdf = new Dompdf($options);
 
     // Render the HTML with the Base64 logo passed to the view
     $html = view('Areport/final_incident_report/pdf', [
@@ -196,9 +196,9 @@ public function previewPdf($id)
     }
 
     // Load PDF library and configure
-    $options = new \Dompdf\Options();
+    $options = new Options();
     $options->set('isRemoteEnabled', true); // Enable remote images
-    $dompdf = new \Dompdf\Dompdf($options);
+    $dompdf = new Dompdf($options);
 
     // Pass the report and Base64 logo to the view
     $html = view('Areport/final_incident_report/pdf', [

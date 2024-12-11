@@ -7,9 +7,9 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // USER WEBSITE
-$routes->get('/generate-challenge', 'BiometricController::generateChallenge');
-$routes->post('/biometric/register', 'BiometricController::registerBiometric');
-$routes->post('/biometric/login', 'BiometricController::loginBiometric');
+// $routes->get('/generate-challenge', 'BiometricController::generateChallenge');
+// $routes->post('/biometric/register', 'BiometricController::registerBiometric');
+// $routes->post('/biometric/login', 'BiometricController::loginBiometric');
 
 
 // LOGIN
@@ -146,6 +146,8 @@ $routes->get('/save-token', 'CommunityReportController::saveToken', );
 $routes->get('getLatestReports', 'CommunityReportController::getLatestReports');
 $routes->get('getReportByCommunityReportId/(:num)', 'CommunityReportController::getReportByCommunityReportId/$1');
 
+$routes->post('save-subscription', 'CommunityReportController::saveSubscription');
+$routes->get('send-notifications', 'CommunityReportController::sendNotification');
 
 // RESCUER REPORT
 // $routes->get('fire-report/create', 'FireReportController::firereportform');
