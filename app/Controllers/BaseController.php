@@ -1,4 +1,3 @@
-<!-- app\Controllers\BaseController.php -->
 <?php
 
 namespace App\Controllers;
