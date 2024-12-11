@@ -174,7 +174,7 @@
         <span id="philippineTime" class="text-white">Philippine Standard Time: <span id="current-time"></span></span>
     </div>
 
-<script src="/js/notification.js"></script>
+<script src="/bfpcalapancity/public/js/notification.js"></script>
     <!-- Firebase and Notification Scripts -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
