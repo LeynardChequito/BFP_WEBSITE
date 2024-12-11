@@ -1,3 +1,4 @@
+<!-- app\Controllers\BaseController.php -->
 <?php
 
 namespace App\Controllers;
@@ -57,7 +58,7 @@ abstract class BaseController extends Controller
     }
     protected function initialize()
 {
-    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: https://bfpcalapancity.online');
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
 }

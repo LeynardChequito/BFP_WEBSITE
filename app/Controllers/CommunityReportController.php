@@ -186,7 +186,7 @@ public function getReportByCommunityReportId($communityreport_id)
 }
 public function saveSubscription()
 {
-    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: https://bfpcalapancity.online');
     header('Access-Control-Allow-Methods: GET, POST');
     header('Access-Control-Allow-Headers: Content-Type');
     try {
